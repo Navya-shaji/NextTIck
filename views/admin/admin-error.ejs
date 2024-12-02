@@ -1,0 +1,15 @@
+<%- include("../../views/partials/admin/header") %>
+<head>
+  <link rel="stylesheet" href="/styles/admin-error.css">
+</head>
+  <h1>Error Page Admin</h1>
+  <p>An error occurred.</p>
+  <button onclick="godashboard()">Go to Home Page</button>
+
+  <script>
+      function godashboard() {
+          window.location.href = "/admin";
+      }
+  </script>
+
+<%- include("../../views/partials/admin/footer") %>

@@ -12,9 +12,10 @@ const categorySchema =new mongoose.Schema({
         required:true,
         
     },
-    isListed:{
-        type:Boolean,
-        required:true
+    isListed: {
+        type: Boolean,
+        required: true,
+        default: true, // Automatically set to true if not provided
     },
     categoryOffer:{
         type:Number,
@@ -26,6 +27,6 @@ const categorySchema =new mongoose.Schema({
     }
 })
 
-const Category =mongoose.model("category",categorySchema)
+const Category =mongoose.model("Category",categorySchema)
 
 module.exports =Category;

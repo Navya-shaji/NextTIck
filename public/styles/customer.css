@@ -1,0 +1,19 @@
+.search-bar {
+    width: 500px;
+    margin: 0 auto;
+    border: 1px solid grey;
+    border-radius: 50px;
+}
+
+.search-bar .form-control {
+    border: none;
+    border-radius: 50px;
+}
+
+.table-responsive {
+    margin-top: 20px;
+}
+
+.pagination {
+    margin-top: 20px;
+}

@@ -1,0 +1,43 @@
+
+body {
+    background-color: #ffffff;
+}
+.navbar {
+    background-color:  #edbfde;
+}
+.navbar-aside {
+    background-color: #edbfde;
+}
+.menu-item a.menu-link {
+    color: #0a0a0a;
+}
+
+.menu-item a.menu-link:hover,
+.menu-item a.menu-link.active {
+    background-color: #f5f6f5; 
+    color: #030304;
+}
+.dropdown-menu {
+    background-color: #ffffff;
+}
+
+.dropdown-item:hover {
+    background-color: #050306;
+    color: #b96faa;
+}
+
+p{
+    color:black
+}
+
+.menu-aside .menu-item .icon {
+    color: #03080c;
+    margin-right: 10px;
+    font-size: 24px;
+}
+
+
+
+
+
+

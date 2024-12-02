@@ -1,0 +1,93 @@
+<%- include("../../views/partials/admin/header") %>
+
+<div class="content-header row">
+    <div class="d-flex justify-content-between align-items-center">
+        <h2 class="content-title card-title">Customers</h2>
+    </div>
+</div>
+
+<header class="card-header text-center mb-20">
+    <form action="/admin/users" method="get" class="d-inline">
+        <div class="input-group input-group-sm search-bar">
+            <input
+                type="text"
+                class="form-control"
+                placeholder="Search customers..."
+                name="search"
+                value="<%= search %>"
+                aria-label="Search customers"
+            />
+            <button class="btn btn-outline-primary" type="submit" aria-label="Search">Search</button>
+        </div>
+    </form>
+</header>
+
+<div class="table-responsive mt-5">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col"><b>Name</b></th>
+                <th scope="col"><b>Email</b></th>
+                <th scope="col"><b>Phone No</b></th>
+                <th scope="col"><b>Action</b></th>
+            </tr>
+        </thead>
+        <tbody>
+            <% if (customers && customers.length > 0) { %>
+                <% customers.forEach((customer) => { %>
+                    <tr>
+                        <td><%= customer.name || "N/A" %></td>
+                        <td><%= customer.email || "N/A" %></td>
+                        <td><%= customer.phone || "N/A" %></td>
+                        <td>
+                            <% if (customer.isBlocked) { %>
+                                <a href="/admin/unblock/<%= customer._id %>" class="btn btn-success btn-sm text-white text-decoration-none" aria-label="Unblock customer">Unblock</a>
+                            <% } else { %>
+                                <a href="/admin/block/<%= customer._id %>" class="btn btn-danger btn-sm text-white text-decoration-none" aria-label="Block customer">Block</a>
+                            <% } %>
+                        </td>
+                    </tr>
+                <% }); %>
+            <% } else { %>
+                <tr>
+                    <td colspan="4" class="text-center">No customers found</td>
+                </tr>
+            <% } %>
+        </tbody>
+    </table>
+</div>
+
+<div class="container mt-3">
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            <% if (pagination && pagination.totalPages > 1) { %>
+                <!-- Previous Button -->
+                <li class="page-item <%= pagination.currentPage === 1 ? 'disabled' : '' %>">
+                    <a class="page-link" href="?page=<%= pagination.currentPage - 1 %>&search=<%= search %>" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+
+                <!-- Page Numbers -->
+                <% for (let i = 1; i <= pagination.totalPages; i++) { %>
+                    <li class="page-item <%= i === pagination.currentPage ? 'active' : '' %>">
+                        <a class="page-link" href="?page=<%= i %>&search=<%= search %>"><%= i %></a>
+                    </li>
+                <% } %>
+
+                <!-- Next Button -->
+                <li class="page-item <%= pagination.currentPage === pagination.totalPages ? 'disabled' : '' %>">
+                    <a class="page-link" href="?page=<%= pagination.currentPage + 1 %>&search=<%= search %>" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            <% } else { %>
+                <li class="page-item disabled">
+                    <span class="page-link">No pages available</span>
+                </li>
+            <% } %>
+        </ul>
+    </nav>
+</div>
+
+<%- include("../../views/partials/admin/footer") %>

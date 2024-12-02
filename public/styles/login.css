@@ -1,0 +1,202 @@
+/* login.css */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+  }
+  
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f4f8;
+  }
+  
+  .container {
+    display: flex;
+    flex-direction: row;
+    width: 70%;
+    max-width: 900px;
+    background: #ffffff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  .image-section {
+    flex: 1;
+    background-color: #edf2f7;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image:url(../images/pexels-jessbaileydesign-1172848.jpg);
+    background-size: cover;
+
+  }
+  
+  .image-section img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+ 
+  .login-section {
+    flex: 1.5;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  h2 {
+    font-size: 24px;
+    color: #333333;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  label {
+    font-size: 14px;
+    color: #555555;
+    margin-bottom: 5px;
+  }
+  
+  input {
+    padding: 10px;
+    border: 1px solid #dddddd;
+    border-radius: 5px;
+    font-size: 14px;
+    color: #333333;
+  }
+  
+  input:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+  
+  .error-message {
+    color: #e63946;
+    font-size: 12px;
+    margin-top: 5px;
+  }
+  
+  button {
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  
+  button.btn {
+    background-color: #d34ef1;
+    color: white;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+  
+  button.btn:hover {
+    background-color: #0056b3;
+  }
+  
+  button.google-btn {
+    background-color: #7c7ee7;
+    color: white;
+  }
+  
+  button.google-btn:hover {
+    background-color: #4b1f6d;
+  }
+  
+  .divider {
+    text-align: center;
+    margin: 15px 0;
+    color: #999999;
+    font-size: 14px;
+  }
+  
+  .register-text {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+  }
+  
+  .register-text a {
+    color: #007bff;
+    text-decoration: none;
+  }
+  
+  .register-text a:hover {
+    text-decoration: underline;
+  }
+  
+  .alert {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 10px;
+    border: 1px solid #f5c6cb;
+    border-radius: 5px;
+    margin-top: 10px;
+    text-align: center;
+  }
+  
+.google-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: #ffffff;
+  color: #333;
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  height: 37px;
+}
+
+img {
+  height: 20px;
+  width: 20px;
+}
+
+
+.forgot-password-link {
+  font-size: 14px;
+  color: #6200ea; 
+  text-decoration: none; 
+  font-weight: 500; 
+  border: 1px solid transparent; 
+  padding: 5px 10px; 
+  border-radius: 4px; 
+  background-color: rgba(98, 0, 234, 0.1);
+  transition: all 0.3s ease; 
+    text-align: center;
+}
+
+.forgot-password-link:hover {
+  color: #ffffff; 
+  background-color: #6200ea;
+  border-color: #6200ea;
+  box-shadow: 0px 4px 6px rgba(98, 0, 234, 0.3); 
+  transform: scale(1.05); 
+}
+
+
+

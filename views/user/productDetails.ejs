@@ -1,0 +1,198 @@
+<%- include("../../views/partials/user/header") %>
+
+    <style>
+
+        .ProductContainer {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px; 
+            margin-top: 5%;
+        }
+        .product-detail {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+        .product-images {
+            flex: 1;
+            min-width: 300px;
+        }
+        .main-image-container {
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            padding-top: 100%; /* 1:1 Aspect Ratio */
+        }
+        .main-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .thumbnail-strip {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            overflow-x: auto;
+        }
+        .thumbnail {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        .thumbnail.active {
+            border-color: #007bff;
+        }
+        .product-info {
+            flex: 1;
+            min-width: 300px;
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .rating {
+            color: #ffc107;
+            font-size: 20px;
+        }
+        .price {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+            margin: 10px 0;
+        }
+        .old-price {
+            text-decoration: line-through;
+            color: #6c757d;
+            margin-left: 10px;
+        }
+        .quantity {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .quantity button {
+            background-color: #f8f9fa;
+            border: 1px solid #ced4da;
+            padding: 5px 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .quantity span {
+            padding: 5px 15px;
+            border-top: 1px solid #ced4da;
+            border-bottom: 1px solid #ced4da;
+        }
+        .add-to-cart {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .add-to-cart:hover {
+            background-color: #0056b3;
+        }
+        .product-meta {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #6c757d;
+        }
+    </style>
+    <div class="ProductContainer">
+        <div class="product-detail">
+            <div class="product-images">
+                <div class="main-image-container" onmousemove="zoomImage(event)" onmouseleave="resetZoom(event)">
+                    <img id="mainImage" src="/uploads/re-image/<%=product.productImage[0]%>" alt="Product Image" class="main-image" onmouseleave="resetZoom(event)" >
+                </div>
+                <div class="thumbnail-strip">
+                    <%for(let i=0;i<product.productImage.length;i++){%>
+                        <div>
+                            <img src="/uploads/re-image/<%=product.productImage[i]%>"  alt="Product Thumbnail 1" class="thumbnail active" onclick="changeImage(this)">
+                        </div>
+                   <%}%>
+                    <!-- <img src="/uploads/re-image/product1.jpg" alt="Product Thumbnail 1" class="thumbnail active" onclick="changeImage(this)">
+                    <img src="/uploads/re-image/product2.jpg" alt="Product Thumbnail 2" class="thumbnail" onclick="changeImage(this)">
+                    <img src="/uploads/re-image/product3.jpg" alt="Product Thumbnail 3" class="thumbnail" onclick="changeImage(this)">
+                    <img src="/uploads/re-image/product4.jpg" alt="Product Thumbnail 4" class="thumbnail" onclick="changeImage(this)">
+                    <img src="/uploads/re-image/product5.jpg" alt="Product Thumbnail 5" class="thumbnail" onclick="changeImage(this)"> -->
+                </div>
+            </div>
+            <div class="product-info">
+                <h1><%=product.productName%></h1>
+                <div class="rating">
+                    ★★★★☆ <span style="color: #6c757d; font-size: 14px;">(25 reviews)</span>
+                </div>
+                <p><%=product.brand%></p>
+                <p><%=product.description%></p>
+                <div class="price">
+                    <%=product.regularPrice%><span class="old-price"></span>
+                </div>
+                <div class="quantity">
+                    <button onclick="changeQuantity(-1)">-</button>
+                    <span id="quantity">1</span>
+                    <button onclick="changeQuantity(1)">+</button>
+                </div>
+                <button class="add-to-cart" onclick="addToCart()">Add to Cart</button>
+                <div class="product-meta">
+                    <p>Stock Code: FWM15VKT</p>
+                   
+                    <p>Availability: <span style="color: #28a745;"><%=quantity%></span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function changeImage(thumbnail) {
+            const mainImage = document.getElementById('mainImage');
+            mainImage.src = thumbnail.src;
+            mainImage.alt = thumbnail.alt;
+            
+            // Update active thumbnail
+            document.querySelectorAll('.thumbnail').forEach(thumb => {
+                thumb.classList.remove('active');
+            });
+            thumbnail.classList.add('active');
+        }
+
+        function changeQuantity(change) {
+            const quantityElement = document.getElementById('quantity');
+            let quantity = parseInt(quantityElement.textContent) + change;
+            quantity = Math.max(1, quantity); // Ensure quantity is at least 1
+            quantityElement.textContent = quantity;
+        }
+
+        function addToCart() {
+            const quantity = document.getElementById('quantity').textContent;
+            alert(`Added ${quantity} item(s) to cart!`);
+        }
+
+        function zoomImage(e) {
+            const image = e.target;
+            const zoomer = e.currentTarget;
+            const x = e.offsetX / zoomer.offsetWidth;
+            const y = e.offsetY / zoomer.offsetHeight;
+            const zoomLevel = 2;
+            image.style.transformOrigin = `${x * 100}% ${y * 100}%`;
+            image.style.transform = `scale(${zoomLevel})`;
+        }
+
+        function resetZoom(e) {
+            console.log("mouse leaved");
+            
+            const image = e.target;
+            image.style.transformOrigin = 'center center';
+            image.style.transform = 'scale(1)';
+        }
+    </script>
+<%- include("../../views/partials/user/footer") %>
+

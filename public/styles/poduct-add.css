@@ -1,0 +1,16 @@
+.error-message{
+    color: red;
+}
+
+
+    .thumbnails-container {
+        display: flex;
+        overflow-x: auto;
+    }
+
+
+    .thumbnail {
+        margin-right: 10px;
+
+
+    }

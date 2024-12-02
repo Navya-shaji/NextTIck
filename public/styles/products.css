@@ -1,0 +1,40 @@
+/* Button Styles */
+button {
+    font-family: Arial, sans-serif;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button.btn-info {
+    background-color: #17a2b8;
+    color: white;
+}
+
+button.btn-info:hover {
+    background-color: #138496;
+    transform: scale(1.05);
+}
+
+button.btn-danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+button.btn-danger:hover {
+    background-color: #c82333;
+    transform: scale(1.05);
+}
+
+button.btn-success {
+    background-color: #28a745;
+    color: white;
+}
+
+button.btn-success:hover {
+    background-color: #218838;
+    transform: scale(1.05);
+}

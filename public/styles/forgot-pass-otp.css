@@ -1,0 +1,52 @@
+.otp-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  }
+ 
+ 
+  .otp-timer-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+    width: 100%;
+  }
+ 
+ 
+  .otp-timer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #f0f0f0;
+    font-size: 14px;
+    color: black;
+    text-align: center;
+  }
+ 
+ 
+  .form-group {
+    width: 100%;
+    text-align: center;
+  }
+ 
+ 
+  .btn-primary {
+    margin-top: 15px;
+  }
+ 
+ 
+  .resend-button {
+    margin-top: 10px;
+  }

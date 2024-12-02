@@ -1,0 +1,150 @@
+<%- include("../../views/partials/admin/header") %>
+
+<head>
+    <link rel="stylesheet" href="/styles/brands.css">
+</head>
+
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">Brands</h2>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <!-- Add Brand Form -->
+                <div class="col-md-3">
+                    <form method="POST" action="/admin/addBrand" enctype="multipart/form-data">
+                        <div class="mb-4">
+                            <label for="product_name" class="form-label">Brand Name</label>
+                            <input
+                                type="text"
+                                name="name"
+                                placeholder="Type here"
+                                class="form-control"
+                                required
+                            />
+                        </div>
+                        <label for="brand_image" class="form-label">Brand Image</label>
+                        <div class="input-upload">
+                            <input 
+                                class="form-control border" 
+                                id="brand_image" 
+                                name="image" 
+                                type="file" 
+                                required 
+                            />
+                        </div>
+                        <div class="d-grid">
+                            <button class="btn btn-primary mt-3" type="submit">
+                                Add Brand
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Brand List Table -->
+                <div class="col-md-7 offset-md-1">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Brand</th>
+                                    <th>Logo</th>
+                                    <th>Status</th>
+                                    <th>Block/Unblock/Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% data.forEach((brand) => { %>
+                                    <tr>
+                                        <td class="text-start"><%= brand.brandName %></td>
+                                        <td class="text-center">
+                                            <div
+                                                class="d-flex align-items-center justify-content-center"
+                                                style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden;"
+                                            >
+                                                <img
+                                                    src="/uploads/re-image/<%= brand.brandImage %>"
+                                                    alt="<%= brand.brandName %>"
+                                                    class="img-fluid rounded-circle brand-img"
+                                                />
+                                            </div>
+                                        </td>
+                                        <td class="text-center">
+                                            <% if (brand.isBlocked) { %>
+                                                <span class="badge badge-danger">
+                                                    Blocked
+                                                </span>
+                                            <% } else { %>
+                                                <span class="badge badge-success">
+                                                    Active
+                                                </span>
+                                            <% } %>
+                                        </td>
+                                        <td class="text-center">
+                                            <% if (!brand.isBlocked) { %>
+                                                <form method="POST" action="/admin/blockBrand/<%= brand._id %>" style="display: inline;">
+                                                    <button class="btn btn-danger" style="width: 90px;">
+                                                        Block
+                                                    </button>
+                                                </form>
+                                            <% } else { %>
+                                                <form method="POST" action="/admin/unblockBrand/<%= brand._id %>" style="display: inline;">
+                                                    <button class="btn btn-success" style="width: 90px;">
+                                                        Unblock
+                                                    </button>
+                                                </form>
+                                            <% } %>
+
+                                            <!-- Delete Button -->
+                                            <form 
+                                                method="POST" 
+                                                action="/admin/deleteBrand/<%= brand._id %>" 
+                                                style="display: inline;"
+                                            >
+                                                <button 
+                                                    class="btn btn-danger" 
+                                                    style="width: 90px;" 
+                                                    onclick="return confirmDelete()"
+                                                >
+                                                    Delete
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                <% }); %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-container text-center mt-4">
+        <% if (currentPage > 1) { %>
+            <a href="?page=<%= currentPage - 1 %>">&laquo; Previous</a>
+        <% } %>
+        <% for (let i = 1; i <= totalPages; i++) { %>
+            <% if (i === currentPage) { %>
+                <span class="current-page"><%= i %></span>
+            <% } else { %>
+                <a href="?page=<%= i %>"><%= i %></a>
+            <% } %>
+        <% } %>
+        <% if (currentPage < totalPages) { %>
+            <a href="?page=<%= currentPage + 1 %>">Next &raquo;</a>
+        <% } %>
+    </div>
+</section>
+
+<script>
+    function confirmDelete() {
+        return confirm("Are you sure you want to delete this brand?");
+    }
+</script>
+
+<%- include("../../views/partials/admin/footer") %>

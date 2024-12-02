@@ -1,0 +1,127 @@
+<%- include("../../views/partials/user/header") %>
+<head>
+  <link rel="stylesheet" href="/styles/forgot-pass-otp.css">
+</head>
+
+<div class="container col-4 login_wrap widget-taber-content p-30 background-white border-radius-5 mt-30">
+    <div class="padding_eight_all bg-white">
+      <div class="heading_s1">
+        <h3 class="mb-30 text-center">Email Verification</h3>
+      </div>
+      <div class="otp-container">
+        <form onsubmit="return validateOtpForm()">
+          <div class="form-group">
+            <label for="otp">Enter OTP:</label>
+            <input type="text" id="otp" name="otp" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <button type="submit" class="btn btn-primary">Verify OTP</button>
+          </div>
+        </form>
+        <div class="form-group otp-timer-wrapper">
+          <div class="otp-timer" id="otpTimer"></div>
+        </div>
+        <div class="form-group">
+          <button type="button" class="btn btn-link resend-button" onclick="">Resend OTP</button>
+        </div>
+        <%if(locals.message && message.length >0){ %>
+          <div class="alert alert-danger mt-3">
+            <%=message %>
+          </div>
+          <% } %>
+      </div>
+      <div class="text-muted text-center pt-25">
+        Already verified? <a href="/login">Login now</a>
+      </div>
+    </div>
+   </div>
+   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+   <script>
+
+
+    let otpTimerInterval;
+    let timer=60;
+   function updateTimerColor(percentage){
+    const timerElement = document.getElementById('otpTimer');
+    if(percentage >50){
+      timerElement.style.backgroundColor ='#28a745'
+    }else if(percentage>25){
+      timerElement.style.backgroundColor ='#ffc107';
+    }else{
+      timerElement.style.backgroundColor='#dc3545'
+    }
+   }
+
+  
+
+
+    function startOtpTimer(){
+      const timerElement=document.getElementById('otpTimer');
+      otpTimerInterval=setInterval(function(){
+
+        const minutes = Math.floor(timer/60);
+        const seconds=timer %60;
+        timerElement.textContent = `${minutes}:${seconds<10?"0":""}${seconds}`;
+        updateTimerColor((timer/60)*100);
+        if(--timer<0){
+          clearInterval(otpTimerInterval);
+          timerElement.textContent='Expired';
+          timerElement.style.backgroundColor ='red'
+        }
+      },1000)
+    }
+     
+
+   initializeOtpTimer();
+
+    function intilizeOtoTimer(){
+      clearInterval(otpTimerInterval);
+      timer=60;
+      startOtpTimer();
+    }
+
+    function validateOtpForm(){
+      const otpInput =document.getElementById('otp').value;
+      $.ajax({
+        type:"POST",
+        url:"/verify-passForgot-otp",
+        data:{otp:otpInput},
+        success:function(response){
+          if(response.success){
+            Swal.fire({
+              icon:"success",
+              title:"OTP Verified Successfully",
+              showConfirmButton:false,
+              timer:1500
+            }).then(()=>{
+              window.location.href = response.redirectUrl;
+            })
+          }else{
+            Swal.fire({
+              icon:"error",
+              title:"Invalid OTP",
+              text:response.message
+            })
+          }
+        },
+        error: function (){
+          Swal.fire({
+            icon:"error",
+            title:"Error",
+            text:"Failed to verify OTP.Please try again"
+          })
+        }
+
+      });
+
+      return false;
+
+    }
+
+   </script>
+
+
+
+<%- include("../../views/partials/user/footer") %>

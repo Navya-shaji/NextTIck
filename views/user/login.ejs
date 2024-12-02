@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Page</title>
+  <link rel="stylesheet" href="/styles/login.css">
+</head>
+<body>
+  <div class="container">
+    <div class="image-section">
+    </div>
+    <div class="login-section">
+      <h2>Welcome Back</h2>
+      <form action="/login" method="POST" class="login-form" id="loginform" novalidate>
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="Enter your email" >
+          <div id="error2" class="error-message"></div>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="Enter your password" >
+          <div id="error2" class="error-message"></div>
+        </div class="form-group d-flex justify-content-end">
+        <a href="/forgot-password" class="forgot-password-link ms-auto">Forgot Password</a>
+          <div>
+    
+
+          </div>
+          <%if(locals.message && message.length>0){%>
+            <div class="alert alert-danger text-center">
+              <%=message%>
+            </div>
+            <%}%>
+
+        <button type="submit" class="btn">Login</button>
+        <div class="divider">or</div>
+        <a href = "/auth/google" class="google-btn">
+          <img src="images/icon.jpg" alt="Google Icon">
+           
+          Sign up with Google
+        </a>
+      </form>
+      <p class="register-text">
+        Not registered? <a href="/signup">Signup</a>
+      </p>
+    </div>
+  </div>
+
+<script>
+  const emailid = document.getElementById("email");
+  const passid = document.getElementById("password");
+  const error1 = document.getElementById("error1");
+  const error2 = document.getElementById("error2");
+  const loginform = document.getElementById("loginform");
+
+  function emailValidateChecking(e) {
+      const emailval = emailid.value;
+      const emailpattern =
+      /^[a-zA-Z0-9._-]+@([a-zA-Z0-9.-]+)\.([a-zA-Z]{2,4})$/;
+
+      if (!emailpattern.test(emailval)) {
+      error1.style.display = "block";
+      error1.innerHTML = "Invalid Format";
+      } else {
+      error1.style.display = "none";
+      error1.innerHTML = "";
+      }
+  }
+
+  function passValidateChecking(e) {
+      const passval = passid.value;
+      if (passval.length <8) {
+      error2.style.display = "block";
+      error2.innerHTML = "Should contain at least 6 characters";
+      } else {
+      error2.style.display = "none";
+      error2.innerHTML = "";
+      }
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+      loginform.addEventListener("submit", function (e) {
+      emailValidateChecking();
+      passValidateChecking();
+
+      if (!emailid || !passid || !error1 || !error2 || !loginform) {
+          console.error("One or more elements not found");
+      }
+
+      if (error1.innerHTML || error2.innerHTML) {
+          e.preventDefault();
+      }
+      });
+  });
+  </script>
+  </body>
+  </html>
