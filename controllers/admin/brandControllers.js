@@ -82,12 +82,43 @@ const deleteBrand = async (req, res) => {
     }
 };
 
+
+const updateBrand = async (req, res) => {
+    try {
+        console.log("update working");
+        const id = req.body.brandId;
+        const brandName = req.body.brandName;
+        const image = req.file;
+
+        const findBrand = await Brand.findOne({ brandName: brandName });
+        if (findBrand) {
+            console.log("find brand");
+            return res.status(400).json({ success: false, message: "Brand already exists" });
+        } else {
+            const updateBrand = await Brand.updateOne(
+                { _id: id },
+                { $set: { brandName: brandName, brandImage: image?.filename } }
+            );
+
+            if (!updateBrand.modifiedCount) {
+                return res.status(404).json({ success: false, message: "Brand not found" });
+            }
+
+            return res.status(200).json({ success: true, message: "Brand updated successfully" });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: "Error updating brand", error });
+    }
+};
+
 module.exports={
     getBrandPage,
     addBrand,
     blockBrand,
     unblockBrand,
-    deleteBrand
+    deleteBrand,
+    updateBrand 
 }
 
 

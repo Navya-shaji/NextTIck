@@ -40,7 +40,7 @@
                   placeholder="Type here"
                   class="form-control"
                   id="product_name"
-                  required
+                  
                 />
                 <div class="invalid-feedback" id="nameError"></div>
               </div>
@@ -51,7 +51,7 @@
                   name="description"
                   class="form-control"
                   id="descriptionId"
-                  required
+                  
                 ></textarea>
                 <div class="invalid-feedback" id="descriptionError"></div>
               </div>
@@ -353,5 +353,6 @@ async function removeOffer(categoryId) {
 
     </script>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <%- include("../../views/partials/admin/footer") %>

@@ -1,0 +1,79 @@
+<%- include("../../views/partials/user/header") %>
+<main class="main">
+
+
+   <div class="page-header breadcrumb-wrap">
+       <div class="container">
+           <div class="breadcrumb">
+               <a href="/" rel="nofollow">Home</a>
+               <span></span> Shop
+               <span></span> My Wishlist
+           </div>
+       </div>
+   </div>
+
+
+   <section class="mt-50 mb-50">
+       <div class="container">
+           <div class="row">
+               <div class="col-12">
+                   <div class="table-responsive">
+                       <table class="table shopping-summery text-center clean">
+                           <thead>
+                               <tr class="main-heading">
+                                   <th scope="col">Image</th>
+                                   <th scope="col">Name</th>
+                                   <th scope="col">Price</th>
+                                   <th scope="col">Add to Cart</th>
+                                   <th scope="col">Remove</th>
+                               </tr>
+                           </thead>
+                           <tbody>
+                             
+                                       <tr>
+                                           <td class="image product-thumbnail">
+                                               <img src="" />
+                                           </td>
+                                           <td class="product-des product-name">
+                                               <h5 class="product-name">
+                                                   <a href="">
+                                                      
+                                                   </a>
+                                               </h5>
+                                               <p class="font-xs">
+                                                   <br />
+                                                  
+                                               </p>
+                                           </td>
+                                           <td class="price" data-title="Price">₹<span>
+                                          
+                                           </span></td>
+                                           <td class="text-center" data-title="Add to Cart">
+                                               <a href="#" onclick="" class="btn btn-sm">Add to Cart</a>
+                                           </td>
+                                           <td class="action" data-title="Remove">
+                                               <a class="btn btn-sm" href="#" onclick="">
+                                                   <i class="fi-rs-trash"></i>
+                                               </a>
+                                           </td>
+                                       </tr>
+                                   <tr>
+                                       <td colspan="5" class="text-center">
+                                           <p class="lead mb-4">No items found in Wishlist</p>
+                                       </td>
+                                   </tr>
+                           </tbody>
+                       </table>
+                   </div>
+               </div>
+           </div>
+       </div>
+   </section>
+</main>
+<%- include("../../views/partials/user/footer") %>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+
+
+

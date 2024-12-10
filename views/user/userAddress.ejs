@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Addresses</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .btn-save {
+            background-color: #ffc107;
+            color: black;
+            border: none;
+        }
+        .btn-save:hover {
+            background-color: #e0ac07;
+        }
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+        body {
+            background-color: #f8f9fa;
+        }
+        .address-card {
+            background: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .edit-btn {
+            background-color: #ffc107;
+            color: black;
+            border: none;
+        }
+        .edit-btn:hover {
+            background-color: #e0ac07;
+        }
+        hr {
+            border-top: 1px solid #e6e6e6;
+        }
+        hr {
+            border-top: 1px solid #e6e6e6;
+        }
+        .nav-link:hover{
+            color: orange;
+        }
+        .nav-link.active {
+         color: orange; 
+        font-weight: bold; 
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar with Hamburger Menu -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="#">User Profile</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link " href="profile">My Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">My Orders</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="userAdress">My Addresses</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Mb Cash</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Saved Cards</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+<!-- Address List -->
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mt-5">
+        <h2 class="fw-bold">My Addresses</h2>
+        <button class="btn btn-save" data-bs-toggle="modal" data-bs-target="#addAddressModal">Add New Address</button>
+    </div>
+
+    <div id="address-list" class="mt-4">
+        <!-- Address Cards Will Be Dynamically Added Here -->
+        <div class="address-card">
+            <h5>123 Main St, Apt 101</h5>
+            <p>New York, NY 10001</p>
+            <button class="btn btn-warning edit-btn">Edit</button>
+            <button class="btn btn-danger">Delete</button>
+        </div>
+        <div class="address-card">
+            <h5>456 Elm St</h5>
+            <p>Los Angeles, CA 90001</p>
+            <button class="btn btn-warning edit-btn">Edit</button>
+            <button class="btn btn-danger">Delete</button>
+        </div>
+        <!-- Add more address cards here as needed -->
+    </div>
+</div>
+
+<!-- Modal for Adding Address (Not Needed in This Version) -->
+<!-- Modal code for adding address can be added here if needed -->
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // You can handle editing and deleting address functionality here if needed
+    // For example, you could add event listeners to the edit and delete buttons
+    document.addEventListener('DOMContentLoaded', () => {
+        const editButtons = document.querySelectorAll('.edit-btn');
+        const deleteButtons = document.querySelectorAll('.btn-danger');
+
+        editButtons.forEach((button) => {
+            button.addEventListener('click', () => {
+                // Handle edit address functionality here (open modal, etc.)
+                alert("Edit functionality can be implemented here.");
+            });
+        });
+
+        deleteButtons.forEach((button) => {
+            button.addEventListener('click', () => {
+                // Handle delete address functionality here
+                if (confirm("Are you sure you want to delete this address?")) {
+                    alert("Address deleted.");
+                    // You can also call an API to delete the address from the backend
+                }
+            });
+        });
+    });
+
+
+
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (event) => {
+                // Remove 'active' from all links
+                navLinks.forEach(nav => nav.classList.remove('active'));
+                // Add 'active' to the clicked link
+                link.classList.add('active');
+            });
+        });
+    });
+</script>
+</script>
+</body>
+</html>

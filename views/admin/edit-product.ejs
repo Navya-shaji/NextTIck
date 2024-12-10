@@ -38,29 +38,30 @@
 
 
                    <div class="card-body">
-                       <form method="post" action="/admin/editProduct/<%=product._id %>" enctype="multipart/form-data"
-                           onsubmit="return validateForm()">
+                       <form method="post" action="/admin/editProduct/<%=product._id%>" enctype=""
+                           onsubmit="return validationForm()">
                            <div class="mb-4">
                                <label for="product_name" class="form-label">Product Name</label>
-                               <input type="text" name="productName" value="<%=product.productName %>"
+                               <input type="text" name="productName" value="<%=product.productName%>"
                                    class="form-control border" id="product_name">
                                    <div id="productName-error" class="error-message"></div>
                            </div>
-                           <div class="col-sm-6 mb-3">
-                            <label class="form-label">Brand</label>
-                            <select class="form-select border" style="width: 150px;" name="brand">
-                                <% for (let i = 0; i < brand.length; i++) { %>
-                                    <option value="<%= brand[i].brandName %>">
-                                        <%= brand[i].brandName %>
-                                    </option>
-                                <% } %>
-                            </select>                            
+                           <div class="col-lg-4 mb-4">
+                               <label class="form-label">Brand</label>
+                               <select class="form-select border" name="brand">
+                                  <%for(let i=0;i<brand.length;i++){%>
+                                       <option value="<%=brand[i].brandName%>">
+                                        <%=brand[i].brandName%> 
+                                       </option>
+                                      <%}%>
+                               </select>
+                               <div id="brand-error" class="error-message"></div>
 
-                            <div id="brand-error" class="error-message"></div>
-                        </div>
+
+                           </div>
                            <div class="mb-4">
                                <label class="form-label">Full description</label>
-                               <input name="descriptionData" value="<%=product.description %>"  class="form-control border"
+                               <input name="descriptionData" value="<%=product.description%>"  class="form-control border"
                                    rows="4">
                                    <div id="description-error" class="error-message"></div>
                            </div>
@@ -69,14 +70,14 @@
                                    <div class="mb-4">
                                        <label class="form-label">Regular price</label>
                                        <input placeholder="$" name="regularPrice" type="text"
-                                           value="<%=product.regularPrice %>" class="form-control border">
+                                           value="<%=product.regularPrice%>" class="form-control border">
                                            <div id="regularPrice-error" class="error-message"></div>
                                    </div>
                                </div>
                                <div class="col-lg-4">
                                    <div class="mb-4">
                                        <label class="form-label">Sale price</label>
-                                       <input name="salePrice" type="text" value="<%=product.salePrice %>"
+                                       <input name="salePrice" type="text" value="<%=product.salePrice%>"
                                            class="form-control border">
                                    </div>
                                    <div id="salePrice-error" class="error-message"></div>
@@ -84,7 +85,7 @@
                                <div class="col-lg-4">
                                    <div class="mb-4">
                                        <label class="form-label">Quantity</label>
-                                       <input name="quantity" type="text" value="<%=product.quantity %>"
+                                       <input name="quantity" type="text" value="<%=product.quantity%>"
                                            class="form-control border">
                                            <div id="quantity-error" class="error-message"></div>
                                    </div>
@@ -95,7 +96,7 @@
                                <div class="col-lg-4">
                                    <div class="mb-4">
                                        <label class="form-label">Color</label>
-                                       <input name="color" type="text" value="<%=product.color %>"
+                                       <input name="color" type="text" value="<%=product.color%>"
                                            class="form-control border">
                                            <div id="color-error" class="error-message"></div>
                                    </div>
@@ -110,11 +111,11 @@
                                        <div class="col-sm-6 mb-3">
                                            <label class="form-label">Category</label>
                                            <select class="form-select border" style="width: 150px;" name="category">
-                                              <%for(let i=0;i<cat.length;i++){ %>
-                                                   <option value="<%=cat[i].name %>">
-                                                      <%=cat[i].name%>
-                                                   </option>
-                                                  <% } %>
+                                            <%for(let i=0;i<cat.length;i++){%>
+                                                <option value="<%=cat[i].name%>">
+                                                    <%=cat[i].name%> 
+                                                </option>
+                                               <%}%>
                                            </select>
 
 
@@ -127,31 +128,24 @@
                                <div class="card-header">
                                    <h4>Choose images</h4>
                                </div>
-                                  <%for(let i=0;i<product.productImage.length;i++){%>
+                               <%for(let i=0;i<product.productImage.length;i++){%>
+                                  
                                        <div class="col-md-12">
                                            <div class="mb-4">
                                                <div class="col-12">
-                                                <td>
-                                                    <input type="hidden" value="<%= product.productImage[i] %>" id="imageDatas">
-                                                    <img 
-                                                        class="rounded" 
-                                                        style="width: 50px; height: 60px;" 
-                                                        src="/uploads/re-image/<%= product.productImage[i] %>" 
-                                                        alt="Product Image"
-                                                    >
-                                                    <!-- Correct icon class and onclick function -->
-                                                    <i 
-                                                        onclick="deleteSingleImage('<%= product.productImage[i] %>', '<%= product._id %>')" 
-                                                        style="position: absolute; margin-left: .5rem; cursor: pointer;" 
-                                                        class="fa fa-times"
-                                                    ></i>
-                                                </td>
-                                                
+                                                   <td>
+                                                       <input type="hidden" value="<%=product.productImage[i]%>" id="imageDatas">
+                                                       <img class="rounded" style="width: 50px; height: 60px;"
+                                                           src="/uploads/re-image/<%=product.productImage[i]%>"
+                                                           alt="">
+                                                       <i onclick="deleteSingleImage('<%=product.productImage[i]%>','<%=product._id%>')" style="position: absolute; margin-left: .5rem; cursor: pointer;" class="fa-solid fa-xmark"></i>
+                                                   </td>
                                                </div>
                                               
                                            </div>
                                        </div>
-                                  <% } %>
+                                       <%}%>
+                              
                                   
                                <div class="card-body">
                                    <div class="card-body align-items-center" style="margin-bottom: 20px;">
@@ -186,7 +180,7 @@
                                                                    <input class="form-control" type="file" name="images" id="input3"
                                                                        accept="image/png, image/jpeg, image/jpg"
                                                                        onchange="viewImage3(event),viewImage(event, 3)">
-                                                               </div>
+                                                                </div>
                                                                <div class="image-cropper d-flex align-items-center"
                                                                    style="display:none; width: 300px; height: 200px; margin-bottom: 20px;">
                                                                    <img src="" id="croppedImg3" alt="">
@@ -223,8 +217,8 @@
        </div>
    </section>
    <script src="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.js"></script>
-<%- include("../../views/partials/admin/footer") %>
-<script>
+
+   <script>
 
 
     function validateAndSubmit() {
@@ -233,76 +227,83 @@
     }
     }
     
+    
+    
+    
     function validateForm() {
-    clearErrorMessages();
-        console.log("validating")
-    const name = document.getElementsByName('productName')[0].value.trim();
-    const description = document.getElementsByName('descriptionData')[0].value.trim();
-    const brand = document.getElementsByName('brand')[0].value.trim();
-    const price = document.getElementsByName('regularPrice')[0].value.trim();
-    const saleprice = document.getElementsByName('salePrice')[0].value.trim();
-    const color = document.getElementsByName('color')[0].value.trim();
-    const category = document.getElementsByName('category')[0].value.trim();
-    const quantity = parseInt(document.getElementsByName('quantity')[0].value, 10);
-    const images = document.getElementById('input1').files;
-    const existingImage = document.getElementById("imageDatas")?.value;
-
-    let isValid = true;
-
-    if (!name) {
-        displayErrorMessage('productName-error', 'Please enter a product name.');
-        isValid = false;
+       let imageDatas = false
+               console.log("validate form");
+               clearErrorMessages();
+               const name = document.getElementsByName('productName')[0].value;
+               const description = document.getElementsByName('descriptionData')[0].value;
+               const brand = document.getElementsByName('brand')[0].value;
+               const price = document.getElementsByName('regularPrice')[0].value;
+               const saleprice = document.getElementsByName('salePrice')[0].value;
+               const color = document.getElementsByName('color')[0].value;
+               const category = document.getElementsByName('category')[0].value;
+               const images = document.getElementById('input1')
+               const quantity=document.getElementsByName('quantity')
+    imageDatas = document.getElementById("imageDatas")?.value;
+               let isValid = true;    
+               if (name.trim() === "") {
+       displayErrorMessage('productName-error', 'Please enter a product name.');
+       isValid = false;
     }
-    if (!description) {
-        displayErrorMessage('description-error', 'Please enter a product description.');
-        isValid = false;
-    }
-    if (!brand) {
-        displayErrorMessage('brand-error', 'Please select a brand.');
-        isValid = false;
-    }
-    if (!/^\d+(\.\d{1,2})?$/.test(price) || parseFloat(price) < 0) {
-        displayErrorMessage('regularPrice-error', 'Please enter a valid non-negative price.');
-        isValid = false;
-    }
-    if (!/^\d+(\.\d{1,2})?$/.test(saleprice) || parseFloat(saleprice) < 0) {
-        displayErrorMessage('salePrice-error', 'Please enter a valid non-negative price.');
-        isValid = false;
-    }
-    if (isNaN(quantity) || quantity < 0) {
-        displayErrorMessage('quantity-error', 'Please enter a valid non-negative quantity.');
-        isValid = false;
-    }
-    if (!color) {
-        displayErrorMessage('color-error', 'Please enter a color.');
-        isValid = false;
-    }
-    if (!category) {
-        displayErrorMessage('category-error', 'Please select a category.');
-        isValid = false;
-    }
-    if (!existingImage && images.length === 0) {
-        displayErrorMessage('images-error', 'Please select an image.');
-        isValid = false;
-    }
-
-    return isValid;
-}
-
-function displayErrorMessage(elementId, message) {
-    const errorElement = document.getElementById(elementId);
-    errorElement.innerText = message;
-    errorElement.style.display = "block";
-}
-
-function clearErrorMessages() {
-    const errorElements = document.getElementsByClassName('error-message');
-    Array.from(errorElements).forEach(element => {
-        element.innerText = '';
-        element.style.display = "none";
-    });
-}
-
+              
+               if (description=== '') {
+                   displayErrorMessage('description-error', 'Please enter a product description.');
+                   isValid = false;
+               } 
+    
+    
+               if ( parseInt(quantity) < 0) {
+                   displayErrorMessage('quantity-error', 'Please enter a valid non-negative quantity.');
+                   isValid = false;
+               }
+    
+    
+    
+    
+               if (!/^\d+(\.\d{1,2})?$/.test(price) || parseFloat(price) < 0) {
+                   displayErrorMessage('regularPrice-error', 'Please enter a valid non-negative price.');
+                   isValid = false;
+               }
+              if (!/^\d+(\.\d{1,2})?$/.test(saleprice) || parseFloat(saleprice) < 0) {
+                   displayErrorMessage('salePrice-error', 'Please enter a valid non-negative price.');
+                   isValid = false;
+               }
+              
+               if (color.trim() === "") {
+                   displayErrorMessage('color-error', 'Please enter a color.');
+                   isValid = false;
+               }
+               if (!imageDatas && images.files.length === 0) {
+                   displayErrorMessage("images-error",'Please select an image.');
+                   isValid = false;
+               }
+               return isValid;
+           }
+          
+           function displayErrorMessage(elementId, message) {
+               var errorElement = document.getElementById(elementId);
+               errorElement.innerText = message;
+               errorElement.style.display = "block";
+           }
+    
+    
+           function clearErrorMessages() {
+               const errorElements = document.getElementsByClassName('error-message');
+               Array.from(errorElements).forEach(element => {
+                   element.innerText = '';
+               });
+               const errorMessage = document.getElementById('errorMessage');
+    
+    
+           }
+    
+    
+    
+    
     function viewImage1(event) {
                document.getElementById('imgView1').src = URL.createObjectURL(event.target.files[0])
            }
@@ -397,8 +398,9 @@ function clearErrorMessages() {
                }
            };
 
+
            function deleteSingleImage(imageId,productId){
-            $.aja({
+            $.ajax({
                 url:"/admin/deleteImage",
                 method:'post',
                 data:{imageNameToserver:imageId,productIdToServer:productId},
@@ -409,8 +411,8 @@ function clearErrorMessages() {
                 })
             })
            }
-
            
        </script>
     
     
+<%- include("../../views/partials/admin/footer") %>

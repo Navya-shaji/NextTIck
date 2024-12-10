@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Address</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/styles/editAddress.css">
+</head>
+<body>
+
+<!-- Navbar with Hamburger Menu -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="#">User Profile</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link " href="#">My Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">My Orders</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="#">My Addresses</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Mb Cash</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Saved Cards</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Address Form -->
+<div class="container">
+    <div class="address-card mx-auto">
+        <h2 class="fw-bold mb-4">Edit Address</h2>
+        <form id="addressForm">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="fullName" class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="fullName" name="name" placeholder="Enter your full name"  value="<%= address.name %>">
+                        <small class="error-message" id="nameError"></small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">Phone Number</label>
+                        <input type="tel" class="form-control" id="phone" name="phone" placeholder="Enter your phone number" value="<%=address.phone %>">
+                        <small class="error-message" id="phoneError"></small>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="address" class="form-label">Address</label>
+                <input class="form-control" id="address" name="addressType" placeholder="Enter your address" rows="3" value="<%=address.address %>">
+                <small class="error-message" id="addressError"></small>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="city" class="form-label">City</label>
+                        <input type="text" class="form-control" id="city" name="city" placeholder="Enter your city" value="<%=address.city %>">
+                        <small class="error-message" id="cityError"></small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="state" class="form-label">State</label>
+                        <input type="text" class="form-control" id="state" name="state" placeholder="Enter your state" value="<%=address.state %>">
+                        <small class="error-message" id="stateError"></small>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="landmark" class="form-label">Landmark</label>
+                        <input type="text" class="form-control" id="landmark" name="landmark" placeholder="Enter a nearby landmark" value="<%=address.landMark %>">
+                        <small class="error-message" id="landmarkError"></small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="pincode" class="form-label">Pincode</label>
+                        <input type="text" class="form-control" id="pincode" name="pincode" placeholder="Enter your pincode" value="<%=address.pincode %>">
+                        <small class="error-message" id="pincodeError"></small>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="altPhone" class="form-label">Alternative Phone Number</label>
+                <input type="tel" class="form-control" id="altPhone" name="altPhone" placeholder="Enter your alternative phone number" value="<%=address.altPhone%>">
+                <small class="error-message" id="altPhoneError"></small>
+            </div>
+            <button type="submit" class="btn btn-save">Save Address</button>
+        </form>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.getElementById('addressForm').addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        const fullName = document.getElementById('fullName').value;
+        const phone = document.getElementById('phone').value;
+        const address = document.getElementById('address').value;
+        const city = document.getElementById('city').value;
+        const state = document.getElementById('state').value;
+        const landmark = document.getElementById('landmark').value;
+        const pincode = document.getElementById('pincode').value;
+        const altPhone = document.getElementById('altPhone').value;
+
+        let valid = true;
+
+        // Validation logic remains the same as in your provided script...
+
+        if (!valid) return;
+
+        // POST data to backend for saving the new address
+        try {
+            const response = await fetch('/postEditAddress/<%=address._id%>', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: fullName,
+                    phone: phone,
+                    addressType: address,
+                    city: city,
+                    state: state,
+                    landMark: landmark,
+                    pincode: pincode,
+                    altPhone: altPhone,
+                }),
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Address Added',
+                    text: 'Your new address has been successfully saved!',
+                }).then(() => {
+                    window.location.href = '/userProfile'; // Redirect to address list
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: result.message || 'Something went wrong!',
+                });
+            }
+        } catch (error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Network Error',
+                text: error,
+            });
+        }
+    });
+</script>
+
+</body>
+</html>

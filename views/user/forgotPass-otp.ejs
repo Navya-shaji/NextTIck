@@ -22,7 +22,7 @@
           <div class="otp-timer" id="otpTimer"></div>
         </div>
         <div class="form-group">
-          <button type="button" class="btn btn-link resend-button" onclick="">Resend OTP</button>
+          <button type="button" class="btn btn-link resend-button" onclick="resendOtp()">Resend OTP</button>
         </div>
         <%if(locals.message && message.length >0){ %>
           <div class="alert alert-danger mt-3">
@@ -118,6 +118,39 @@
 
       return false;
 
+    }
+
+    function resendOtp(){
+      clearInterval(otpTimerInterval);
+      timer=60;
+      startOtpTimer();
+      $.ajax({
+        type:"POST",
+        url:"/resend-forgot-otp",
+        success:function(response){
+          if(response.success){
+            Swal.fire({
+              icon:"success",
+              title:"Resend OTP Successful",
+              showConfirmButton:false,
+              timer:1500,
+            })
+          }else{
+            Swal.fire({
+              icon:"error",
+              title:"Error",
+              text:"Failed to resend OTP.Please try again"
+            })
+          }
+        },
+        error:function(){
+          Swal.fire({
+            icon:"error",
+            title:"Error",
+            text:"Failed to resend OTP.Please try again"
+          })
+        }
+      })
     }
 
    </script>

@@ -154,3 +154,8 @@ textarea.form-control {
 .swal2-container {
   z-index: 2000 !important;
 }
+.error-message {
+  color: red;
+  font-size: 14px;
+  margin-top: 5px;
+}

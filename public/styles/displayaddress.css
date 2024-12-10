@@ -1,0 +1,54 @@
+    /* General Button Styles */
+    .btn-save {
+        background-color: #ffc107;
+        color: black;
+        border: none;
+    }
+    .btn-save:hover {
+        background-color: #e0ac07;
+    }
+    .btn-danger:hover {
+        background-color: #c82333;
+    }
+
+    /* Navbar Styling */
+    .navbar {
+        background-color: white;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .navbar-brand {
+        font-weight: bold;
+    }
+    .nav-link:hover {
+        color: orange;
+    }
+    .nav-link.active {
+        color: orange;
+        font-weight: bold;
+    }
+
+    /* Body Styling */
+    body {
+        background-color: #f8f9fa;
+    }
+
+    /* Address Form Styling */
+    .address-form {
+        background: white;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        padding: 20px;
+        margin-top: 20px;
+    }
+
+    /* Separator Line Styling */
+    hr {
+        border-top: 1px solid #e6e6e6;
+    }
+
+    /* Responsive Styling for Mobile */
+    @media (max-width: 768px) {
+        .address-form {
+            width: 100%; /* Full width for smaller screens */
+        }
+    }

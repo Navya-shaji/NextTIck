@@ -119,11 +119,7 @@
                             <img src="/uploads/re-image/<%=product.productImage[i]%>"  alt="Product Thumbnail 1" class="thumbnail active" onclick="changeImage(this)">
                         </div>
                    <%}%>
-                    <!-- <img src="/uploads/re-image/product1.jpg" alt="Product Thumbnail 1" class="thumbnail active" onclick="changeImage(this)">
-                    <img src="/uploads/re-image/product2.jpg" alt="Product Thumbnail 2" class="thumbnail" onclick="changeImage(this)">
-                    <img src="/uploads/re-image/product3.jpg" alt="Product Thumbnail 3" class="thumbnail" onclick="changeImage(this)">
-                    <img src="/uploads/re-image/product4.jpg" alt="Product Thumbnail 4" class="thumbnail" onclick="changeImage(this)">
-                    <img src="/uploads/re-image/product5.jpg" alt="Product Thumbnail 5" class="thumbnail" onclick="changeImage(this)"> -->
+                 
                 </div>
             </div>
             <div class="product-info">
@@ -141,7 +137,7 @@
                     <span id="quantity">1</span>
                     <button onclick="changeQuantity(1)">+</button>
                 </div>
-                <button class="add-to-cart" onclick="addToCart()">Add to Cart</button>
+                <button class="add-to-cart" ><a href="/addToCart?id=<%= product._id%>"  >Add to Cart</a></button>
                 <div class="product-meta">
                     <p>Stock Code: FWM15VKT</p>
                    

@@ -1,0 +1,234 @@
+<%- include("../../views/partials/user/header.ejs") %>
+<head>
+  <link rel="stylesheet" href="/styles/profile.css">
+</head>
+<main class="main">
+ <div class="page-header breadcrumb-wrap mb-3">
+   <div class="container">
+     <div class="breadcrumb">
+       <a href="#" rel="nofollow">Home</a>
+       <span></span> Profile <span></span> Account
+     </div>
+   </div>
+ </div>
+  <section class="pt-10 pb-10">
+   <div class="container">
+     <div class="row">
+       <div class="col-lg-10 m-auto">
+         <div class="row">
+           <div class="col-md-4">
+             <div class="dashboard-menu">
+               <ul class="nav flex-column" role="tablist">
+                 <li class="nav-item">
+                   <a class="nav-link active" id="dashboard-tab" data-bs-toggle="tab" href="#dashboard" role="tab" aria-controls="dashboard" aria-selected="false">
+                     <i class="fi-rs-settings-sliders mr-10"></i>Dashboard
+                   </a>
+                 </li>
+                 <li class="nav-item">
+                   <a class="nav-link" id="address-tab" data-bs-toggle="tab" href="#address" role="tab" aria-controls="address" aria-selected="false">
+                     <i class="fi-rs-marker mr-10"></i>My Address
+                   </a>
+                 </li>
+                 <li class="nav-item">
+                   <a class="nav-link" id="orders-tab" data-bs-toggle="tab" href="#orders" role="tab" aria-controls="orders" aria-selected="false">
+                     <i class="fi-rs-shopping-bag mr-10"></i>Orders
+                   </a>
+                 </li>
+                 <li class="nav-item">
+                   <a class="nav-link" id="track-orders-tab" data-bs-toggle="tab" href="#track-orders" role="tab" aria-controls="track-orders" aria-selected="false">
+                     <i class="fi-rs-shopping-cart-check mr-10"></i>Wallet Status
+                   </a>
+                 </li>
+                 <li class="nav-item">
+                   <a class="nav-link" id="track-orders-tab" data-bs-toggle="tab" href="#wallet-history" role="tab" aria-controls="track-orders" aria-selected="false">
+                     <i class="fi-rs-shopping-cart-check mr-10"></i>Wallet History
+                   </a>
+                 </li>
+                 <li class="nav-item">
+                   <a class="nav-link" id="track-orders-tab" data-bs-toggle="tab" href="#referal" role="tab" aria-controls="track-orders" aria-selected="false">
+                     <i class="fi-rs-shopping-cart-check mr-10"></i>Referals
+                   </a>
+                 </li>
+                 <li class="nav-item">
+                   <a class="nav-link" href="/logout">
+                     <i class="fi-rs-sign-out mr-10"></i>Logout
+                   </a>
+                 </li>
+               </ul>
+             </div>
+           </div>
+           <div class="col-md-8">
+             <div class="tab-content dashboard-content">
+
+               <div class="tab-pane fade show active" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
+                 <div class="card card-green">
+                   <div class="card-header">
+                     <h5 class="mb-0 text-center">User Profile</h5>
+                   </div>
+                   <div class="card-body text-center">
+                     <h5 class="card-title"></h5>
+                     <p class="card-text">
+                       <strong>Phone: <%=user.phone %></strong>
+                     </p>
+                     <p class="card-text">
+                       <strong>Email: <%=user.email%></strong>
+                     </p>
+                     <a href="change-email" class="btn btn-sm btn-success ml-2">Change Email</a>
+                     <a href="/change-password" class="btn btn-sm btn-success">Change Password</a>
+                   </div>
+                 </div>
+               </div>
+
+               <div class="tab-pane fade" id="address" role="tabpanel" aria-labelledby="address-tab">
+                <div class="row">
+                    <% if (userAddress && userAddress.address) { %>
+                        <% userAddress.address.forEach((address) => { %>
+                            <div class="col-lg-6">
+                                <div class="card mb-3 mb-lg-0">
+                                    <div class="card-header">
+                                        <h5 class="mb-0"><%=address.addressType %></h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <address>
+                                            <strong><%=address.name %></strong><br />
+                                            <%=address.city %><br />
+                                            <%=address.landmark %><br />
+                                            <%=address.state %><br />
+                                        </address>
+                                        <p><strong>Pincode:</strong> <%=address.pincode %></p>
+                                        <p><strong>Phone:</strong> <%=address.phone %></p>
+                                        <p><strong>Alt Phone:</strong> <%=address.altPhone %></p>
+                                        <div class="d-flex justify-content-between">
+                                          <a href="/edit-address/<%=address.id %>" class="btn btn-sm btn-primary">Edit</a>
+                                          <a href="/delete-address/<%=address.id %>" class="btn btn-sm btn-danger">Delete</a>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }) %>
+                    <% } else { %>
+                        <div class="col-lg-6">
+                            <div class="card mb-3 mb-lg-0">
+                                <div class="card-header">
+                                    <h5 class="mb-0">No Address</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p>No address available. Please add one.</p>
+                                </div>
+                            </div>
+                        </div>
+                    <% } %>
+                </div>
+                <div class="mt-3 text-center">
+                    <a href="/add-address">
+                        <button class="btn btn-primary">
+                            Add Address
+                        </button>
+                    </a>
+                </div>
+            </div>
+            
+
+               <div class="tab-pane fade" id="orders" role="tabpanel" aria-labelledby="orders-tab">
+                 <div class="card">
+                   <div class="card-header">
+                     <h5 class="mb-0">Your Orders</h5>
+                   </div>
+                   <div class="card-body">
+                     <div class="table-responsive">
+                       <table class="table">
+                         <thead>
+                           <tr>
+                             <th>Order</th>
+                             <th>Status</th>
+                             <th>Total</th>
+                             <th>Actions</th>
+                           </tr>
+                         </thead>
+                         <tbody>
+                           <tr>
+                             <td></td>
+                             <td></td>
+                             <td></td>
+                             <td>
+                               <a href="" class="btn-small d-block">View</a>
+                             </td>
+                           </tr>
+                         </tbody>
+                       </table>
+                     </div>
+                   </div>
+                 </div>
+               </div>
+
+               <div class="tab-pane fade" id="track-orders" role="tabpanel" aria-labelledby="track-orders-tab">
+                 <div class="card">
+                   <div class="card-header">
+                     <h5 class="mb-0">Wallet</h5>
+                   </div>
+                   <div class="card-body contact-from-area">
+                     <div class="row">
+                       <div class="col-lg-8 mx-auto text-center mt-90">
+                         <form>
+                           <div class="form-group">
+                             <label for="walletAmount" class="h4">Amount</label>
+                             <div class="h3"></div>
+                           </div>
+                           <button type="button" class="btn btn-success" onclick="">Add Money</button>
+                         </form>
+                       </div>
+                     </div>
+                   </div>
+                 </div>
+               </div>
+
+               <div class="tab-pane fade" id="wallet-history" role="tabpanel" aria-labelledby="orders-tab">
+                 <div class="card">
+                   <div class="card-header">
+                     <h5 class="mb-0">Wallet History</h5>
+                   </div>
+                   <div class="card-body">
+                     <div class="table-responsive">
+                       <table class="table">
+                         <thead>
+                           <tr>
+                             <th>Date</th>
+                             <th>Status</th>
+                             <th>Amount</th>
+                           </tr>
+                         </thead>
+                         <tbody>
+                           <tr>
+                             <td></td>
+                             <td></td>
+                             <td></td>
+                           </tr>
+                         </tbody>
+                       </table>
+                     </div>
+                   </div>
+                 </div>
+               </div>
+
+               <div class="tab-pane fade" id="referal" role="tabpanel" aria-labelledby="track-orders-tab">
+                 <div class="card">
+                   <div class="card-header">
+                     <h5 class="mb-0">Referal</h5>
+                   </div>
+                   <div class="card-body">
+                     <h6 class="mb-3">Refer your friends and earn money!</h6>
+                     <p>Share this link: <strong></strong></p>
+                     <p>Earned: ₹</p>
+                   </div>
+                 </div>
+               </div>
+             </div>
+           </div>
+         </div>
+       </div>
+     </div>
+   </div>
+ </section>
+</main>
+<%- include("../../views/partials/user/footer.ejs") %>

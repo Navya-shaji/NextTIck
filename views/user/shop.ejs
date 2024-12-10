@@ -1,308 +1,107 @@
-<%- include("../../views/partials/user/header") %>
-<style>
- .main-container {
-   max-width: 1200px;
-   margin: 0 auto;
-   padding: 20px;
- }
- .shop-topbar {
-   display: flex;
-   justify-content: space-between;
-   align-items: center;
-   margin-bottom: 20px;
- }
-
-
- .search-form {
-   display: flex;
-   align-items: center;
-   background-color: #f1f1f1;
-   border-radius: 25px;
-   overflow: hidden;
-   max-width: 250px;
-   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
- }
-
-
- .search-input {
-   flex: 1;
-   padding: 8px 10px;
-   font-size: 14px;
-   border: none;
-   outline: none;
-   background-color: transparent;
- }
-
-
- .search-button {
-   padding: 8px 15px;
-   background-color: #1e918b;
-   color: #fff;
-   border: none;
-   cursor: pointer;
-   font-size: 14px;
-   border-radius: 15px;
-   margin-right: 5px;
-   transition: background-color 0.3s, transform 0.2s;
- }
-
-
- .search-button:hover {
-   background-color: #0056b3;
-   transform: scale(1.05);
- }
- .sidebar {
-   padding: 20px;
-   border: 1px solid #ddd;
-   background-color: #f9f9f9;
-   border-radius: 8px;
-   margin-bottom: 20px;
-   width: 250px;
-   text-align: center;
- }
-
-
- .filter-section {
-   margin-bottom: 20px;
- }
-
-
- .filter-title {
-   font-weight: bold;
-   margin-bottom: 10px;
-   font-size: 16px;
-   color: #333;
- }
-
-
- .filter-item {
-   margin: 5px 0;
- }
-
-
- .filter-item a {
-   text-decoration: none;
-   color: #333;
- }
-
-
- .filter-item a:hover {
-   color: #007bff;
- }
-
-
- .product-list-container {
-   display: flex;
-   gap: 20px;
- }
-
-
- .product-grid {
-   display: flex;
-   flex-wrap: wrap;
-   gap: 20px;
-   width: calc(100% - 270px);
- }
-
-
- .product-card {
-   width: calc(33.333% - 20px);
-   border: 1px solid #ddd;
-   padding: 15px;
-   border-radius: 8px;
-   text-align: center;
-   position: relative;
- }
-
-
- .product-card img {
-   max-width: 100%;
-   height: auto;
-   border-radius: 5px;
- }
-
-
- .wishlist-btn {
-   position: absolute;
-   top: 8px;
-   right: 8px;
-   background-color: rgba(237, 247, 247, 0.8);
-   color: #fff;
-   padding: 8px;
-   border-radius: 50%;
-   cursor: pointer;
- }
-
-
- .add-to-cart-btn {
-   background-color: #46698f;
-   color: #fff;
-   padding: 10px;
-   border: none;
-   border-radius: 5px;
-   cursor: pointer;
-   width: 100%;
-   margin-top: 10px;
- }
-
-
- .pagination {
-   display: flex;
-   justify-content: center;
-   gap: 10px;
-   margin: 20px 0;
- }
-
-
- .pagination a {
-   padding: 8px 12px;
-   background-color: #f0f0f0;
-   border: 1px solid #ddd;
-   color: #333;
-   text-decoration: none;
- }
-
-
- .pagination .active {
-   background-color: #007bff;
-   color: #fff;
- }
-
-
- .price-filter {
-   padding: 10px;
-   background-color: #f9f9f9;
-   border-radius: 8px;
-   margin-top: 20px;
- }
-
-
- .price-filter .price-options {
-   display: flex;
-   flex-direction: column;
-   gap: 10px;
- }
-
-
- .price-button {
-   padding: 12px 20px;
-   background-color: #f1f1f1;
-   color: #333;
-   border: 1px solid #ddd;
-   border-radius: 30px;
-   cursor: pointer;
-   transition: background-color 0.3s, transform 0.2s;
-   text-align: center;
-   font-size: 14px;
- }
-
-
- .price-button:hover {
-   background-color: #007bff;
-   color: white;
-   transform: scale(1.05);
- }
-
-
- .price-button:active {
-   transform: scale(0.95);
- }
-
-
- .category-brand-container {
-   text-align: center;
- }
-</style>
-
+<%- include("../../views/partials/user/header.ejs") %>
+<head>
+  <link rel="stylesheet" href="/styles/shop-page.css">
+</head>
 
 <div class="main-container">
- <section class="shop-page container">
-   <div class="shop-topbar">
-     <div class="search-bar">
-       <form action="" method="POST" class="search-form">
-         <input type="text" name="query" placeholder="Search items..." class="search-input" />
-         <button type="submit" class="search-button">Search</button>
-       </form>
-     </div>
-   </div>
+  <section class="shop-page container">
+    <div class="shop-topbar">
+      <div class="search-bar">
+        <form action="" method="POST" class="search-form">
+          <input type="text" name="query" placeholder="Search items..." class="search-input" />
+          <button type="submit" class="search-button">Search</button>
+        </form>
+      </div>
+    </div>
   
-   <div class="product-list-container">
-     <aside class="sidebar">
-       <div class="filter-section">
-         <div class="filter-title">Categories</div>
-         <div class="category-brand-container">
-           <ul>
-               <li class="filter-item">
-                 <a href=""></a>
-               </li>
-           </ul>
-         </div>
-       </div>
+    <div class="product-list-container">
+      <aside class="sidebar">
+        <div class="filter-section">
+          <div class="filter-title">Categories</div>
+          <div class="category-brand-container">
+            <ul>
+              <% for(let i = 0; i < category.length; i++) { %>
+                <li class="filter-item">
+                  <a href="/filter?category=<%= category[i]._id %>"><%= category[i].name %></a>
+                </li>
+              <% } %>
+            </ul>
+          </div>
+        </div>
 
+        <div class="filter-section">
+          <div class="filter-title">Brands</div>
+          <div class="category-brand-container">
+            <ul>
+              <% for(let i = 0; i < brand.length; i++) { %>
+                <li class="filter-item">
+                  <a href="/filter?brand=<%= brand[i]._id %>"><%= brand[i].brandName %></a>
+                </li>
+              <% } %>
+            </ul>
+          </div>
+        </div>
 
-      
-       <div class="filter-section">
-         <div class="filter-title">Brands</div>
-         <div class="category-brand-container">
-           <ul>
-               <li class="filter-item">
-                 <a href=""></a>
-               </li>
-           </ul>
-         </div>
-       </div>
+        <div class="price-filter">
+          <div class="filter-title">Filter by Price</div>
+          <form id="price-filter-form">
+            <div class="price-options">
+              <a href=""><button type="button" class="price-button">Under ₹500</button></a>
+              <a href=""><button type="button" class="price-button">₹500 - ₹1000</button></a>
+              <a href=""><button type="button" class="price-button">₹1000 - ₹1500</button></a>
+              <a href=""><button type="button" class="price-button">Above ₹1500</button></a>
+            </div>
+          </form>
+        </div>
+      </aside>
 
+      <main class="product-grid">
+        <% for(let i = 0; i < products.length; i++) { %>
+          <div class="product-card">
+            <span class="wishlist-btn" onclick="">❤️</span>
+            <a href="">
+              <img src="/uploads/re-image/<%= products[i].productImage[0] %>" alt="<%= products[i].productName %>" />
+              <h4><%= products[i].productName %></h4>
+              <p>Brand: <%= products[i].brand %></p>
+              <p>Price: ₹
+                <% if (products[i].salePrice) { %>
+                  <%= products[i].salePrice.toLocaleString('en-IN') %>
+                <% } else { %>
+                  <%= 'N/A' %>  <!-- Add a fallback if salePrice is undefined -->
+                <% } %>
+                <span class="text-muted">
+                  <strike>
+                    <% if (products[i].regularPrice) { %>
+                      ₹<%= products[i].regularPrice.toLocaleString('en-IN') %>
+                    <% } else { %>
+                      ₹<%= 'N/A' %>  <!-- Fallback if regularPrice is undefined -->
+                    <% } %>
+                  </strike>
+                </span>
+              </p>
+            </a>
+            <button class="add-to-cart-btn" onclick="">Add to Cart</button>
+          </div>
+        <% } %>
+      </main>
+    </div>
 
-      
-       <div class="price-filter">
-         <div class="filter-title">Filter by Price</div>
-         <form id="price-filter-form">
-           <div class="price-options">
-             <a href=""><button type="button" class="price-button">Under ₹500</button></a>
-             <a href=""><button type="button" class="price-button">₹500 - ₹1000</button></a>
-             <a href=""><button type="button" class="price-button">₹1000- ₹1500</button></a>
-             <a href=""><button type="button" class="price-button">Above ₹1500</button></a>
-           </div>
-         </form>
-       </div>
-     </aside>
+    <!-- Pagination -->
+    <div class="pagination">
+      <% if (currentPage > 1) { %>
+        <a class="btn" href="/shop?page=<%= currentPage - 1 %>">Prev</a>
+      <% } %>
 
+      <% for (let i = 1; i <= totalPages; i++) { %>
+        <a class="btn <%= currentPage === i ? 'active' : '' %>" href="/shop?page=<%= i %>"><%= i %></a>
+      <% } %>
 
-     <main class="product-grid">
-        <%for(let i=0;i<product.length;i++){%>
-         <div class="product-card">
-           <span class="wishlist-btn" onclick="">❤️</span>
-           <a href="/productDetails?id=<%=products[i].id">
-             <img src="/uploads/re-image/<%=products[i].productImage[0]%>" alt="<%=products[i]%.productName>" />
-             <h4><%=products[i].productName%></h4>
-             <p>Brand:<%=products[i].brand%>/p>
-             <p>Price:₹<%=products[i].salePrice.toLocalString('en-IN)%><span class="text-muted"><strike>₹</strike></span></p>
-           </a>
-           <button class="add-to-cart-btn" onclick="">Add to Cart</button>
-         </div>
-         <% } %>
-     </main>
-   </div>
+      <% if (currentPage < totalPages) { %>
+        <a class="btn" href="/shop?page=<%= currentPage + 1 %>">Next</a>
+      <% } %>
+    </div>
+  </section>
+</div>
 
-
-<!-- Pagination -->
-<div class="pagination">
-    <% if (currentPage > 1) { %>
-      <a class="btn" href="/shop?page=<%= currentPage - 1 %>">Prev</a>
-    <% } %>
-
-
-    <% for (let i = 1; i <= totalPages; i++) { %>
-      <a class="btn <%= currentPage === i ? 'active' : '' %>" href="/shop?page=<%= i %>"><%= i %></a>
-    <% } %>
-
-
-    <% if (currentPage < totalPages) { %>
-      <a class="btn" href="/shop?page=<%= currentPage + 1 %>">Next</a>
-    <% } %>
-  </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
-<%- include("../../views/partials/user/footer") %>
-
-
-
+<%- include("../../views/partials/user/footer.ejs") %>

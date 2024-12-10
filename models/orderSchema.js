@@ -1,8 +1,9 @@
-const mongoose =require("mongoose")
-const {schema}=mongoose;
-const {v4:uuidv4}=require("uuid");
 
-const OrderSchema =new mongoose.Schema({
+const mongoose =require("mongoose")
+const {Schema}=mongoose;
+const {v4:uuidv4} = require("uuid");
+
+const orderSchema =new Schema({
     orderId:{
         type:String,
         default:()=>uuidv4(),
@@ -58,5 +59,5 @@ const OrderSchema =new mongoose.Schema({
        default:false
     }
 })
-const order =mongoose.model("Order",OrderSchema);
+const Order =mongoose.model("Order",orderSchema);
 module.exports = Order;

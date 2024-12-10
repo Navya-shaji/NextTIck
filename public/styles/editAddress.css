@@ -1,0 +1,35 @@
+.btn-save {
+    background-color: #ffc107;
+    color: black;
+    border: none;
+}
+.btn-save:hover {
+    background-color: #e0ac07;
+}
+body {
+    background-color: #f8f9fa;
+}
+.nav-tabs .nav-link.active {
+    border-bottom: 3px solid #ffc107;
+}
+.address-card {
+    background: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+}
+.nav-link:hover {
+    color: orange;
+}
+.nav-link.active {
+    color: orange;
+    font-weight: bold;
+}
+hr {
+    border-top: 1px solid #e6e6e6;
+}
+.error-message {
+    color: red;
+    font-size: 0.875rem;
+}

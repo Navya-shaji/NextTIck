@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Verification</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/otp.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+</head>
+<body class="d-flex align-items-center justify-content-center">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-4">
+                <div class="card p-4">
+                    <h1 class="text-center mb-4">OTP</h1>
+                    <div class="otp-icon d-flex align-items-center justify-content-center mx-auto mb-4">
+                        <div class="otp-icon-inner d-flex align-items-center justify-content-center">OTP</div>
+                    </div>
+                    <h2 class="text-center mb-3">Verification Code</h2>
+                    <p class="text-center text-muted mb-4">We have sent a verification code to your Email account</p>
+                    <form id="otpForm" onsubmit="validateOTPForm(e)" method="post"><!--  -->
+                        <div class="d-flex justify-content-center mb-4">
+                           <input type="text" id="otp1" name="otp1" class="otp-input form-control me-2" maxlength="1" autofocus>
+                           <input type="text" id="otp2" name="otp2" class="otp-input form-control me-2" maxlength="1">
+                           <input type="text" id="otp3" name="otp3" class="otp-input form-control me-2" maxlength="1">
+                           <input type="text" id="otp4" name="otp4" class="otp-input form-control" maxlength="1">
+                        </div>
+                        <button id="alertButton" type="submit" class="btn submit-btn btn-lg w-100">Submit</button>
+                        <p class="text-center mt-3" id="timer">Time left: 60 seconds</p>
+                        <p class="text-center mt-2 " id="resend">
+                            Didn't receive the code? <a href="#" id="resendOtpLink">Resend OTP</a>
+                        </p>                        
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+
+    <script>
+        
+        let timeLeft = 60; 
+        const timerElement = document.getElementById('timer');
+        let countdown;
+
+        function startCountdown() {
+            clearInterval(countdown);
+            countdown = setInterval(() => {
+                if (timeLeft <= 0) {
+                    clearInterval(countdown);
+                    timerElement.textContent = "Time is up!";
+                    // document.getElementById('alertButton').disabled = true; // Disable the submit button
+                } else {
+                    timerElement.textContent = `Time left: ${timeLeft} seconds`;
+                }
+                timeLeft--;
+            }, 1000);
+        }
+
+        
+        startCountdown();
+
+
+
+
+        // OTP input navigation and submission handler
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = document.querySelectorAll('.otp-input');
+            const submitBtn = document.querySelector('.submit-btn');
+          
+            inputs.forEach((input, index) => {
+                input.addEventListener('input', function() {
+                    if (this.value.length === 1) {
+                        if (index < inputs.length - 1) {
+                            inputs[index + 1].focus();
+                        }
+                    }
+                });
+
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Backspace' && !this.value && index > 0) {
+                        inputs[index - 1].focus();
+                    }
+                });
+            });
+
+            submitBtn.addEventListener('click', function() {
+                const otp = Array.from(inputs).map(input => input.value).join('');
+                if (otp.length === 4) {
+                    console.log('OTP Submitted:', otp);
+                }
+            });
+        });
+        const form = document.getElementById('otpForm');
+        form.addEventListener('submit',validateOTPForm)
+        function validateOTPForm(e) {
+    e.preventDefault(); 
+    const otpString = 
+        document.getElementById('otp1').value +
+        document.getElementById('otp2').value +
+        document.getElementById('otp3').value +
+        document.getElementById('otp4').value;
+
+    if (otpString.length !== 4) {
+        Swal.fire({
+            icon: "warning",
+            title: "Incomplete OTP",
+            text: "Please enter all 4 digits of the OTP."
+        });
+        return false;
+    }
+
+    console.log("Attempting to submit OTP:", otpString); 
+
+    fetch("/otp", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ otp: otpString })
+    })
+    .then(response => {
+        console.log("Response status:", response.status); 
+        return response.json();
+    })
+    .then(data => {
+        console.log("Response data:", data); 
+        if (data.success) {
+            Swal.fire({
+                icon: 'success',
+                title: 'OTP Submitted!',
+                showConfirmButton: false,
+                timer: 1500
+            }).then(() => {
+                window.location.href = "/";
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: data.message || "Please try again"
+            });
+        }
+    })
+    .catch(error => {
+        console.error("Error during OTP submission:", error);
+        Swal.fire({
+            icon: "error",
+            title: "Server Error",
+            text: "An error occurred while verifying OTP."
+        });
+    });
+};
+
+
+// resent otp fetching
+document.getElementById('resendOtpLink').addEventListener('click', function(e) {
+            e.preventDefault();
+
+            fetch('/resend-otp', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'OTP resent successfully!',
+                        text: 'Please check your email for the new OTP.',
+                        timer: 1500
+                    });
+                    timeLeft = 60;
+                    startCountdown();
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message || 'Failed to resend OTP. Please try again.'
+                    });
+                }
+            })
+            .catch(error => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Server Error',
+                    text: 'An error occurred while resending OTP.'
+                });
+            });
+        });
+
+
+</script>
+</body>
+</html>

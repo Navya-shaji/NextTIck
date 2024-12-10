@@ -2,10 +2,10 @@
 const User= require("../../models/userSchema");
 const nodemailer =require("nodemailer");
 const env=require("dotenv").config()
-
 const bcrypt =require("bcrypt")
 const Category=require("../../models/categorySchema")
 const Product =require("../../models/productSchema")
+const brand=require("../../models/brandSchema");
 
 
 // signupPage loadSignup........................................
@@ -283,6 +283,8 @@ return res.redirect("/login")
 }
 
 
+//shopping Page.......................................................
+
 
 module.exports={
     loadHomepage,
@@ -294,5 +296,8 @@ module.exports={
     resendOtp,
     loadLogin,
     login,
-    logout
+    logout,
+    
+    
+
 }

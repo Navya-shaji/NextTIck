@@ -1,0 +1,42 @@
+.btn-save {
+    background-color: #ffc107;
+    color: black;
+    border: none;
+}
+.btn-save:hover {
+    background-color: #e0ac07;
+}
+.btn-danger:hover {
+    background-color: #c82333;
+}
+body {
+    background-color: #f8f9fa;
+}
+.address-card {
+    background: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+}
+.edit-btn {
+    background-color: #ffc107;
+    color: black;
+    border: none;
+}
+.edit-btn:hover {
+    background-color: #e0ac07;
+}
+hr {
+    border-top: 1px solid #e6e6e6;
+}
+.nav-link:hover {
+    color: orange;
+}
+.nav-link.active {
+    color: orange; 
+    font-weight: bold; 
+}
+.modal-content {
+    border-radius: 10px;
+}

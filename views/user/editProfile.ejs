@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Address</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/styles/editProfile.css">
+</head>
+<body>
+
+<!-- Modal -->
+<div class="modal fade" id="addAddressModal" tabindex="-1" aria-labelledby="addAddressModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addAddressModalLabel">Add New Address</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Add Address Form -->
+                <form id="addressForm">
+                    <div class="mb-3">
+                        <label for="addressType" class="form-label">Address Type</label>
+                        <input type="text" class="form-control" id="addressType" placeholder="Home, Office, etc." required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="fullName" class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="fullName" placeholder="Enter recipient's name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="streetAddress" class="form-label">Street Address</label>
+                        <input type="text" class="form-control" id="streetAddress" placeholder="Enter street address" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="city" class="form-label">City</label>
+                        <input type="text" class="form-control" id="city" placeholder="Enter city" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="state" class="form-label">State</label>
+                        <input type="text" class="form-control" id="state" placeholder="Enter state" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="pincode" class="form-label">Pincode</label>
+                        <input type="text" class="form-control" id="pincode" placeholder="Enter pincode" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">Phone Number</label>
+                        <input type="tel" class="form-control" id="phone" placeholder="Enter phone number" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="altPhone" class="form-label">Alternate Phone Number</label>
+                        <input type="tel" class="form-control" id="altPhone" placeholder="Enter alternate phone number">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-save" id="saveAddressBtn">Save Address</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Custom JS -->
+<script>
+    // JavaScript code for handling modal and saving addresses
+    document.addEventListener('DOMContentLoaded', () => {
+        const saveAddressBtn = document.getElementById('saveAddressBtn');
+        const addressForm = document.getElementById('addressForm');
+
+        // Simulated address data
+        const addressList = [];
+
+        // Save new address
+        saveAddressBtn.addEventListener('click', () => {
+            const newAddress = {
+                addressType: document.getElementById('addressType').value,
+                fullName: document.getElementById('fullName').value,
+                streetAddress: document.getElementById('streetAddress').value,
+                city: document.getElementById('city').value,
+                state: document.getElementById('state').value,
+                pincode: document.getElementById('pincode').value,
+                phone: document.getElementById('phone').value,
+                altPhone: document.getElementById('altPhone').value,
+            };
+
+            addressList.push(newAddress);
+            console.log('Address saved:', newAddress);
+
+            // Reset form
+            addressForm.reset();
+
+            // Close the modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addAddressModal'));
+            modal.hide();
+        });
+    });
+</script>
+</body>
+</html>

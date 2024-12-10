@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Address</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/styles/displayaddress.css">
+</head>
+<body>
+
+<!-- Navbar with Hamburger Menu -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="#">User Profile</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">My Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">My Orders</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="userAddresses">My Addresses</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Mb Cash</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Saved Cards</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Address Form -->
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mt-5">
+        <h2 class="fw-bold">Add New Address</h2>
+        <a href="userAddresses" class="btn btn-danger">Cancel</a>
+    </div>
+
+    <div class="address-form mt-4">
+        <form action="/addAddress" method="POST">
+            <div class="mb-3">
+                <label for="addressType" class="form-label">Address Type</label>
+                <input type="text" class="form-control" id="addressType" name="addressType" required>
+            </div>
+            <div class="mb-3">
+                <label for="name" class="form-label">Full Name</label>
+                <input type="text" class="form-control" id="name" name="name" required>
+            </div>
+            <div class="mb-3">
+                <label for="city" class="form-label">City</label>
+                <input type="text" class="form-control" id="city" name="city" required>
+            </div>
+            <div class="mb-3">
+                <label for="landmark" class="form-label">Landmark</label>
+                <input type="text" class="form-control" id="landmark" name="landmark" required>
+            </div>
+            <div class="mb-3">
+                <label for="state" class="form-label">State</label>
+                <input type="text" class="form-control" id="state" name="state" required>
+            </div>
+            <div class="mb-3">
+                <label for="pincode" class="form-label">Pincode</label>
+                <input type="text" class="form-control" id="pincode" name="pincode" required>
+            </div>
+            <div class="mb-3">
+                <label for="phone" class="form-label">Phone Number</label>
+                <input type="tel" class="form-control" id="phone" name="phone" required>
+            </div>
+            <div class="mb-3">
+                <label for="altPhone" class="form-label">Alternate Phone Number</label>
+                <input type="tel" class="form-control" id="altPhone" name="altPhone" required>
+            </div>
+            <button type="submit" class="btn btn-save">Save Address</button>
+        </form>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Handle navbar active link functionality
+    document.addEventListener('DOMContentLoaded', () => {
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (event) => {
+                // Remove 'active' from all links
+                navLinks.forEach(nav => nav.classList.remove('active'));
+                // Add 'active' to the clicked link
+                link.classList.add('active');
+            });
+        });
+    });
+</script>
+</body>
+</html>

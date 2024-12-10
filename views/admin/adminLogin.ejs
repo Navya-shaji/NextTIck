@@ -16,19 +16,63 @@
     <!-- Right Side: Login Form -->
     <div class="login-section">
       <h2>Admin Login</h2>
-      <form action="/admin/login" method="POST">
+      <form action="/admin/login" method="POST" onsubmit="return validateAdminLoginForm()">
         <div class="form-group">
           <label for="email">Email</label>
-          <input type="email" id="email" name="email" placeholder="Enter your email" required>
+          <input type="email" id="email" name="email" placeholder="Enter your email">
+          <div class="error-message" id="email-error"></div>
         </div>
         <div class="form-group">
           <label for="password">Password</label>
-          <input type="password" id="password" name="password" placeholder="Enter your password" required>
+          <input type="password" id="password" name="password" placeholder="Enter your password">
+          <div class="error-message" id="password-error"></div>
         </div>
         <button type="submit" class="btn">Login</button>
-        <p class="forgot-password"><a href="/admin/forgot-password">Forgot Password?</a></p>
+        <p class="forgot-password"><a href="/forgot-password">Forgot Password?</a></p>
       </form>
     </div>
   </div>
-</body>
-</html>
+
+  <script>
+    function validateAdminLoginForm() {
+      const email = document.getElementById('email');
+      const password = document.getElementById('password');
+      const emailError = document.getElementById('email-error');
+      const passwordError = document.getElementById('password-error');
+
+      let isValid = true;
+
+      // Reset error messages
+      emailError.textContent = '';
+      passwordError.textContent = '';
+
+      // Email validation
+      const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+      if (!email.value.trim()) {
+        emailError.textContent = 'Email is required.';
+        email.classList.add('is-invalid');
+        isValid = false;
+      } else if (!email.value.match(emailPattern)) {
+        emailError.textContent = 'Enter a valid email address.';
+        email.classList.add('is-invalid');
+        isValid = false;
+      } else {
+        email.classList.remove('is-invalid');
+      }
+
+      // Password validation
+      if (!password.value.trim()) {
+        passwordError.textContent = 'Password is required.';
+        password.classList.add('is-invalid');
+        isValid = false;
+      } else if (password.value.length < 6) {
+        passwordError.textContent = 'Password must be at least 6 characters.';
+        password.classList.add('is-invalid');
+        isValid = false;
+      } else {
+        password.classList.remove('is-invalid');
+      }
+
+      return isValid;
+    }
+  </script>

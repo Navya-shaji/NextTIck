@@ -1,0 +1,255 @@
+.card-green {
+    background-color: #ADD8E6;
+  }
+  .main {
+    padding: 30px 0;
+  }
+ 
+  .dashboard-menu {
+    background-color: #cce3e6;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+ 
+  .dashboard-menu .nav-link {
+  font-weight: bold;
+  color: #30683c;
+  box-shadow: 0 4px 10px rgba(123, 131, 112, 0.3), 0 4px 20px rgba(0, 191, 255, 0.2);
+  transition: box-shadow 0.3s ease;
+ }
+ 
+ .dashboard-menu .nav-link:hover {
+  color: #00bfff;
+  box-shadow: 0 4px 15px rgba(173, 255, 47, 0.5), 0 6px 25px rgba(0, 191, 255, 0.4);
+ }
+ 
+  .card {
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    margin-bottom: 20px;
+  }
+ 
+  .card-header {
+    background-color: #487379;
+    color: white;
+    border-radius: 10px 10px 0 0;
+  }
+ 
+  .btn-success {
+    background-color: #577194;
+    border-color: #6bb87d;
+  }
+ 
+  .btn-success:hover {
+    background-color: #506955;
+  }
+ 
+  .form-group {
+    margin-bottom: 15px;
+  }
+ 
+  .required {
+    color: red;
+  }
+ 
+   @media (max-width: 768px) {
+    .dashboard-menu {
+      padding: 10px;
+    }
+ 
+    .card {
+      margin-bottom: 15px;
+    }
+  }
+  .page-header.breadcrumb-wrap {
+  background-color: #eee2e9;
+  padding: 15px 0;
+ }
+ 
+ .breadcrumb {
+  display: flex;
+  align-items: center;
+  font-family: 'Arial', sans-serif;
+  font-size: 16px;
+  color: #121311;
+ }
+ 
+ .breadcrumb a {
+  color: #007bff;
+  text-decoration: none;
+  position: relative;
+  margin: 0 5px;
+ }
+ 
+ .breadcrumb a:hover {
+  color: #0056b3;
+ }
+ 
+ .breadcrumb span {
+  margin: 0 5px;
+  color: #999;
+ }
+ 
+ .breadcrumb a::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  background: #6e6e3a;
+  left: 0;
+  bottom: -2px;
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+ }
+ 
+ .breadcrumb a:hover::after {
+  transform: scaleX(1);
+ }
+ /* General Styling */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+/* Address Tab Content */
+#address .row {
+    margin: 0 -15px;
+}
+
+/* Card Container */
+.card {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Card Header */
+.card-header {
+    background-color: #007bff;
+    color: #fff;
+    padding: 15px;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Card Body */
+.card-body {
+    padding: 15px;
+}
+
+.card-body p {
+    margin: 0 0 10px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #555;
+}
+
+/* Card Footer */
+.card-footer {
+    padding: 10px 15px;
+    background-color: #f8f9fa;
+    text-align: right;
+    border-top: 1px solid #ddd;
+}
+
+.card-footer a {
+    text-decoration: none;
+    font-size: 14px;
+    color: #007bff;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.card-footer a:hover {
+    color: #0056b3;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .col-lg-6 {
+        flex: 0 0 100%;
+        max-width: 100%;
+        margin-bottom: 20px;
+    }
+}
+.card {
+    margin-bottom: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+}
+
+.btn {
+    border-radius: 5px;
+}
+
+/* General Navbar Styling */
+.navbar {
+  position: fixed; /* Sticks the navbar at the top */
+  top: 0;
+  left: 0;
+  width: 100%; /* Ensures it spans the entire width */
+  background-color: #007bff; /* Navbar background color */
+  z-index: 1000; /* Places it above other content */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.navbar .nav-link {
+  color: white; /* Links in navbar are white */
+  padding: 10px 15px;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.navbar .nav-link:hover {
+  color: #ffd700; /* Change color on hover */
+}
+
+.navbar-brand {
+  font-size: 20px;
+  font-weight: bold;
+  color: white;
+  text-decoration: none;
+  padding: 10px 15px;
+}
+
+.navbar-brand:hover {
+  color: #ffd700;
+}
+
+/* Space below navbar to avoid overlap */
+body {
+  padding-top: 60px; /* Adjust based on the height of your navbar */
+}
+
+/* Responsive Navbar */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+  }
+
+  .navbar .nav-link {
+    padding: 8px;
+    text-align: center;
+  }
+}

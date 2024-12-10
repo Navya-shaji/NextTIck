@@ -1,0 +1,48 @@
+<%- include("../../views/partials/user/header") %>
+
+
+<section class="content-main mt-80 mb-80">
+   <div class="card mx-auto card-login col-4">
+       <div class="card-body">
+           <h4 class="card-title mb-4">Enter New Email</h4>
+           <form method="post" action="/update-email" onsubmit="return validateEmailForm()">
+               <div class="mb-3">
+                   <input class="form-control" name="newEmail" placeholder="New Email" type="text" id="email">
+                   <div class="error-message" id="email-error"></div>
+               </div>
+               <div class="mb-4">
+                   <button type="submit" class="btn btn-primary w-100">Submit</button>
+               </div>
+           </form>
+       </div>
+   </div>
+</section>
+
+
+<script>
+   function validateEmailForm() {
+       const emailInput = document.getElementById('email');
+       const emailError = document.getElementById('email-error');
+       const emailValue = emailInput.value.trim();
+       const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+
+
+       if (emailValue === '') {
+           emailError.textContent = 'Please enter your new email.';
+           emailInput.classList.add('is-invalid');
+           return false;
+       } else if (!emailValue.match(emailPattern)) {
+           emailError.textContent = 'Please enter a valid email address';
+           emailInput.classList.add('is-invalid');
+           return false;
+       } else {
+           emailError.textContent = '';
+           emailInput.classList.remove('is-invalid');
+           return true;
+       }
+   }
+</script>
+<%- include("../../views/partials/user/footer") %>
+
+
+

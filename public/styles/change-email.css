@@ -1,0 +1,61 @@
+General Styles
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f3f0ff; /* Light lavender */
+    color: #2c2c54; /* Dark purple-gray */
+}
+
+/* Card Styles */
+.card-login {
+    background: white;
+    border: 1px solid #d6d0e1; /* Soft border */
+    border-radius: 15px;
+}
+
+.card-title {
+    color: #6f42c1; /* Primary purple color */
+    font-weight: bold;
+}
+
+/* Form Styles */
+.form-label {
+    font-weight: 600;
+    color: #6f42c1; /* Label color */
+}
+
+.form-control {
+    padding: 10px;
+    border-radius: 8px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #6f42c1; /* Focused border color */
+    box-shadow: 0 0 0 0.2rem rgba(111, 66, 193, 0.25);
+}
+
+/* Button Styles */
+.btn-primary {
+    background-color: #6f42c1; /* Primary button color */
+    border: none;
+    font-weight: bold;
+    text-transform: capitalize;
+}
+
+.btn-primary:hover {
+    background-color: #5938a7; /* Darker hover state */
+}
+
+/* Error Messages */
+.text-danger {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #e63946; /* Error red */
+}
+
+/* Responsiveness */
+@media (max-width: 768px) {
+    .card-login {
+        margin: 0 20px;
+    }
+}

@@ -13,6 +13,7 @@ const uploads = multer({storage:storage})
 
 
 //Error Management.......................
+// router.get("/",adminAuth.adminAuth,adminController.loadDashboard);
 router.get("/pageerror",adminController.pageerror)
 
 //login Management...................
@@ -44,8 +45,8 @@ router.get("/brands",adminAuth,brandController.getBrandPage);
 router.post("/addBrand",adminAuth,uploads.single("image"),brandController.addBrand);
 router.post('/blockBrand/:id', brandController.blockBrand);
 router.post("/unblockBrand/:id", adminAuth, brandController.unblockBrand);
-
 router.get("/deleteBrand",adminAuth,brandController.deleteBrand)
+// router.post("/updateBrand",uploads.single("logo"),adminAuth.adminAuth,brandController.updateBrand);
 
 //Product Management...........................
 router.get("/addProducts",adminAuth,productController.getProductAddPage);

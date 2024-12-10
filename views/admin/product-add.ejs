@@ -1,7 +1,26 @@
 <%- include("../../views/partials/admin/header") %>
 <head>
    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.css">
-   <!-- <link rel="stylesheet" href="/styles/product-add.css"> -->
+ 
+   <style>
+    .error-message {
+      color: red; /* Set the text color to red */
+      font-size: 12px; /* Optional: adjust the size */
+      margin-top: 5px; /* Add spacing between the input and the error message */
+    }
+    .thumbnails-container {
+        display: flex;
+        overflow-x: auto;
+    }
+
+
+    .thumbnail {
+        margin-right: 10px;
+
+
+    }
+  </style>
+  
 </head>
 
    <section class="content-main">

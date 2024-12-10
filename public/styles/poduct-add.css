@@ -1,16 +1,9 @@
-.error-message{
-    color: red;
-}
 
 
-    .thumbnails-container {
-        display: flex;
-        overflow-x: auto;
-    }
-
-
-    .thumbnail {
-        margin-right: 10px;
-
-
-    }
+   
+   
+      .error-message {
+        color: red; /* Set the text color to red */
+        font-size: 12px; /* Optional: adjust the size */
+        margin-top: 5px; /* Add spacing between the input and the error message */
+      }
