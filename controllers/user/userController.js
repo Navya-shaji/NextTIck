@@ -41,7 +41,7 @@ const pageNotFound = async (req, res) => {
 const loadHomepage = async (req, res) => {
     try {
      
-      const products = await Product.find({}); 
+      const products = await Product.find({}).populate('category'); 
         console.log(req.session)
 
       const userData = req.session.user ?? req.session.passport?.user

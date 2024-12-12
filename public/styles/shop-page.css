@@ -61,7 +61,7 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
-  padding-top: 3rem; /* Adds space between the navbar and the rest of the content */
+  padding-top: 3rem;
 }
 
 .shop-page {
@@ -79,10 +79,9 @@ body {
   padding: 1.5rem;
   border-radius: var(--radius);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  margin-bottom: 2rem; /* Adds space below the navbar */
-  gap: 1rem; /* Adds space between the brand name and the search bar */
+  margin-bottom: 2rem;
+  gap: 1rem;
 }
-
 
 .shop-title {
   color: hsl(var(--primary-foreground));
@@ -130,6 +129,10 @@ body {
 .product-list-container {
   display: flex;
   gap: 2rem;
+}
+
+.product-content {
+  flex-grow: 1;
 }
 
 /* Sidebar styles */
@@ -297,6 +300,24 @@ body {
   color: hsl(var(--primary-foreground));
 }
 
+.sort-options {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.sort-options label {
+  margin-right: 0.5rem;
+}
+
+.sort-options select {
+  padding: 0.5rem;
+  border-radius: var(--radius);
+  border: 1px solid hsl(var(--border));
+}
+
+
 /* Responsive styles */
 @media (max-width: 1024px) {
   .main-container {
@@ -324,58 +345,40 @@ body {
     align-items: flex-start;
     gap: 1rem;
     padding: 1.5rem;
-    margin-bottom: 2rem; /* Space after the navbar */
+    margin-bottom: 2rem;
   }
+
   .main-container {
     padding: 1rem;
     padding-top: 2rem;
   }
 
-  .shop-title {
-    text-align: center;
+  .product-list-container {
+    flex-direction: column;
   }
 
-  .search-form {
-    max-width: none;
+  .sidebar {
+    order: -1;
+    margin-bottom: 2rem;
   }
 
-  .product-grid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  .sort-options {
+    justify-content: flex-start;
   }
 }
 
 @media (max-width: 480px) {
-  .product-grid {
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  }
-
-  .product-card h4 {
-    font-size: 0.9rem;
-  }
-
-  .product-card p {
-    font-size: 0.8rem;
-  }
-
-  .search-form {
-    flex-direction: column;
-  }
-
-  .search-input,
-  .search-button {
-    width: 100%;
-  }
-
-  .search-button {
-    margin-top: 0.5rem;
-  }
   .shop-topbar {
-    margin-bottom: 1.5rem; /* Slightly reduce the spacing for smaller screens */
+    margin-bottom: 1.5rem;
   }
 
   .main-container {
     padding: 0.5rem;
     padding-top: 1.5rem;
+  }
+
+  .product-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   }
 }
 

@@ -1,0 +1,126 @@
+<%- include("../partials/userr/admin/header.ejs") %>
+
+<main class="main bg-light">
+  <div class="container py-5">
+    <div class="row">
+      <div class="col-12">
+        <!-- Return to Orders Link -->
+        <nav aria-label="breadcrumb" class="mb-4">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+              <a href="/admin/order" class="text-muted">
+                <i class="fi-rs-angle-left me-2"></i>Return to Orders
+              </a>
+            </li>
+          </ol>
+        </nav>
+
+        <!-- Order Information Card -->
+        <div class="card shadow-sm mb-4">
+          <div class="card-header bg-primary text-white">
+            <div class="d-flex justify-content-between align-items-center">
+              <h2 class="h4 mb-0">Order Details</h2>
+              <span class="badge bg-light text-primary">
+                Order ID: <%= order.orderId %>
+              </span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-4">
+                <h5 class="text-muted">Order Status</h5>
+                <span
+                  class="badge <% if (order.status === 'Pending') { %> bg-warning text-dark <% } else if (order.status === 'Processing') { %> bg-info text-white <% } else if (order.status === 'Shipped') { %> bg-primary text-white <% } else if (order.status === 'Delivered') { %> bg-success text-white <% } else if (order.status === 'Cancelled') { %> bg-danger text-white <% } else if (order.status === 'Return Request') { %> bg-secondary text-white <% } else if (order.status === 'Returned') { %> bg-dark text-white <% } %>"
+                >
+                  <%= order.status %>
+                </span>
+              </div>
+              <div class="col-md-4">
+                <h5 class="text-muted">Created On</h5>
+                <p><%= order.createdOn.toLocaleString() || "Date unavailable" %></p>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer bg-light">
+            <div class="d-flex justify-content-between align-items-center">
+              <h3 class="mb-0">Total Order Value</h3>
+              <h3 class="text-primary mb-0">
+                ₹ <%= order.finalAmount.toLocaleString() %>
+              </h3>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ordered Products Section -->
+        <div class="card shadow-sm mb-4">
+          <div class="card-header bg-secondary text-white">
+            <h4 class="mb-0">Ordered Products</h4>
+          </div>
+          <div class="card-body">
+            <% order.orderItems.forEach((item) => { %>
+              <div class="row align-items-center border-bottom pb-3 mb-3">
+                <div class="col-md-2">
+                  <img
+                    src="/uploads/re-image/<%= item.product?.productImage?.[0] || 'default.jpg' %>"
+                    alt="<%= item.product?.productName || 'Product Name Unavailable' %>"
+                    class="img-fluid rounded"
+                  />
+                </div>
+                <div class="col-md-6">
+                  <h5><%= item.product?.productName || 'Unknown Product' %></h5>
+                  <p class="text-muted">Quantity: <%= item.quantity %></p>
+                </div>
+                <div class="col-md-4 text-end">
+                  <h5>₹ <%= item.price.toLocaleString() || "0.00" %></h5>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+        </div>
+
+        <!-- Summary and Shipping Details -->
+        <div class="row">
+          <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+              <div class="card-header bg-info text-white">
+                <h4 class="mb-0">Shipping Details</h4>
+              </div>
+              <div class="card-body">
+                <p class="fw-bold"><%= address?.name || "N/A" %></p>
+                <p class="text-muted">
+                  <%= address ? `${address.addressType}, ${address.city}, ${address.state} - ${address.pincode}` : "Address not available" %>
+                </p>
+                <p>Phone: <%= address?.phone || "N/A" %></p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+              <div class="card-header bg-info text-white">
+                <h4 class="mb-0">Order Summary</h4>
+              </div>
+              <div class="card-body">
+                <div class="d-flex justify-content-between mb-2">
+                  <span>Subtotal:</span>
+                  <span>₹ <%= order.totalPrice.toLocaleString() %></span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                  <span>Discount:</span>
+                  <span>₹ <%= order.discount.toLocaleString() %></span>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between">
+                  <h5>Total:</h5>
+                  <h5 class="text-primary">₹ <%= order.finalAmount.toLocaleString() %></h5>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<%- include("../partials/userr/admin/footer.ejs") %>

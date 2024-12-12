@@ -1,6 +1,6 @@
 const User=require("../../models/userSchema");
 const Address=require("../../models/addressSchema")
-const order=require("../../models/orderSchema")
+const Order=require("../../models/orderSchema")
 const nodemailer = require("nodemailer");
 const bcrypt =require("bcrypt");
 const env = require("dotenv").config();
@@ -155,16 +155,30 @@ const postNewPassword = async (req, res) => {
     }
 };
 
+
+// Render User Profile with Orders
 const userProfile = async (req, res) => {
     try {
-        const userId = req.session.user._id;
-        const userData = await User.findById(userId);
-        const addressData = await Address.findOne({ userId: userId });
-        // const orderData = await Order.find({ userId: userId }).sort({ createdAt: -1 });
-        res.render("profile", { user: userData, userAddress: addressData });
+        // Ensure the user is logged in
+        const user = req.session.user;
+        if (!user) {
+            return res.redirect("/login");
+        }
+
+        // Fetch the user's orders from the database
+        const orders = await Order.find({ userId: user._id }).sort({ createdOn: -1 });
+
+        // Render the profile page with user details and orders
+        const address  = await Address.findOne({ userId: user._id })
+        console.log("address",address)
+        res.render("profile", {
+            user: user,
+            orders: orders, // Pass the orders array to the view
+            userAddress: address || {}, // Add address if available
+        });
     } catch (error) {
-        console.error("user profile error", error);
-        res.redirect("/pageNotFound");
+        console.error("Error fetching user profile:", error.message);
+        res.status(500).send("Internal Server Error");
     }
 };
 
@@ -363,7 +377,7 @@ const postAddAddress = async (req, res) => {
     try {
         const userId = req.session.user._id;
         const { addressType, name, city, landMark, state, pincode, phone, altPhone } = req.body;
-        
+        console.log("address", addressType)
         const userAddress = await Address.findOne({ userId: userId });
         if (!userAddress) {
             const newAddress = new Address({
@@ -461,6 +475,9 @@ const deleteAddress = async (req, res) => {
     }
 };
 
+
+//order page........................
+
 const getOrders = async (req, res) => {
     try {
         const userId = req.session.user._id;
@@ -491,7 +508,28 @@ const cancelOrder = async (req, res) => {
     }
 };
 
+const deleteOrder = async (req, res) => {
+    try {
+        const { orderId } = req.params; // Get the order ID from the URL
+        const user = req.session.user;
 
+        if (!user) {
+            return res.status(401).json({ success: false, message: "Unauthorized" });
+        }
+
+        // Find and delete the order
+        const order = await Order.findOneAndDelete({ _id: orderId, userId: user._id });
+
+        if (!order) {
+            return res.status(404).json({ success: false, message: "Order not found" });
+        }
+
+        res.status(200).json({ success: true, message: "Order deleted successfully" });
+    } catch (error) {
+        console.error("Error deleting order:", error.message);
+        res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+};
 
 module.exports = {
     getForgotPassPage,
@@ -518,5 +556,7 @@ module.exports = {
     deleteAddress,
     getOrders,
     cancelOrder,
-    renderChangePasswordPage 
+    renderChangePasswordPage ,
+    deleteOrder
+    
 }

@@ -139,12 +139,30 @@
                 </div>
                 <button class="add-to-cart" ><a href="/addToCart?id=<%= product._id%>"  >Add to Cart</a></button>
                 <div class="product-meta">
-                    <p>Stock Code: FWM15VKT</p>
+                    <!-- <p>Stock Code: FWM15VKT</p> -->
                    
                     <p>Availability: <span style="color: #28a745;"><%=quantity%></span></p>
                 </div>
             </div>
         </div>
+    </div>
+    <div >
+        <h1>Related Product</h1>
+        <%for(let i=0; i <recommendedProduct.length ; i++){%>
+            
+            <div class="col-lg-3 col-sm-6 mix all dresses bags">
+                <div class="single-product-item">
+                    <figure>
+                        <a href="/productDetails?id=<%=recommendedProduct[i]?._id%>"><img src="/uploads/re-image/<%=recommendedProduct[i]?.productImage[0]%>" alt=""></a>
+                        <div class="p-status">new</div>
+                    </figure>
+                    <div class="product-text">
+                        <h6><%=recommendedProduct[i].productName%></h6>
+                        <p><%=recommendedProduct[i].salePrice%></p>
+                    </div>
+                </div>
+            </div>
+            <%}%>
     </div>
 
     <script>

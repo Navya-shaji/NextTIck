@@ -2,7 +2,6 @@
 
     <!-- END nav -->
 
-
 	<section id="home-section" class="hero">
 			<div class="home-slider owl-carousel">
 			<div class="slider-item js-fullheight">
@@ -117,7 +116,7 @@
               <div class="text py-3 pb-4 px-3">
                 <div class="d-flex">
                   <div class="cat">
-                    <span><%= product.category %></span>
+                    <span><%= product.category.name %></span>
                   </div>
                   <div class="rating">
                     <p class="text-right mb-0">
@@ -131,15 +130,15 @@
                 <div class="pricing">
                   <% if (product.discount > 0) { %>
                     <p class="price">
-                      <span class="mr-2 price-dc">$<%= product.price %></span>
-                      <span class="price-sale">$<%= product.price - (product.price * product.discount / 100) %></span>
+                      <span class="mr-2 price-dc">₹<%= product.regularPrice.toFixed(2) %></span>
+                      <span class="price-sale">₹<%= (product.regularPrice - (product.regularPrice * product.discount / 100)).toFixed(2) %></span>
                     </p>
                   <% } else { %>
-                    <p class="price"><span>$<%= product.regularPrice %></span></p>
+                    <p class="price"><span>₹<%= product.regularPrice.toFixed(2) %></span></p>
                   <% } %>
                 </div>
                 <p class="bottom-area d-flex px-3">
-                  <a href="/cart" class="add-to-cart text-center py-2 mr-1">
+                  <a href="#" class="add-to-cart text-center py-2 mr-1" onclick="addToCartHandler(event, '<%= product._id %>')">
                     <span>Add to cart <i class="ion-ios-add ml-1"></i></span>
                   </a>
                   <a href="#" class="buy-now text-center py-2">
@@ -404,3 +403,117 @@
 
    
   <%- include ("../partials/user/footer.ejs")  %>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- Add to your head section -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<script>
+ function addToCartHandler(event, productId) {
+    event.preventDefault();
+
+    fetch('/addToCart', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            productId: productId,
+            quantity: 1
+        })
+    })
+    .then(response => {
+      alert(response)
+      console.log(response)
+        if (!response.ok) {
+            return response.json().then(data => {
+                throw new Error(data.message || 'Failed to add product to cart');
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            // Show success message
+            Swal.fire({
+                title: 'Success!',
+                text: data.message || 'Product added to cart successfully!',
+                icon: 'success',
+                showConfirmButton: false,
+                timer: 1500
+            }).then(() => {
+                // Update cart count if available
+                if (data.cartCount !== undefined) {
+                    updateCartCount(data.cartCount);
+                }
+                
+                // Redirect to cart page if specified
+                if (data.redirect) {
+                    window.location.href = data.redirect;
+                }
+            });
+        } else {
+            throw new Error(data.message || 'Failed to add product to cart');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        
+        // Handle unauthorized/login required error
+        if (error.message.includes('Please login')) {
+            Swal.fire({
+                title: 'Login Required',
+                text: 'Please login to add items to your cart',
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonText: 'Login',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '/login';
+                }
+            });
+        } 
+        // Handle quantity limit error
+        else if (error.message.includes('Maximum quantity')) {
+            Swal.fire({
+                title: 'Quantity Limit Reached',
+                text: error.message,
+                icon: 'warning',
+                confirmButtonText: 'OK'
+            });
+        }
+        // Handle out of stock error
+        else if (error.message.includes('out of stock') || error.message.includes('available in stock')) {
+            Swal.fire({
+                title: 'Stock Limited',
+                text: error.message,
+                icon: 'warning',
+                confirmButtonText: 'OK'
+            });
+        }
+        // Handle other errors
+        else {
+            Swal.fire({
+                title: 'Error!',
+                text: error.message || 'Something went wrong. Please try again.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
+    });
+}
+
+// Helper function to update cart count in the UI
+function updateCartCount(count) {
+    const cartCountElements = document.querySelectorAll('.cart-count');
+    cartCountElements.forEach(element => {
+        element.textContent = count;
+    });
+}
+
+// Add this in your HTML head section if not already present
+// <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  

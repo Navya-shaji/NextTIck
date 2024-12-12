@@ -39,15 +39,23 @@ const productDetail = async(req,res)=>{
         console.log(productId);
         const product = await Product.findById(productId).populate('category');
         console.log(product)
+        const findCategory=product.category;
+
+
+        const recommendedProduct=await Product.find({category:findCategory,_id:{$ne:productId}})
+        console.log(recommendedProduct);
+        
+        
         // const findCategory=findCategory ?.categoryOffer || 0;
-        // const ProductOffer=product.productOffer ||0;
-        // const totalOffer=categoryOffer + productOffer;
+        const ProductOffer=product.productOffer ||0;
+        const totalOffer= ProductOffer;
         res.render("productDetails",{
-        user:userData,
-        product:product,
-        quantity:product.quantity,
-        // totalOffer:totalOffer,
-        // category:findCategory
+            user:userData,
+            product:product,
+            quantity:product.quantity,
+            totalOffer:totalOffer,
+            category:findCategory,
+            recommendedProduct
         });
     } catch (error) {
         console.error("Error for fetching product details",error);

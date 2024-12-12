@@ -8,6 +8,8 @@ const profileController =require("../controllers/user/profileController")
 const cartController = require("../controllers/user/cartController");
 const shopController =require("../controllers/user/shopController");
 const checkoutController=require("../controllers/user/checkoutController");
+const orderController=require("../controllers/user/orderController")
+
 
 
 
@@ -65,14 +67,35 @@ router.post("/postEditAddress/:id",userAuth,profileController.postEditAddress);
 router.get("/delete-address/:id",userAuth,profileController.deleteAddress);
 
 //shoping management........................
-router.get("/shop",userAuth,shopController.loadshoppingPage)
-router.get("/filter",userAuth,shopController.filterProduct)
 
+// Main shop page
+router.get('/shop', shopController.loadshoppingPage);
+
+// Search products
+router.get('/search', shopController.searchProducts);
+
+// Filter products (can be handled by the main shop route with query parameters)
+router.get('/filter', shopController.loadshoppingPage);
+
+// Sort products (can be handled by the main shop route with query parameters)
+router.get('/sort', shopController.loadshoppingPage);
 
 //cart management................................................................................................................
 
-router.post('/addToCart', userAuth,cartController.addToCart);
-router.get('/cart', userAuth,cartController. getCartItems);
-router.delete('/removeFromCart', userAuth,cartController. removeFromCart);
+router.post('/addToCart',userAuth,cartController.addToCart);
+router.get('/cart', cartController.getCart);
+router.post('/cart/update-quantity', userAuth, cartController.updateQuantity);
+router.post('/cart/remove', userAuth, cartController.removeFromCart);
 
+//checkoutpage........................
+router.get("/checkout",userAuth,checkoutController.getcheckoutPage);
+router.post("/checkout",userAuth,checkoutController.postCheckout);
+router.get("/ orderConfirm",checkoutController. orderConfirm);
+router.get("/orders",checkoutController.)
+//order..............
+// Profile page with orders
+router.get("/profile", profileController.userProfile);
+
+// Delete order
+router.delete("/orders/:orderId", profileController.deleteOrder);
 module.exports = router

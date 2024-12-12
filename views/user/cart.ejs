@@ -1,251 +1,269 @@
-<%- include("../partials/userr/header.ejs") %>
-<head>
-    <style>
-        .image {
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            height: 100%;
-        }
+<%- include("../../views/partials/user/header") %>
 
-        .main-image {
-            max-width: 100%;
-            height: auto;
-        }
-    </style>
-</head>
-<div class="mobile-header-active mobile-header-wrapper-style">
-    <div class="mobile-header-wrapper-inner">
-        <div class="mobile-header-top">
-            <div class="mobile-header-logo">
-                <a href="index.html"><img src="assets/imgs/theme/logo.svg" alt="logo"></a>
-            </div>
-            <div class="mobile-menu-close close-style-wrap close-style-position-inherit">
-                <button class="close-style search-close">
-                    <i class="icon-top"></i>
-                    <i class="icon-bottom"></i>
-                </button>
-            </div>
-        </div>
-        <div class="mobile-header-content-area">
-            <div class="mobile-search search-style-3 mobile-header-border">
-                <form action="#">
-                    <input type="text" placeholder="Search for watches…">
-                    <button type="submit"><i class="fi-rs-search"></i></button>
-                </form>
-            </div>
-            <div class="mobile-menu-wrap mobile-header-border">
-                <div class="main-categori-wrap mobile-header-border">
-                    <a class="categori-button-active-2" href="#">
-                        <span class="fi-rs-apps"></span> Browse Categories
-                    </a>
-                    <div class="categori-dropdown-wrap categori-dropdown-active-small">
-                        <ul>
-                            <li><a href="shop-grid-right.html"><i class="evara-font-watch"></i>Luxury Watches</a></li>
-                            <li><a href="shop-grid-right.html"><i class="evara-font-watch"></i>Sports Watches</a></li>
-                            <li><a href="shop-grid-right.html"><i class="evara-font-watch"></i>Dress Watches</a></li>
-                            <li><a href="shop-grid-right.html"><i class="evara-font-watch"></i>Smartwatches</a></li>
-                            <li><a href="shop-grid-right.html"><i class="evara-font-watch"></i>Vintage Watches</a></li>
-                            <li><a href="shop-grid-right.html"><i class="evara-font-watch"></i>Watch Accessories</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <!-- mobile menu start -->
-                <nav>
-                    <ul class="mobile-menu">
-                        <li class="menu-item-has-children"><span class="menu-expand"></span><a href="index.html">Home</a>
-                            <ul class="dropdown">
-                                <li><a href="index.html">Home 1</a></li>
-                                <li><a href="index-2.html">Home 2</a></li>
-                                <li><a href="index-3.html">Home 3</a></li>
-                                <li><a href="index-4.html">Home 4</a></li>
-                            </ul>
-                        </li>
-                        <li class="menu-item-has-children"><span class="menu-expand"></span><a href="shop-grid-right.html">shop</a>
-                            <ul class="dropdown">
-                                <li><a href="shop-grid-right.html">Shop Grid – Right Sidebar</a></li>
-                                <li><a href="shop-grid-left.html">Shop Grid – Left Sidebar</a></li>
-                                <li><a href="shop-list-right.html">Shop List – Right Sidebar</a></li>
-                                <li><a href="shop-list-left.html">Shop List – Left Sidebar</a></li>
-                                <li><a href="shop-fullwidth.html">Shop - Wide</a></li>
-                                <li class="menu-item-has-children"><span class="menu-expand"></span><a href="#">Single Product</a>
-                                    <ul class="dropdown">
-                                        <li><a href="shop-product-right.html">Product – Right Sidebar</a></li>
-                                        <li><a href="shop-product-left.html">Product – Left Sidebar</a></li>
-                                        <li><a href="shop-product-full.html">Product – No sidebar</a></li>
-                                    </ul>
-                                </li>
-                                <li><a href="shop-filter.html">Shop – Filter</a></li>
-                                <li><a href="shop-wishlist.html">Shop – Wishlist</a></li>
-                                <li><a href="shop-cart.html">Shop – Cart</a></li>
-                                <li><a href="shop-checkout.html">Shop – Checkout</a></li>
-                                <li><a href="shop-compare.html">Shop – Compare</a></li>
-                            </ul>
-                        </li>
-                        <li class="menu-item-has-children"><span class="menu-expand"></span><a href="#">Mega menu</a>
-                            <ul class="dropdown">
-                                <li class="menu-item-has-children"><span class="menu-expand"></span><a href="#">Watch Brands</a>
-                                    <ul class="dropdown">
-                                        <li><a href="shop-product-right.html">Rolex</a></li>
-                                        <li><a href="shop-product-right.html">Omega</a></li>
-                                        <li><a href="shop-product-right.html">Tag Heuer</a></li>
-                                        <li><a href="shop-product-right.html">Seiko</a></li>
-                                    </ul>
-                                </li>
-                                <li class="menu-item-has-children"><span class="menu-expand"></span><a href="#">Watch Styles</a>
-                                    <ul class="dropdown">
-                                        <li><a href="shop-product-right.html">Dive Watches</a></li>
-                                        <li><a href="shop-product-right.html">Chronographs</a></li>
-                                        <li><a href="shop-product-right.html">Dress Watches</a></li>
-                                    </ul>
-                                </li>
-                                <li class="menu-item-has-children"><span class="menu-expand"></span><a href="#">Watch Features</a>
-                                    <ul class="dropdown">
-                                        <li><a href="shop-product-right.html">Automatic Watches</a></li>
-                                        <li><a href="shop-product-right.html">Solar Powered</a></li>
-                                        <li><a href="shop-product-right.html">Smartwatches</a></li>
-                                        <li><a href="shop-product-right.html">Limited Editions</a></li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="menu-item-has-children"><span class="menu-expand"></span><a href="blog-category-fullwidth.html">Blog</a>
-                            <ul class="dropdown">
-                                <li><a href="blog-category-grid.html">Blog Category Grid</a></li>
-                                <li><a href="blog-category-list.html">Blog Category List</a></li>
-                                <li><a href="blog-category-big.html">Blog Category Big</a></li>
-                                <li><a href="blog-category-fullwidth.html">Blog Category Wide</a></li>
-                                <li class="menu-item-has-children"><span class="menu-expand"></span><a href="#">Single Product Layout</a>
-                                    <ul class="dropdown">
-                                        <li><a href="blog-post-left.html">Left Sidebar</a></li>
-                                        <li><a href="blog-post-right.html">Right Sidebar</a></li>
-                                        <li><a href="blog-post-fullwidth.html">No Sidebar</a></li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="menu-item-has-children"><span class="menu-expand"></span><a href="#">Pages</a>
-                            <ul class="dropdown">
-                                <li><a href="page-about.html">About Us</a></li>
-                                <li><a href="page-contact.html">Contact</a></li>
-                                <li><a href="page-account.html">My Account</a></li>
-                                <li><a href="page-login-register.html">login/register</a></li>
-                                <li><a href="page-purchase-guide.html">Purchase Guide</a></li>
-                                <li><a href="page-privacy-policy.html">Privacy Policy</a></li>
-                                <li><a href="page-terms.html">Terms of Service</a></li>
-                                <li><a href="page-404.html">404 Page</a></li>
-                            </ul>
-                        </li>
-                        <li class="menu-item-has-children"><span class="menu-expand"></span><a href="#">Language</a>
-                            <ul class="dropdown">
-                                <li><a href="#">English</a></li>
-                                <li><a href="#">French</a></li>
-                                <li><a href="#">German</a></li>
-                                <li><a href="#">Spanish</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </nav>
-                <!-- mobile menu end -->
-            </div>
-            <div class="mobile-header-info-wrap mobile-header-border">
-                <div class="single-mobile-header-info mt-30">
-                    <a href="page-contact.html"> Our location </a>
-                </div>
-                <div class="single-mobile-header-info">
-                    <a href="page-login-register.html">Log In / Sign Up </a>
-                </div>
-                <div class="single-mobile-header-info">
-                    <a href="#">(+01) - 2345 - 6789 </a>
-                </div>
-            </div>
-            <div class="mobile-social-icon">
-                <h5 class="mb-15 text-grey-4">Follow Us</h5>
-                <a href="#"><img src="assets/imgs/theme/icons/icon-facebook.svg" alt=""></a>
-                <a href="#"><img src="assets/imgs/theme/icons/icon-twitter.svg" alt=""></a>
-                <a href="#"><img src="assets/imgs/theme/icons/icon-instagram.svg" alt=""></a>
-                <a href="#"><img src="assets/imgs/theme/icons/icon-pinterest.svg" alt=""></a>
-                <a href="#"><img src="assets/imgs/theme/icons/icon-youtube.svg" alt=""></a>
-            </div>
-        </div>
-    </div>
-</div>
+
+<style>
+   /* General Styling */
+.detail-qty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px; /* Increased gap for better alignment */
+    width: auto; /* Auto width for better layout adaptability */
+    height: 40px; /* Slightly increased height */
+}
+
+.detail-qty button {
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 35px; /* Increased button size */
+    height: 35px;
+    font-size: 18px; /* Larger font size */
+    font-weight: bold;
+    cursor: pointer;
+    color: #333;
+    transition: background-color 0.3s ease;
+}
+
+.detail-qty button:hover {
+    background-color: #e0e0e0;
+}
+
+.qty-val {
+    width: 50px; /* Increased width for better readability */
+    text-align: center;
+    font-size: 16px; /* Larger font size */
+    border: none;
+    outline: none;
+    background-color: transparent;
+    pointer-events: none;
+}
+
+/* Table Layout */
+.table.shopping-summery {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+    top:30px; /* Increased bottom margin */
+}
+
+.table.shopping-summery th,
+.table.shopping-summery td {
+    padding: 15px; /* Increased padding */
+    border: 1px solid #ddd;
+    vertical-align: middle;
+    font-size: 16px; /* Increased font size for better readability */
+}
+
+.table.shopping-summery .image.product-thumbnail img {
+    width: 80px; /* Increased size of the image */
+    height: 80px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.table.shopping-summery .product-des {
+    text-align: left;
+    padding-left: 10px; /* Added padding for better spacing */
+}
+
+.cart-action a.btn {
+    background-color: #424874;
+    color: #fff;
+    padding: 12px 20px; /* Adjusted padding for more space */
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.cart-action a.btn:hover {
+    background-color: #36395E;
+}
+
+/* Item Status */
+.item-status {
+    padding: 8px 15px;
+    border-radius: 4px;
+    font-size: 14px; /* Slightly larger font size */
+    font-weight: 500;
+    text-align: center;
+}
+
+.status-placed {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+
+/* Cart Totals */
+.cart-totals {
+    background: #fafafa;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 30px; /* Added top margin */
+}
+
+.cart_total_amount span {
+    font-size: 24px; /* Increased font size for better visibility */
+    color: #424874;
+}
+
+/* Button for Proceed to Checkout */
+.btn-success {
+    background-color: #28a745;
+    color: white;
+    padding: 12px 20px; /* Adjusted padding for better button size */
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.btn-success:disabled {
+    background-color: #A6B1E1;
+    color: white;
+    border-color: darkgray;
+}
+
+/* Improved Spacing Between Sections */
+.mt-50, .mb-50 {
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+.divider.center_icon i {
+    font-size: 24px; /* Adjusted size of the divider icon */
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .table.shopping-summery th,
+    .table.shopping-summery td {
+        padding: 10px; /* Reduced padding for smaller screens */
+        font-size: 14px;
+    }
+
+    .detail-qty {
+        gap: 8px; /* Adjusted gap for small screens */
+    }
+
+    .qty-val {
+        width: 40px; /* Adjusted width */
+    }
+
+    .cart-totals {
+        padding: 15px;
+    }
+}
+
+</style>
+
+
 <main class="main">
     <div class="page-header breadcrumb-wrap">
         <div class="container">
-            <div class="breadcrumb">
-                <a href="/" rel="nofollow">Home</a>
-                <span></span> Shop
-                <span></span> Your Cart
-            </div>
+            <!-- <div class="breadcrumb"> -->
+                <!-- <a href="/" rel="nofollow">Home</a> -->
+                <!-- <span></span> Shop
+                <span></span> Cart -->
+            <!-- </div>  -->
         </div>
     </div>
-    <% if (products.length === 0) { %>
-        <section class="container">
-            <div class="image">
-                <div class="image">
-                    <img src="assets/imgs/banner/empty-cart.png" alt="Empty Cart Illustration" class="main-image">
-                </div>
-            </div>
-            <div class="content">
-                <h2 class="text-center mt-4">Your cart is empty</h2>
-                <p class="text-center">Explore our collection and find your perfect timepiece.</p>
-                <div class="text-center mt-4">
-                    <a href="/shop" class="btn btn-primary">Continue Shopping</a>
-                </div>
-            </div>
-        </section>
-    <% } else { %>
     <section class="mt-50 mb-50">
         <div class="container">
             <div class="row">
                 <div class="col-12">
                     <div class="table-responsive">
-                        <table class="table shopping-summery text-center clean">
-                            <thead>
-                                <tr class="main-heading">
-                                    <th scope="col">Image</th>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Price</th>
-                                    <th scope="col">Quantity</th>
-                                    <th scope="col">Subtotal</th>
-                                    <th scope="col">Remove</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <% for (let i = 0; i < products.length; i++) { %>
-                                    <tr>
-                                        <td class="image product-thumbnail">
-                                            <img src="/uploads/re-image/<%= products[i].product.productImage[0] %>" alt="#">
-                                        </td>
-                                        <td class="product-des product-name">
-                                            <h5 class="product-name">
-                                                <a href="/productDetails"><%= products[i].product.productName %></a>
-                                            </h5>
-                                            <p class="font-xs">Movement: <%= products[i].product.movement %></p>
-                                        </td>
-                                        <td class="price" data-title="Price">
-                                            <span>$<%= products[i].product.salePrice %></span>
-                                        </td>
-                                        <td class="text-center" data-title="Stock">
-                                            <div class="detail-qty border radius m-auto">
-                                                <a href="#" class="qty-down"><i class="fi-rs-angle-small-down" onclick="updateQuantity('<%= products[i].product._id %>', 'decrease')"></i></a>
-                                                <span class="qty-val" id="quantity-<%= products[i].product._id %>"><%= products[i].quantity %></span>
-                                                <a href="#" class="qty-up"><i class="fi-rs-angle-small-up" onclick="updateQuantity('<%= products[i].product._id %>', 'increase')"></i></a>
-                                            </div>
-                                        </td>
-                                        <td class="text-right" data-title="Cart">
-                                            <span>$<%= products[i].totalPrice %></span>
-                                        </td>
-                                        <td class="action" data-title="Remove">
-                                            <a href="#" class="text-muted" onclick="deleteProduct('<%= products[i].product._id %>')"><i class="fi-rs-trash"></i></a>
-                                        </td>
+                        <% if (cart && products.length > 0) { %>
+                            <table class="table shopping-summery text-center clean">
+                                <thead>
+                                    <tr class="main-heading">
+                                        <th scope="col">Image</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Price</th>
+                                        <th scope="col">Quantity</th>
+                                        <th scope="col">Subtotal</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Remove</th>
                                     </tr>
-                                <% } %>
-                            </tbody>                            
-                        </table>
+                                </thead>
+                                <tbody>
+                                    <% products.forEach(item => { %>
+                                        <tr>
+                                            <td class="image product-thumbnail">
+                                                <img src="/uploads/re-image/<%= item.productId.productImage?.[0] || 'default.png' %>" alt="#">
+                                            </td>
+                                            <td class="product-des product-name">
+                                                <h5 class="product-name">
+                                                    <span><%= item.productId?.productName || 'Unnamed Product' %></span>
+                                                </h5>
+                                            </td>
+                                            <td class="price" data-title="Price">
+                                                <span>₹<%= item.price %></span>
+                                            </td>
+                                            <td class="text-center" data-title="Quantity">
+                                                <div class="detail-qty border radius m-auto">
+                                                    <button class="qty-down" 
+                                                            onclick="updateQuantity('<%= item.productId?._id %>', -1)"
+                                                            <%= item.status !== 'placed' ? 'disabled' : '' %>>
+                                                        -
+                                                    </button>
+                                                    <input readonly class="qty-val" 
+                                                           id="qty-<%= item.productId?._id %>" 
+                                                           value="<%= item.quantity %>">
+                                                    <button class="qty-up" 
+                                                            onclick="updateQuantity('<%= item.productId?._id %>', 1)"
+                                                            <%= item.status !== 'placed' ? 'disabled' : '' %>>
+                                                        +
+                                                    </button>
+                                                </div>
+                                            </td>
+                                            <td class="text-right" data-title="Subtotal">
+                                                <span id="totalPrice-<%= item.productId?._id %>">
+                                                    ₹<%= item.totalPrice || 0 %>
+                                                </span>
+                                            </td>
+                                            <td class="text-center" data-title="Status">
+                                                <span class="item-status status-<%= item.status?.toLowerCase() %>">
+                                                    <%= item.status || 'Unknown' %>
+                                                </span>
+                                                <% if (item.cancellationReason && item.cancellationReason !== 'none') { %>
+                                                    <div class="small text-danger mt-1">
+                                                        <%= item.cancellationReason %>
+                                                    </div>
+                                                <% } %>
+                                            </td>
+                                            <td class="action" data-title="Remove">
+                                                <% if (item.status === 'placed') { %>
+                                                    <button type="button" 
+                                                            class="btn btn-danger" 
+                                                            onclick="confirmRemoveProduct('<%= item.productId?._id %>')">
+                                                        Delete
+                                                    </button>
+                                                <% } %>
+                                            </td>
+                                        </tr>
+                                    <% }); %>
+                                </tbody>
+                            </table>
+                        <% } else { %>
+                            <div class="text-center">
+                                <h1 class="mb-4">Your Cart is Empty</h1>
+                                <p class="mb-4">It seems like you haven't added any products to your cart yet.</p>
+                                <p>Start browsing our products and add them to your cart to complete your order.</p>
+                            </div>
+                        <% } %>
                     </div>
-                    <div class="divider center_icon mt-50 mb-50"><i class="fi-rs-fingerprint"></i></div>
+    
+                    <div class="cart-action text-end">
+                        <a href="/" class="btn">
+                            <i class="fi-rs-shopping-bag mr-10"></i>Continue Shopping
+                        </a>
+                    </div>
+    
+                    <div class="divider center_icon mt-50 mb-50">
+                        <i class="fi-rs-fingerprint"></i>
+                    </div>
+    
                     <div class="row mb-50">
                         <div class="col-lg-6 col-md-12">
                             <div class="border p-md-4 p-30 border-radius cart-totals">
@@ -256,21 +274,29 @@
                                     <table class="table">
                                         <tbody>
                                             <tr>
-                                                <td class="cart_total_label">Cart Subtotal</td>
-                                                <td class="cart_total_amount"><span class="font-lg fw-900 text-brand">$<%= cartPrice %></span></td>
-                                            </tr>
-                                            <tr>
-                                                <td class="cart_total_label">Shipping</td>
-                                                <td class="cart_total_amount"> <i class="ti-gift mr-5"></i> Free Shipping</td>
-                                            </tr>
-                                            <tr>
                                                 <td class="cart_total_label">Total</td>
-                                                <td class="cart_total_amount"><strong><span class="font-xl fw-900 text-brand">$<%= cartPrice %></span></strong></td>
+                                                <td class="cart_total_amount">
+                                                    <strong>
+                                                        <span class="font-xl fw-900 text-brand">
+                                                            ₹<%= totalAmount.toLocaleString() %>
+                                                        </span>
+                                                    </strong>
+                                                </td>
                                             </tr>
                                         </tbody>
                                     </table>
                                 </div>
-                                <a href="/checkout" class="btn"> <i class="fi-rs-box-alt mr-10"></i> Proceed To CheckOut</a>
+    
+                                <% if (products.some(item => item.status === 'placed')) { %>
+                                    <a href="/checkout" class="btn btn-success">
+                                        <i class="fi-rs-box-alt mr-10"></i> Proceed To CheckOut
+                                    </a>
+                                <% } else { %>
+                                    <button class="btn btn-success" disabled 
+                                            style="background-color: #A6B1E1; color: white; border-color: darkgray;">
+                                        <i class="fi-rs-box-alt mr-10"></i> Proceed To CheckOut
+                                    </button>
+                                <% } %>
                             </div>
                         </div>
                     </div>
@@ -278,86 +304,114 @@
             </div>
         </div>
     </section>
-    <% } %>
+    
 </main>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<%- include("../partials/userr/footer.ejs") %>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    async function updateQuantity(productId, action) {
+    async function updateQuantity(productId, change) {
+        const quantityElement = document.getElementById(`qty-${productId}`);
+        const totalPriceElement = document.getElementById(`totalPrice-${productId}`);
+        const totalCartAmountElement = document.querySelector('.cart_total_amount span');
+
+        let currentQty = parseInt(quantityElement.value) || 0;
+        const newQuantity = currentQty + change;
+
+        if (newQuantity < 1) {
+            Swal.fire({
+                icon: "warning",
+                title: "Minimum quantity reached",
+                text: "The minimum quantity is 1"
+            });
+            return;
+        }
+
+        if (newQuantity > 5) {
+            Swal.fire({
+                icon: "warning",
+                title: "Maximum quantity reached",
+                text: "The maximum quantity allowed is 5"
+            });
+            return;
+        }
+
         try {
             const response = await fetch('/cart/update-quantity', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ productId, action }),
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    productId,
+                    quantity: newQuantity
+                })
             });
 
             const data = await response.json();
 
-            if (response.status === 200) {
-                // Success Alert
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success',
-                    text: data.message,
-                    timer: 1500,
-                    showConfirmButton: false,
-                }).then(() => {
-                    window.location.reload(); // Reload cart page
-                });
+            if (data.success) {
+                quantityElement.value = newQuantity;
+                totalPriceElement.innerText = `₹${data.totalPrice}`;
+                totalCartAmountElement.innerText = `₹${data.cartTotal.toLocaleString()}`;
             } else {
-                // Warning Alert
                 Swal.fire({
-                    icon: 'warning',
-                    title: 'Warning',
-                    text: data.message,
+                    icon: "error",
+                    title: "Update failed",
+                    text: data.message || "Error updating cart."
                 });
             }
         } catch (error) {
-            // Error Alert
+            console.error('Error:', error);
             Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Failed to update quantity. Please try again.',
+                icon: "error",
+                title: "Error",
+                text: "Unable to update cart. Please try again."
             });
         }
-    };
+    }
 
-    async function deleteProduct(productId) {
-        try {
-            const response = await fetch('/cart/deleteProduct', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ productId }),
-            });
-
-            const data = await response.json();
-            console.log(data);
-            if (response.status === 200) {
-                // Success Alert
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success',
-                    text: data.message,
-                    timer: 1500,
-                    showConfirmButton: false,
-                }).then(() => {
-                    window.location.reload(); // Reload cart page
-                });
-            } else {
-                // Warning Alert
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: data.message,
+    function confirmRemoveProduct(productId) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Do you want to remove this product from your cart?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, remove it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch('/cart/remove', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ productId })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: data.message || 'Failed to remove item'
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Failed to remove item'
+                    });
                 });
             }
-        } catch (error) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Failed to remove from cart. Please try again.',
-            });
-        }
-    };
+        });
+    }
 </script>
+
+<%- include("../../views/partials/user/footer") %>

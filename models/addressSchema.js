@@ -11,7 +11,7 @@ const addressSchema = new Schema({
         {
             addressType: {
                 type: String,
-                required: true, 
+                // required: true, 
             },
             name: {
                 type: String,

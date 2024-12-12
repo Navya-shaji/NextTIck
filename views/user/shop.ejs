@@ -1,14 +1,16 @@
 <%- include("../../views/partials/user/header.ejs") %>
 <head>
   <link rel="stylesheet" href="/styles/shop-page.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
 <div class="main-container">
-  <section class="shop-page container">
+  <section class="shop-page">
     <div class="shop-topbar">
+      <!-- <h1 class="shop-title">Our Shop</h1> -->
       <div class="search-bar">
-        <form action="" method="POST" class="search-form">
-          <input type="text" name="query" placeholder="Search items..." class="search-input" />
+        <form action="/search" method="GET" class="search-form">
+          <input type="text" name="query" placeholder="Search items..." class="search-input" value="<%= query.query || '' %>" />
           <button type="submit" class="search-button">Search</button>
         </form>
       </div>
@@ -20,11 +22,13 @@
           <div class="filter-title">Categories</div>
           <div class="category-brand-container">
             <ul>
-              <% for(let i = 0; i < category.length; i++) { %>
+              <% categories.forEach(function(category) { %>
                 <li class="filter-item">
-                  <a href="/filter?category=<%= category[i]._id %>"><%= category[i].name %></a>
+                  <a href="/shop?category=<%= category._id %>" class="<%= query.category === category._id.toString() ? 'active' : '' %>">
+                    <%= category.name %>
+                  </a>
                 </li>
-              <% } %>
+              <% }); %>
             </ul>
           </div>
         </div>
@@ -33,75 +37,175 @@
           <div class="filter-title">Brands</div>
           <div class="category-brand-container">
             <ul>
-              <% for(let i = 0; i < brand.length; i++) { %>
+              <% brands.forEach(function(brand) { %>
                 <li class="filter-item">
-                  <a href="/filter?brand=<%= brand[i]._id %>"><%= brand[i].brandName %></a>
+                  <a href="/shop?brand=<%= brand._id %>" class="<%= query.brand === brand._id.toString() ? 'active' : '' %>">
+                    <%= brand.brandName %>
+                  </a>
                 </li>
-              <% } %>
+              <% }); %>
             </ul>
           </div>
         </div>
 
-        <div class="price-filter">
+        <div class="filter-section">
           <div class="filter-title">Filter by Price</div>
-          <form id="price-filter-form">
-            <div class="price-options">
-              <a href=""><button type="button" class="price-button">Under ₹500</button></a>
-              <a href=""><button type="button" class="price-button">₹500 - ₹1000</button></a>
-              <a href=""><button type="button" class="price-button">₹1000 - ₹1500</button></a>
-              <a href=""><button type="button" class="price-button">Above ₹1500</button></a>
-            </div>
+          <form action="/shop" method="GET" id="price-filter-form">
+            <input type="number" name="minPrice" placeholder="Min Price" value="<%= query.minPrice || '' %>">
+            <input type="number" name="maxPrice" placeholder="Max Price" value="<%= query.maxPrice || '' %>">
+            <button type="submit">Apply</button>
           </form>
+        </div>
+
+        <div class="filter-section">
+          <div class="filter-title">Availability</div>
+          <label>
+            <input type="checkbox" name="inStock" value="true" <%= query.inStock === 'true' ? 'checked' : '' %>> In Stock Only
+          </label>
         </div>
       </aside>
 
-      <main class="product-grid">
-        <% for(let i = 0; i < products.length; i++) { %>
-          <div class="product-card">
-            <span class="wishlist-btn" onclick="">❤️</span>
-            <a href="">
-              <img src="/uploads/re-image/<%= products[i].productImage[0] %>" alt="<%= products[i].productName %>" />
-              <h4><%= products[i].productName %></h4>
-              <p>Brand: <%= products[i].brand %></p>
-              <p>Price: ₹
-                <% if (products[i].salePrice) { %>
-                  <%= products[i].salePrice.toLocaleString('en-IN') %>
-                <% } else { %>
-                  <%= 'N/A' %>  <!-- Add a fallback if salePrice is undefined -->
-                <% } %>
-                <span class="text-muted">
-                  <strike>
-                    <% if (products[i].regularPrice) { %>
-                      ₹<%= products[i].regularPrice.toLocaleString('en-IN') %>
-                    <% } else { %>
-                      ₹<%= 'N/A' %>  <!-- Fallback if regularPrice is undefined -->
-                    <% } %>
-                  </strike>
-                </span>
-              </p>
-            </a>
-            <button class="add-to-cart-btn" onclick="">Add to Cart</button>
-          </div>
-        <% } %>
+      <main class="product-content">
+        <div class="sort-options">
+          <form id="sortForm" action="/shop" method="GET">
+            <!-- Preserve existing query parameters -->
+            <% for (const [key, value] of Object.entries(query)) { %>
+              <% if (key !== 'sort' && key !== 'page') { %>
+                <input type="hidden" name="<%= key %>" value="<%= value %>">
+              <% } %>
+            <% } %>
+            
+            <label for="sort">Sort by:</label>
+            <select name="sort" id="sort">
+              <option value="">Default</option>
+              <option value="popularity" <%= query.sort === 'popularity' ? 'selected' : '' %>>Most Popular</option>
+              <option value="price_asc" <%= query.sort === 'price_asc' ? 'selected' : '' %>>Price: Low to High</option>
+              <option value="price_desc" <%= query.sort === 'price_desc' ? 'selected' : '' %>>Price: High to Low</option>
+              <option value="rating" <%= query.sort === 'rating' ? 'selected' : '' %>>Highest Rated</option>
+              <option value="newest" <%= query.sort === 'newest' ? 'selected' : '' %>>New Arrivals</option>
+              <option value="name_asc" <%= query.sort === 'name_asc' ? 'selected' : '' %>>Name: A to Z</option>
+              <option value="name_desc" <%= query.sort === 'name_desc' ? 'selected' : '' %>>Name: Z to A</option>
+            </select>
+          </form>
+        </div>
+
+        <div class="product-grid">
+          <% products.forEach(function(product) { %>
+            <div class="product-card">
+              <span class="wishlist-btn" onclick="addToWishlist('<%= product._id %>')">❤️</span>
+              <a href="/product/<%= product._id %>">
+                <img src="/uploads/re-image/<%= product.productImage[0] %>" alt="<%= product.productName %>" />
+                <h4><%= product.productName %></h4>
+                <p>Brand: <%= product.brand %></p>
+                <p>Price: ₹
+                  <% if (product.salePrice && product.salePrice < product.regularPrice) { %>
+                    <%= product.salePrice.toLocaleString('en-IN') %>
+                    <span class="text-muted">
+                      <strike>₹<%= product.regularPrice.toLocaleString('en-IN') %></strike>
+                    </span>
+                  <% } else { %>
+                    <%= product.regularPrice.toLocaleString('en-IN') %>
+                  <% } %>
+                </p>
+                <p>Rating: <%= product.averageRating ? product.averageRating.toFixed(1) : 'N/A' %> / 5</p>
+                <p>In Stock: <%= product.quantity %></p>
+              </a>
+              <button class="add-to-cart-btn" onclick="addToCart('<%= product._id %>')" <%= product.quantity > 0 ? '' : 'disabled' %>>
+                <%= product.quantity > 0 ? 'Add to Cart' : 'Out of Stock' %>
+              </button>
+            </div>
+          <% }); %>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination">
+          <% if (currentPage > 1) { %>
+            <a class="btn" href="?page=<%= currentPage - 1 %>&<%= new URLSearchParams(query).toString() %>">Prev</a>
+          <% } %>
+
+          <% for (let i = 1; i <= totalPages; i++) { %>
+            <a class="btn <%= currentPage === i ? 'active' : '' %>" href="?page=<%= i %>&<%= new URLSearchParams(query).toString() %>"><%= i %></a>
+          <% } %>
+
+          <% if (currentPage < totalPages) { %>
+            <a class="btn" href="?page=<%= currentPage + 1 %>&<%= new URLSearchParams(query).toString() %>">Next</a>
+          <% } %>
+        </div>
       </main>
-    </div>
-
-    <!-- Pagination -->
-    <div class="pagination">
-      <% if (currentPage > 1) { %>
-        <a class="btn" href="/shop?page=<%= currentPage - 1 %>">Prev</a>
-      <% } %>
-
-      <% for (let i = 1; i <= totalPages; i++) { %>
-        <a class="btn <%= currentPage === i ? 'active' : '' %>" href="/shop?page=<%= i %>"><%= i %></a>
-      <% } %>
-
-      <% if (currentPage < totalPages) { %>
-        <a class="btn" href="/shop?page=<%= currentPage + 1 %>">Next</a>
-      <% } %>
     </div>
   </section>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+<script>
+  // Sorting functionality
+  document.getElementById('sort').addEventListener('change', function() {
+    const form = document.getElementById('sortForm');
+    
+    // Reset to first page when sorting changes
+    const pageInput = form.querySelector('input[name="page"]');
+    if (pageInput) {
+      pageInput.value = '1';
+    }
+    
+    form.submit();
+  });
+  
+  // Price filter submission
+  document.getElementById('price-filter-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const currentUrl = new URL(window.location.href);
+    const minPrice = this.querySelector('input[name="minPrice"]').value;
+    const maxPrice = this.querySelector('input[name="maxPrice"]').value;
+    
+    if (minPrice) currentUrl.searchParams.set('minPrice', minPrice);
+    if (maxPrice) currentUrl.searchParams.set('maxPrice', maxPrice);
+    currentUrl.searchParams.set('page', '1'); // Reset to first page
+    
+    window.location.href = currentUrl.toString();
+  });
+  
+  // In-stock filter
+  document.querySelector('input[name="inStock"]').addEventListener('change', function() {
+    const currentUrl = new URL(window.location.href);
+    if (this.checked) {
+      currentUrl.searchParams.set('inStock', 'true');
+    } else {
+      currentUrl.searchParams.delete('inStock');
+    }
+    currentUrl.searchParams.set('page', '1'); // Reset to first page
+    window.location.href = currentUrl.toString();
+  });
+  </script>
+<script>
+
+function addToWishlist(productId) {
+  // Implement wishlist functionality
+  console.log('Add to wishlist:', productId);
+}
+
+function addToCart(productId) {
+  // Implement add to cart functionality
+  console.log('Add to cart:', productId);
+}
+
+// Apply filters and sorting
+document.getElementById('sort').addEventListener('change', function() {
+  const currentUrl = new URL(window.location.href);
+  currentUrl.searchParams.set('sort', this.value);
+  window.location.href = currentUrl.toString();
+});
+
+document.querySelector('input[name="inStock"]').addEventListener('change', function() {
+  const currentUrl = new URL(window.location.href);
+  if (this.checked) {
+    currentUrl.searchParams.set('inStock', 'true');
+  } else {
+    currentUrl.searchParams.delete('inStock');
+  }
+  window.location.href = currentUrl.toString();
+});
+</script>
 <%- include("../../views/partials/user/footer.ejs") %>
+

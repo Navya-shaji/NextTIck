@@ -6,18 +6,91 @@ const Order = require('../../models/orderSchema');
 const { compareSync } = require("bcrypt");
 
 
+// const getcheckoutPage = async (req, res) => {
+//     console.log("Fetching cart details...");
+//     try {
+//         const user = req.session.user;
+//         const productId = req.query.id || null;
+//         const quantity = parseInt(req.query.quantity) || 1; 
+
+//         if (!user) {
+//             return res.redirect("/login");
+//         }
+
+//         const address = await Address.findOne({userId:user._id});
+//         if (!productId) {
+//             const cart = await Cart.findOne({ userId: user._id }).populate("items.productId");
+
+//             if (!cart || !cart.items || cart.items.length === 0) {
+//                 return res.redirect("/");
+//             }
+
+//             const products = cart.items.map(item => {
+//                 const product = item.productId; 
+//                 const productImage = product?.productImage || []; 
+//                 return {
+//                     _id: product._id,
+//                     productName: product.productName,
+//                     productImage: productImage.length > 0 ? productImage : ["default-image.jpg"], 
+//                     salePrice: product.salePrice || 0, 
+//                     quantity: item.quantity || 1 
+//                 };
+//             });
+
+//             const subtotal = products.reduce((sum, item) => {
+//                 return sum + item.salePrice * item.quantity;
+//             }, 0);
+
+//             return res.render("checkout", { user, product: products, subtotal ,quantity:null,address:address.address});
+//         }
+
+//         if (productId) {
+//             const product = await Product.findById(productId);
+//             if (!product) {
+//                 return res.redirect("/pageNotFound");
+//             }
+
+//             console.log("Single product details:", product);
+
+//             const productData = {
+//                 _id: product._id,
+//                 productName: product.productName,
+//                 productImage: product.productImage?.length > 0 ? product.productImage : ["default-image.jpg"],
+//                 salePrice: product.salePrice || 0,
+//                 quantity: quantity // Use the quantity from the query
+//             };
+
+//             const subtotal = productData.salePrice * quantity;
+
+//             // Render the checkout page with the specific product details
+//             return res.render("checkout", { user, product: [productData], subtotal,quantity:quantity ,address:address.address});
+//         }
+//     } catch (error) {
+//         console.error("Error fetching checkout page:", error.message);
+//         return res.redirect("/pageNotFound");
+//     }
+// };
+
+
+
 const getcheckoutPage = async (req, res) => {
     console.log("Fetching cart details...");
     try {
         const user = req.session.user;
         const productId = req.query.id || null;
-        const quantity = parseInt(req.query.quantity) || 1; 
+        const quantity = parseInt(req.query.quantity) || 1;
 
         if (!user) {
             return res.redirect("/login");
         }
 
-        const address = await Address.findOne({userId:user._id});
+        // Fetch the user's address
+        const address = await Address.findOne({ userId: user._id });
+        
+        // If no address found, set it to an empty object to avoid null issues
+        const addressData = address || { address: [] };
+
+        // If no specific product is queried, show cart items
         if (!productId) {
             const cart = await Cart.findOne({ userId: user._id }).populate("items.productId");
 
@@ -25,25 +98,41 @@ const getcheckoutPage = async (req, res) => {
                 return res.redirect("/");
             }
 
+            // Map cart items to extract product details
             const products = cart.items.map(item => {
-                const product = item.productId; 
-                const productImage = product?.productImage || []; 
+                const product = item.productId;
+                const productImage = product?.productImage || [];
                 return {
                     _id: product._id,
                     productName: product.productName,
-                    productImage: productImage.length > 0 ? productImage : ["default-image.jpg"], 
-                    salePrice: product.salePrice || 0, 
-                    quantity: item.quantity || 1 
+                    productImage: productImage.length > 0 ? productImage : ["default-image.jpg"],
+                    salesPrice: product.salesPrice || 0,
+                    quantity: item.quantity || 1,
+                    // total: product.salesPrice * item.quantity
                 };
             });
 
             const subtotal = products.reduce((sum, item) => {
-                return sum + item.salePrice * item.quantity;
+                return sum + item.salesPrice * item.quantity;
             }, 0);
-
-            return res.render("checkout", { user, product: products, subtotal ,quantity:null,address:address.address});
+            console.log("rendering checkout")
+            console.log({ 
+                user, 
+                product: products, 
+                subtotal, 
+                quantity: null, 
+                addressData 
+            })
+            return res.render("checkout", { 
+                user, 
+                product: products, 
+                subtotal, 
+                quantity: null, 
+                addressData 
+            });
         }
 
+        // If a specific product is queried
         if (productId) {
             const product = await Product.findById(productId);
             if (!product) {
@@ -61,9 +150,21 @@ const getcheckoutPage = async (req, res) => {
             };
 
             const subtotal = productData.salePrice * quantity;
+            console.log("reder", { 
+                user, 
+                product: [productData], 
+                subtotal, 
+                quantity, 
+                addressData 
+            })
+            return res.render("checkout", { 
+                user, 
+                product: [productData], 
+                subtotal, 
+                quantity, 
+                addressData 
+            });
 
-            // Render the checkout page with the specific product details
-            return res.render("checkout", { user, product: [productData], subtotal,quantity:quantity ,address:address.address});
         }
     } catch (error) {
         console.error("Error fetching checkout page:", error.message);
@@ -74,69 +175,77 @@ const getcheckoutPage = async (req, res) => {
 
 
 
+
 const postCheckout = async (req, res) => {
     try {
-        const userId = req.session.user;
+        const userId = req.session.user; // Get the user ID from the session
 
         if (!userId) {
-            return res.redirect("/login");
+            return res.redirect("/login"); // Redirect to login if user is not logged in
         }
 
         const { address, products, subtotal, total, paymentMethod } = req.body;
-        console.log("products details in check out ",products)
+
+        console.log("Request Body:", req.body);
 
         if (!Array.isArray(products) || products.length === 0) {
             return res.status(400).json({ success: false, message: "No products provided" });
         }
 
-        const groupedProducts = products.reduce((acc, item) => {
-            acc[item.id] = acc[item.id] || { ...item, quantity: 0 };
-            acc[item.id].quantity += item.quantity;
-            return acc;
-        }, {});
+        // Validate product stock and reduce quantity
+        for (let product of products) {
+            console.log("Processing product:", product);
 
-        for (let productId in groupedProducts) {
-            const item = groupedProducts[productId];
-            console.log("product id",productId)
-            const product = await Product.findById(productId); 
+            const dbProduct = await Product.findById(product._id); // Fetch the product from the database
 
-            if (!product) {
-                return res.status(404).json({ success: false, message: `Product not found: ${productId}` });
+            if (!dbProduct) {
+                return res.status(404).json({ success: false, message: `Product not found: ${product._id}` });
             }
 
-            if (product.quantity < item.quantity) {
+            if (dbProduct.quantity < product.quantity) {
                 return res.status(400).json({
                     success: false,
-                    message: `Not enough stock for product: ${product.name}`,
+                    message: `Not enough stock for product: ${dbProduct.name}`,
                 });
             }
 
-
-            product.quantity -= item.quantity;
-            await product.save();
+            // Deduct product quantity
+            dbProduct.quantity -= product.quantity;
+            await dbProduct.save();
         }
 
-
+        // Create a new order
         const newOrder = new Order({
             userId: userId,
-            orderedItems: Object.values(groupedProducts),
+            orderedItems: products.map(product => ({
+                id: product._id,
+                name: product.productName,
+                productImage: product.productImage,
+                price: product.salesPrice,
+                quantity: product.quantity,
+            })),
+            address:address,
             shippingAddress: address,
             totalPrice: subtotal,
             finalAmount: total,
-            status: "pending",
+            status: "Pending",
             paymentMethod: paymentMethod,
         });
-        await Cart.findOneAndUpdate({userId:userId._id},{$set:{items:[]}});
 
-        const orderSave = await newOrder.save();
-        if (orderSave) {
-            const orderId = newOrder._id
-            return res.status(200).json({ success: true, message: "Order placed" ,orderId:orderId});
+        // Clear the user's cart
+        await Cart.findOneAndUpdate({ userId: userId }, { $set: { items: [] } });
+
+        // Save the order
+        const savedOrder = await newOrder.save();
+
+        if (savedOrder) {
+            const orderId = savedOrder._id; // Get the newly created order ID
+            return res.status(200).json({ success: true, message: "Order placed", orderId: orderId });
         } else {
             return res.status(400).json({ success: false, message: "Error saving order" });
         }
     } catch (error) {
-        console.log("Error:", error.message);
+        console.error("Error placing order:", error.message);
         return res.status(500).json({ success: false, message: "Internal server error" });
     }
 };
@@ -144,14 +253,15 @@ const postCheckout = async (req, res) => {
 
 
 
-const orderComform = async(req,res)=>{
+
+const  orderConfirm = async(req,res)=>{
     const orderId = req.query.id;
     try {
         if(!req.session.user){
             return res.redirect("/signup");
         }
        const order = await Order.findById({_id:orderId})
-      return  res.render("orderComform",{totalPrice:order.totalPrice,date:order.createdOn.toLocaleDateString()});
+      return  res.render("orderConfirm",{totalPrice:order.totalPrice,date:order.createdOn.toLocaleDateString()});
         
     } catch (error) {
         console.log("error in onform page ",error.message);
@@ -163,5 +273,5 @@ const orderComform = async(req,res)=>{
 module.exports = {
     getcheckoutPage,
     postCheckout,
-    orderComform,
+    orderConfirm,
 };
