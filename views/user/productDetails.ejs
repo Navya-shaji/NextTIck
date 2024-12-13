@@ -1,112 +1,186 @@
 <%- include("../../views/partials/user/header") %>
 
-    <style>
 
-        .ProductContainer {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px; 
-            margin-top: 5%;
-        }
+<style>
+    .ProductContainer {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        margin-top: 5%;
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    .product-detail {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 40px;
+        align-items: flex-start;
+    }
+
+    .product-images {
+        flex: 1;
+        min-width: 300px;
+        max-width: 50%;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .main-image-container {
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+        padding-top: 100%; /* 1:1 Aspect Ratio */
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        background-color: #f8f9fa;
+    }
+
+    .main-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+
+    .thumbnail-strip {
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;
+        padding-bottom: 10px;
+    }
+
+    .thumbnail {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 4px;
+        cursor: pointer;
+        border: 2px solid transparent;
+        transition: border-color 0.3s ease;
+    }
+
+    .thumbnail.active {
+        border-color: #007bff;
+    }
+
+    .product-info {
+        flex: 1;
+        min-width: 300px;
+        max-width: 50%;
+    }
+
+    h1 {
+        font-size: 28px;
+        margin-bottom: 15px;
+        color: #333;
+    }
+
+    .rating {
+        color: #ffc107;
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+
+    .price {
+        font-size: 28px;
+        font-weight: bold;
+        color: #007bff;
+        margin: 15px 0;
+        display: flex;
+        align-items: center;
+    }
+
+    .old-price {
+        text-decoration: line-through;
+        color: #6c757d;
+        font-size: 18px;
+        margin-left: 10px;
+    }
+
+    .quantity {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .quantity button {
+        background-color: #f8f9fa;
+        border: 1px solid #ced4da;
+        padding: 8px 12px;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: background-color 0.3s ease;
+    }
+
+    .quantity button:hover {
+        background-color: #e9ecef;
+    }
+
+    .quantity span {
+        padding: 8px 15px;
+        border: 1px solid #ced4da;
+        font-size: 16px;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .add-to-cart {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: background-color 0.3s ease;
+        margin-top: 15px;
+    }
+
+    .add-to-cart:hover {
+        background-color: #0056b3;
+    }
+
+    .product-meta {
+        margin-top: 25px;
+        font-size: 14px;
+        color: #6c757d;
+        line-height: 1.6;
+    }
+
+    @media (max-width: 768px) {
         .product-detail {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
-        }
-        .product-images {
-            flex: 1;
-            min-width: 300px;
-        }
-        .main-image-container {
-            position: relative;
-            overflow: hidden;
-            width: 100%;
-            padding-top: 100%; /* 1:1 Aspect Ratio */
-        }
-        .main-image {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 8px;
-        }
-        .thumbnail-strip {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-            overflow-x: auto;
-        }
-        .thumbnail {
-            width: 80px;
-            height: 80px;
-            object-fit: cover;
-            border-radius: 4px;
-            cursor: pointer;
-            border: 2px solid transparent;
-        }
-        .thumbnail.active {
-            border-color: #007bff;
-        }
-        .product-info {
-            flex: 1;
-            min-width: 300px;
-        }
-        h1 {
-            font-size: 24px;
-            margin-bottom: 10px;
-        }
-        .rating {
-            color: #ffc107;
-            font-size: 20px;
-        }
-        .price {
-            font-size: 24px;
-            font-weight: bold;
-            color: #007bff;
-            margin: 10px 0;
-        }
-        .old-price {
-            text-decoration: line-through;
-            color: #6c757d;
-            margin-left: 10px;
-        }
-        .quantity {
-            display: flex;
+            flex-direction: column;
             align-items: center;
-            margin-bottom: 20px;
         }
-        .quantity button {
-            background-color: #f8f9fa;
-            border: 1px solid #ced4da;
-            padding: 5px 10px;
-            font-size: 16px;
-            cursor: pointer;
+
+        .product-images, .product-info {
+            max-width: 100%;
         }
-        .quantity span {
-            padding: 5px 15px;
-            border-top: 1px solid #ced4da;
-            border-bottom: 1px solid #ced4da;
+
+        h1 {
+            text-align: center;
         }
+
+        .price {
+            justify-content: center;
+        }
+
         .add-to-cart {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            border-radius: 4px;
+            display: block;
+            width: 100%;
+            text-align: center;
         }
-        .add-to-cart:hover {
-            background-color: #0056b3;
-        }
-        .product-meta {
-            margin-top: 20px;
-            font-size: 14px;
-            color: #6c757d;
-        }
-    </style>
+    }
+</style>
+
     <div class="ProductContainer">
         <div class="product-detail">
             <div class="product-images">
@@ -133,15 +207,17 @@
                     <%=product.regularPrice%><span class="old-price"></span>
                 </div>
                 <div class="quantity">
-                    <button onclick="changeQuantity(-1)">-</button>
+                    <button id="decrease-btn" onclick="changeQuantity(-1)">-</button>
                     <span id="quantity">1</span>
-                    <button onclick="changeQuantity(1)">+</button>
+                    <button id="increase-btn" onclick="changeQuantity(1)">+</button>
                 </div>
-                <button class="add-to-cart" ><a href="/addToCart?id=<%= product._id%>"  >Add to Cart</a></button>
+                <p id="stock-info">Stock left: <span id="stock-count"><%=quantity%></span></p>
+                
+                <button class="add-to-cart" ><a onclick="addToCartHandler(event, '<%= product._id %>')"  >Add to Cart</a></button>
                 <div class="product-meta">
                     <!-- <p>Stock Code: FWM15VKT</p> -->
                    
-                    <p>Availability: <span style="color: #28a745;"><%=quantity%></span></p>
+                    <!-- <p>Availability: <span style="color: #28a745;"><%=quantity%></span></p> -->
                 </div>
             </div>
         </div>
@@ -178,12 +254,12 @@
             thumbnail.classList.add('active');
         }
 
-        function changeQuantity(change) {
-            const quantityElement = document.getElementById('quantity');
-            let quantity = parseInt(quantityElement.textContent) + change;
-            quantity = Math.max(1, quantity); // Ensure quantity is at least 1
-            quantityElement.textContent = quantity;
-        }
+        // function changeQuantity(change) {
+        //     const quantityElement = document.getElementById('quantity');
+        //     let quantity = parseInt(quantityElement.textContent) + change;
+        //     quantity = Math.max(1, quantity); // Ensure quantity is at least 1
+        //     quantityElement.textContent = quantity;
+        // }
 
         function addToCart() {
             const quantity = document.getElementById('quantity').textContent;
@@ -210,3 +286,141 @@
     </script>
 <%- include("../../views/partials/user/footer") %>
 
+<script>
+    function addToCartHandler(event, productId) {
+    event.preventDefault();
+
+    fetch('/addToCart', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            productId: productId,
+            quantity: 1
+        })
+    })
+    .then(response => {
+      alert(response)
+      console.log(response)
+        if (!response.ok) {
+            return response.json().then(data => {
+                throw new Error(data.message || 'Failed to add product to cart');
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            // Show success message
+            Swal.fire({
+                title: 'Success!',
+                text: data.message || 'Product added to cart successfully!',
+                icon: 'success',
+                showConfirmButton: false,
+                timer: 1500
+            }).then(() => {
+                // Update cart count if available
+                if (data.cartCount !== undefined) {
+                    updateCartCount(data.cartCount);
+                }
+                
+                // Redirect to cart page if specified
+                if (data.redirect) {
+                    window.location.href = data.redirect;
+                }
+            });
+        } else {
+            throw new Error(data.message || 'Failed to add product to cart');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        
+        // Handle unauthorized/login required error
+        if (error.message.includes('Please login')) {
+            Swal.fire({
+                title: 'Login Required',
+                text: 'Please login to add items to your cart',
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonText: 'Login',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '/login';
+                }
+            });
+        } 
+        // Handle quantity limit error
+        else if (error.message.includes('Maximum quantity')) {
+            Swal.fire({
+                title: 'Quantity Limit Reached',
+                text: error.message,
+                icon: 'warning',
+                confirmButtonText: 'OK'
+            });
+        }
+        // Handle out of stock error
+        else if (error.message.includes('out of stock') || error.message.includes('available in stock')) {
+            Swal.fire({
+                title: 'Stock Limited',
+                text: error.message,
+                icon: 'warning',
+                confirmButtonText: 'OK'
+            });
+        }
+        // Handle other errors
+        else {
+            Swal.fire({
+                title: 'Error!',
+                text: error.message || 'Something went wrong. Please try again.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
+    });
+}
+function changeQuantity(change) {
+    // Get current quantity
+    const quantityElement = document.getElementById("quantity");
+    const decreaseButton = document.getElementById("decrease-btn");
+    const increaseButton = document.getElementById("increase-btn");
+    let currentQuantity = parseInt(quantityElement.textContent);
+
+    // Adjust quantity
+    let newQuantity = currentQuantity + change;
+
+    // Check limits (min: 1, max: stockLeft)
+    if (newQuantity <= 1) {
+        newQuantity = 1;
+        decreaseButton.disabled = true; // Disable the decrease button if at minimum
+    } else {
+        decreaseButton.disabled = false; // Enable the decrease button otherwise
+    }
+
+    if (newQuantity >= stockLeft) {
+        newQuantity = stockLeft;
+        increaseButton.disabled = true; // Disable the increase button if at maximum stock
+    } else {
+        increaseButton.disabled = false; // Enable the increase button otherwise
+    }
+
+    // Update quantity display
+    quantityElement.textContent = newQuantity;
+}
+
+// Update stock dynamically (Example: call this function when stock changes)
+function updateStock(newStock) {
+    stockLeft = newStock;
+    document.getElementById("stock-count").textContent = stockLeft;
+
+    // Reset buttons and quantity if needed
+    document.getElementById("increase-btn").disabled = stockLeft <= 1;
+    const currentQuantity = parseInt(document.getElementById("quantity").textContent);
+    if (currentQuantity > stockLeft) {
+        document.getElementById("quantity").textContent = stockLeft;
+    }
+}
+
+</script>

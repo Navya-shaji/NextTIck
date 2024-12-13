@@ -145,21 +145,21 @@ const getcheckoutPage = async (req, res) => {
                 _id: product._id,
                 productName: product.productName,
                 productImage: product.productImage?.length > 0 ? product.productImage : ["default-image.jpg"],
-                salePrice: product.salePrice || 0,
+                salePrice: product.salesPrice || 0,
                 quantity: quantity // Use the quantity from the query
             };
 
             const subtotal = productData.salePrice * quantity;
             console.log("reder", { 
                 user, 
-                product: [productData], 
+                product: productData, 
                 subtotal, 
                 quantity, 
                 addressData 
             })
             return res.render("checkout", { 
                 user, 
-                product: [productData], 
+                product: productData, 
                 subtotal, 
                 quantity, 
                 addressData 
@@ -187,44 +187,40 @@ const postCheckout = async (req, res) => {
         const { address, products, subtotal, total, paymentMethod } = req.body;
 
         console.log("Request Body:", req.body);
+        console.log("Products Received:", products);
 
-        if (!Array.isArray(products) || products.length === 0) {
+        if (!Array.isArray(JSON.parse(products)) || products.length === 0) {
             return res.status(400).json({ success: false, message: "No products provided" });
         }
 
-        // Validate product stock and reduce quantity
-        for (let product of products) {
+        // Check stock and reduce quantity directly from passed data
+        for (let product of JSON.parse(products)) {
             console.log("Processing product:", product);
 
-            const dbProduct = await Product.findById(product._id); // Fetch the product from the database
-
-            if (!dbProduct) {
-                return res.status(404).json({ success: false, message: `Product not found: ${product._id}` });
-            }
-
-            if (dbProduct.quantity < product.quantity) {
+            if (product.quantity > product.stock) {
                 return res.status(400).json({
                     success: false,
-                    message: `Not enough stock for product: ${dbProduct.name}`,
+                    message: `Not enough stock for product: ${product.productName}`,
                 });
             }
 
             // Deduct product quantity
-            dbProduct.quantity -= product.quantity;
-            await dbProduct.save();
+            product.stock -= product.quantity;
+            console.log(`Stock updated for ${product.productName}: ${product.stock}`);
         }
 
+        const orderedItems = JSON.parse(products).map(product => ({
+            product: product._id,
+            price: product.salesPrice,
+            quantity: product.quantity,
+        }))
+
+        console.log(orderedItems)
         // Create a new order
         const newOrder = new Order({
             userId: userId,
-            orderedItems: products.map(product => ({
-                id: product._id,
-                name: product.productName,
-                productImage: product.productImage,
-                price: product.salesPrice,
-                quantity: product.quantity,
-            })),
-            address:address,
+            orderItems: orderedItems,
+            address: address,
             shippingAddress: address,
             totalPrice: subtotal,
             finalAmount: total,
@@ -244,6 +240,7 @@ const postCheckout = async (req, res) => {
         } else {
             return res.status(400).json({ success: false, message: "Error saving order" });
         }
+        
     } catch (error) {
         console.error("Error placing order:", error.message);
         return res.status(500).json({ success: false, message: "Internal server error" });
@@ -260,14 +257,14 @@ const  orderConfirm = async(req,res)=>{
         if(!req.session.user){
             return res.redirect("/signup");
         }
-       const order = await Order.findById({_id:orderId})
-      return  res.render("orderConfirm",{totalPrice:order.totalPrice,date:order.createdOn.toLocaleDateString()});
+      return  res.render("orderConfirmation");
         
     } catch (error) {
-        console.log("error in onform page ",error.message);
+        console.log("error in loading confirmation page ",error.message);
         return res.redirect("/pageNotFound")
     }
 }
+
 
 
 module.exports = {

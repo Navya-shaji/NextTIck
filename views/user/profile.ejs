@@ -81,7 +81,7 @@
 
                <div class="tab-pane fade" id="address" role="tabpanel" aria-labelledby="address-tab">
                 <div class="row">
-                  <h1><%= typeof userAddress.userId %></h1>
+                  <!-- <h1><%= typeof userAddress.userId %></h1> -->
                     <% if (userAddress && userAddress.address) { %>
                         <% userAddress.address.forEach((address) => { %>
                             <div class="col-lg-6">
@@ -129,59 +129,57 @@
                     </a>
                 </div>
             </div>
-            
-<!-- 
-            <div class="tab-pane fade show active" id="orders" role="tabpanel" aria-labelledby="orders-tab">
-              <div class="card">
-                  <div class="card-header">
-                      <h5 class="mb-0">Your Orders</h5>
-                  </div>
-                  <div class="card-body">
-                      <div class="table-responsive">
-                          <table class="table">
-                              <thead>
-                                  <tr>
-                                      <th>Order ID</th>
-                                      <th>Items</th>
-                                      <th>Status</th>
-                                      <th>Total</th>
-                                      <th>Actions</th>
-                                  </tr>
-                              </thead>
-                              <tbody>
-                                  <% if (orders && orders.length > 0) { %>
-                                      <% orders.forEach(order => { %>
-                                          <tr>
-                                              <td><%= order.orderId %></td>
-                                              <td>
-                                                  <% order.orderItems.forEach(item => { %>
-                                                      <p><%= item.product.productName %> (x<%= item.quantity %>)</p>
-                                                  <% }); %>
-                                              </td>
-                                              <td><%= order.status %></td>
-                                              <td>$<%= order.finalAmount.toFixed(2) %></td>
-                                              <td>
-                                                  <a href="/orders/<%= order._id %>" class="btn btn-sm btn-primary">View</a>
-                                                  <button 
-                                                      class="btn btn-sm btn-danger delete-order-btn" 
-                                                      data-id="<%= order._id %>">
-                                                      Delete
-                                                  </button>
-                                              </td>
-                                          </tr>
-                                      <% }); %>
-                                  <% } else { %>
-                                      <tr>
-                                          <td colspan="5" class="text-center">No orders found.</td>
-                                      </tr>
-                                  <% } %>
-                              </tbody>
-                          </table>
-                      </div>
-                  </div>
-              </div>
-          </div> -->
-          
+
+          <div class="tab-pane fade" id="orders" role="tabpanel" aria-labelledby="orders-tab">
+                 <div class="card">
+                   <div class="card-header">
+                     <h5 class="mb-0">Your Orders</h5>
+                   </div>
+                   <div class="card-body">
+                     <div class="table-responsive">
+                       <table class="table">
+                         <thead>
+                           <tr>
+                             <th>Order</th>
+                             <th>Date</th>
+                             <th>Status</th>
+                             <th>Total</th>
+                             <th>Actions</th>
+                           </tr>
+                         </thead>
+                         <tbody>
+                           <% if (typeof orders !== 'undefined' && orders && orders.length > 0) { %>
+                             <% orders.forEach(order => { %>
+                               <tr>
+                                 <td>#<%= order.orderId %></td>
+                                 <td><%= new Date(order.createdOn).toLocaleDateString() %></td>
+                                 <td><%= order.status %></td>
+                                 <td>$<%= order.finalAmount ? order.finalAmount.toFixed(2) : '0.00' %></td>
+                                 <td>
+                                   <a href="/orders/<%= order._id %>" class="btn-small d-block">View</a>
+                                   <% if (order.status === 'Pending') { %>
+                                     <form action="/orders/cancel" method="POST" class="mt-2">
+                                       <input type="hidden" name="orderId" value="<%= order._id %>">
+                                       <button type="submit" class="btn-small d-block w-100" 
+                                         onclick="return confirm('Are you sure you want to cancel this order?');">
+                                         Cancel
+                                       </button>
+                                     </form>
+                                   <% } %>
+                                 </td>
+                               </tr>
+                             <% }); %>
+                           <% } else { %>
+                             <tr>
+                               <td colspan="5" class="text-center">No orders found.</td>
+                             </tr>
+                           <% } %>
+                         </tbody>
+                       </table>
+                     </div>
+                   </div>
+                 </div>
+               </div>
 
                <div class="tab-pane fade" id="track-orders" role="tabpanel" aria-labelledby="track-orders-tab">
                  <div class="card">

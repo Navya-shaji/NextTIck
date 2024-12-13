@@ -110,7 +110,7 @@
                 <p>Rating: <%= product.averageRating ? product.averageRating.toFixed(1) : 'N/A' %> / 5</p>
                 <p>In Stock: <%= product.quantity %></p>
               </a>
-              <button class="add-to-cart-btn" onclick="addToCart('<%= product._id %>')" <%= product.quantity > 0 ? '' : 'disabled' %>>
+              <button class="add-to-cart-btn" onclick="addToCartHandler(event, '<%= product._id %>')" <%= product.quantity > 0 ? '' : 'disabled' %>>
                 <%= product.quantity > 0 ? 'Add to Cart' : 'Out of Stock' %>
               </button>
             </div>
@@ -138,6 +138,102 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
 <script>
+
+
+function addToCartHandler(event, productId) {
+    event.preventDefault();
+
+    fetch('/addToCart', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            productId: productId,
+            quantity: 1
+        })
+    })
+    .then(response => {
+      alert(response)
+      console.log(response)
+        if (!response.ok) {
+            return response.json().then(data => {
+                throw new Error(data.message || 'Failed to add product to cart');
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            // Show success message
+            Swal.fire({
+                title: 'Success!',
+                text: data.message || 'Product added to cart successfully!',
+                icon: 'success',
+                showConfirmButton: false,
+                timer: 1500
+            }).then(() => {
+                // Update cart count if available
+                if (data.cartCount !== undefined) {
+                    updateCartCount(data.cartCount);
+                }
+                
+                // Redirect to cart page if specified
+                if (data.redirect) {
+                    window.location.href = data.redirect;
+                }
+            });
+        } else {
+            throw new Error(data.message || 'Failed to add product to cart');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        
+        // Handle unauthorized/login required error
+        if (error.message.includes('Please login')) {
+            Swal.fire({
+                title: 'Login Required',
+                text: 'Please login to add items to your cart',
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonText: 'Login',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '/login';
+                }
+            });
+        } 
+        // Handle quantity limit error
+        else if (error.message.includes('Maximum quantity')) {
+            Swal.fire({
+                title: 'Quantity Limit Reached',
+                text: error.message,
+                icon: 'warning',
+                confirmButtonText: 'OK'
+            });
+        }
+        // Handle out of stock error
+        else if (error.message.includes('out of stock') || error.message.includes('available in stock')) {
+            Swal.fire({
+                title: 'Stock Limited',
+                text: error.message,
+                icon: 'warning',
+                confirmButtonText: 'OK'
+            });
+        }
+        // Handle other errors
+        else {
+            Swal.fire({
+                title: 'Error!',
+                text: error.message || 'Something went wrong. Please try again.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
+    });
+}
   // Sorting functionality
   document.getElementById('sort').addEventListener('change', function() {
     const form = document.getElementById('sortForm');

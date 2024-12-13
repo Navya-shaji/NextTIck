@@ -1,0 +1,129 @@
+<%- include("../../views/partials/admin/header") %>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Order Details</h3>
+                    <a href="/admin/orderList" class="btn btn-secondary float-right">Back to Orders</a>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4>Order Information</h4>
+                            <p><strong>Order ID:</strong> <%= order.orderId %></p>
+                            <p><strong>Date:</strong> <%= new Date(order.createdOn).toLocaleString() %></p>
+                            <p><strong>Status:</strong> <%= order.status %></p>
+                            <p><strong>Total Amount:</strong> ₹<%= order.finalAmount.toFixed(2) %></p>
+                            <% if (order.discount > 0) { %>
+                                <p><strong>Discount Applied:</strong> ₹<%= order.discount.toFixed(2) %></p>
+                            <% } %>
+                            <% if (order.couponApplied) { %>
+                                <p><strong>Coupon Applied:</strong> Yes</p>
+                            <% } %>
+                        </div>
+                        <div class="col-md-6">
+                            <h4>Customer Information</h4>
+                            <p><strong>Name:</strong> <%= order.userId.name %></p>
+                            <p><strong>Email:</strong> <%= order.userId.email %></p>
+
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h4>Order Items</h4>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Quantity</th>
+                                        <th>Price</th>
+                                        <th>Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% order.orderItems.forEach(item => { %>
+                                        <tr>
+                                            <td><%= item.product.name %></td>
+                                            <td><%= item.quantity %></td>
+                                            <td>₹<%= item.price.toFixed(2) %></td>
+                                            <td>₹<%= (item.quantity * item.price).toFixed(2) %></td>
+                                        </tr>
+                                    <% }); %>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="3" class="text-right"><strong>Total:</strong></td>
+                                        <td>$<%= order.totalPrice.toFixed(2) %></td>
+                                    </tr>
+                                    <% if (order.discount > 0) { %>
+                                        <tr>
+                                            <td colspan="3" class="text-right"><strong>Discount:</strong></td>
+                                            <td>₹<%= order.discount.toFixed(2) %></td>
+                                        </tr>
+                                    <% } %>
+                                    <tr>
+                                        <td colspan="3" class="text-right"><strong>Final Amount:</strong></td>
+                                        <td>₹<%= order.finalAmount.toFixed(2) %></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h4>Update Order Status</h4>
+                            <form id="updateStatusForm">
+                                <div class="form-group">
+                                    <select class="form-control" id="orderStatus" name="status">
+                                        <option value="Pending" <%= order.status === 'Pending' ? 'selected' : '' %>>Pending</option>
+                                        <option value="Processing" <%= order.status === 'Processing' ? 'selected' : '' %>>Processing</option>
+                                        <option value="Shipped" <%= order.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
+                                        <option value="Delivered" <%= order.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+                                        <option value="Cancelled" <%= order.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+                                        <option value="Return Request" <%= order.status === 'Return Request' ? 'selected' : '' %>>Return Request</option>
+                                        <option value="Returned" <%= order.status === 'Returned' ? 'selected' : '' %>>Returned</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Update Status</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    
+document.addEventListener('DOMContentLoaded', function() {
+    const updateStatusForm = document.getElementById('updateStatusForm');
+    updateStatusForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const status = document.getElementById('orderStatus').value;
+        try {
+            const response = await fetch('/admin/orders/update-status', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ orderId: '<%= order._id %>', status: status })
+            });
+            const data = await response.json();
+            if (data.success) {
+                alert('Order status updated successfully');
+                location.reload(); // Reload the page to reflect the changes
+            } else {
+                alert('Failed to update order status: ' + data.message);
+            }
+        } catch (error) {
+            console.error('Error updating order status:', error);
+            alert('Failed to update order status');
+        }
+    });
+});
+</script>
+
+<%- include("../../views/partials/admin/footer") %>

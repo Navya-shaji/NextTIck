@@ -1,0 +1,93 @@
+<%- include("../../views/partials/admin/header") %>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Order Management</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Total</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% orders.forEach(order => { %>
+                                    <tr>
+                                        <td><%= order.orderId %></td>
+                                        <td><%= order.userName %></td>
+                                        <td><%= new Date(order.createdOn).toLocaleDateString() %></td>
+                                        <td>
+                                            <select class="form-select status-select" data-order-id="<%= order._id %>">
+                                                <option value="Pending" <%= order.status === 'Pending' ? 'selected' : '' %>>Pending</option>
+                                                <option value="Processing" <%= order.status === 'Processing' ? 'selected' : '' %>>Processing</option>
+                                                <option value="Shipped" <%= order.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
+                                                <option value="Delivered" <%= order.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+                                                <option value="Cancelled" <%= order.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+                                                <option value="Return Request" <%= order.status === 'Return Request' ? 'selected' : '' %>>Return Request</option>
+                                                <option value="Returned" <%= order.status === 'Returned' ? 'selected' : '' %>>Returned</option>
+                                            </select>
+                                        </td>
+                                        <td>₹<%= order.finalAmount.toFixed(2) %></td>
+                                        <td>
+                                            <a href="/admin/orders/<%= order._id %>" class="btn btn-info btn-sm">View Details</a>
+                                        </td>
+                                    </tr>
+                                <% }); %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.status-select').forEach(select => {
+        select.addEventListener('change', async function() {
+            const orderId = this.dataset.orderId;
+            const status = this.value;
+            
+            try {
+                const response = await fetch('/admin/orders/update-status', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ orderId, status })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('Status updated successfully');
+                } else {
+                    alert('Failed to update status: ' + data.message);
+                    // Reset to previous value
+                    this.value = this.getAttribute('data-original-value');
+                }
+            } catch (error) {
+                console.error('Error updating status:', error);
+                alert('Failed to update status');
+                // Reset to previous value
+                this.value = this.getAttribute('data-original-value');
+            }
+        });
+        
+        // Store original value
+        select.setAttribute('data-original-value', select.value);
+    });
+});
+</script>
+
+<%- include("../../views/partials/admin/footer") %>

@@ -428,9 +428,9 @@
                         },
                         body: JSON.stringify({ 
                             address: selectedAddressId,
-                            products: <%- JSON.stringify(product) %>,
-                            subtotal: <%= subtotal %>,
-                            total: <%= subtotal %>,
+                            products: `<%- JSON.stringify(product) %>`,
+                            subtotal: `<%= subtotal %>`,
+                            total: `<%= subtotal %>`,
                             paymentMethod: 'COD'
                         })
                     })
@@ -443,7 +443,7 @@
                                 showConfirmButton: false,
                                 timer: 1500
                             }).then(() => {
-                                window.location.href = '/orders'; // Redirect to orders page
+                                window.location.href = '/orderConfirmation'; // Redirect to orders page
                             });
                         } else {
                             Swal.fire({

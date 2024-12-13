@@ -4,6 +4,11 @@ const {Schema}=mongoose;
 const {v4:uuidv4} = require("uuid");
 
 const orderSchema =new Schema({
+    userId: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+        // required: true
+    },
     orderId:{
         type:String,
         default:()=>uuidv4(),
@@ -38,7 +43,7 @@ const orderSchema =new Schema({
     },
     address:{
         type:Schema.Types.ObjectId,
-        ref:"",
+        ref:"Address",  
         required:true
     },
     invoiceDate:{

@@ -91,11 +91,22 @@ router.post('/cart/remove', userAuth, cartController.removeFromCart);
 router.get("/checkout",userAuth,checkoutController.getcheckoutPage);
 router.post("/checkout",userAuth,checkoutController.postCheckout);
 router.get("/ orderConfirm",checkoutController. orderConfirm);
-router.get("/orders",checkoutController.)
-//order..............
+
+
 // Profile page with orders
 router.get("/profile", profileController.userProfile);
 
 // Delete order
 router.delete("/orders/:orderId", profileController.deleteOrder);
+
+router.get('/history', userAuth, orderController.getOrderHistory);
+
+// POST /orders/cancel - Cancel an order
+router.post('/orders/cancel', userAuth, orderController.cancelOrder);
+
+// GET /orders/status/:orderId - Get order status
+router.get('/status/:orderId', userAuth, orderController.getOrderStatus);
+router.get('/orders/:orderId', userAuth, orderController.getOrderDetails);
+
+router.get("/orderConfirmation",checkoutController.orderConfirm);
 module.exports = router

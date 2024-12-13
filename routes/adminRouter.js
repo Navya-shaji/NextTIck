@@ -5,6 +5,7 @@ const customerController=require("../controllers/admin/customerController")
 const categoryController=require("../controllers/admin/categoryController")
 const brandController=require("../controllers/admin/brandControllers")
 const productController=require("../controllers/admin/productController")
+const orderController = require('../controllers/admin/orderController')
 const {userAuth,adminAuth}=require("../middlewares/auth")
 // const orderController = require('../controllers/orderController');
 const multer=require("multer");
@@ -61,6 +62,17 @@ router.get("/unblockProduct",adminAuth,productController.unblockProduct);
 router.get("/editProduct",adminAuth,productController.getEditProduct);
 router.post("/editProduct/:id",adminAuth,uploads.array("image",4),productController.editProduct);
 router.post("/deleteImage",adminAuth,productController.deleteSingleImage);
+// List all orders
+router.get('/orderList', adminAuth, orderController.listOrders);
+
+// Get cancelled orders
+router.get('/orders/cancelled', adminAuth, orderController.getCancelledOrders);
+
+// Get order details
+router.get('/orders/:orderId', adminAuth, orderController.getAdminOrderDetails);
+
+// Update order status
+router.post('/orders/update-status', adminAuth, orderController.updateOrderStatus);
 
 
 module.exports=router

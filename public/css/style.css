@@ -10769,6 +10769,8 @@ body {
   text-decoration: none;
   font-weight: 600;
   margin-right: 10px;
+  /* text-align: center; */
+
 }
 
 .sign-in-link:hover {
