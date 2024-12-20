@@ -1,0 +1,82 @@
+<%- include('../partials/admin/header') %>
+
+<div class="container mt-5">
+    <h1 class="mb-4">Sales Report</h1>
+    <form action="/admin/sales-report/generate" method="POST" class="mb-4">
+        <div class="row">
+            <div class="col-md-3">
+                <select name="reportType" class="form-control" id="reportType" required>
+                    <option value="">Select Report Type</option>
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="yearly">Yearly</option>
+                    <option value="custom">Custom</option>
+                </select>
+            </div>
+            <div class="col-md-6" id="dateRangeContainer" style="display: none;">
+                <div class="row">
+                    <div class="col-md-6">
+                        <input type="date" name="startDate" class="form-control" id="startDate">
+                    </div>
+                    <div class="col-md-6">
+                        <input type="date" name="endDate" class="form-control" id="endDate">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-primary">Generate Report</button>
+            </div>
+        </div>
+    </form>
+
+    <% if (salesData) { %>
+        <div class="mb-3">
+            <a href="/admin/sales-report/download?format=pdf&reportType=<%= salesData.reportType %>&startDate=<%= salesData.startDate %>&endDate=<%= salesData.endDate %>" class="btn btn-secondary mr-2">Download PDF</a>
+            <a href="/admin/sales-report/download?format=excel&reportType=<%= salesData.reportType %>&startDate=<%= salesData.startDate %>&endDate=<%= salesData.endDate %>" class="btn btn-secondary">Download Excel</a>
+        </div>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Date</th>
+                    <th>Amount</th>
+                    <th>Discount</th>
+                    <th>Coupon</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% salesData.orders.forEach(order => { %>
+                    <tr>
+                        <td><%= order.orderId %></td>
+                        <td><%= new Date(order.date).toLocaleDateString() %></td>
+                        <td>$<%= order.amount.toFixed(2) %></td>
+                        <td>$<%= order.discount.toFixed(2) %></td>
+                        <td><%= order.couponCode %></td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+
+        <div class="mt-4">
+            <h4>Summary</h4>
+            <p>Total Sales: <%= salesData.totalSales %></p>
+            <p>Total Amount: $<%= salesData.totalAmount.toFixed(2) %></p>
+            <p>Total Discount: $<%= salesData.totalDiscount.toFixed(2) %></p>
+        </div>
+    <% } %>
+</div>
+
+<script>
+    document.getElementById('reportType').addEventListener('change', function() {
+        const dateRangeContainer = document.getElementById('dateRangeContainer');
+        if (this.value === 'custom') {
+            dateRangeContainer.style.display = 'block';
+        } else {
+            dateRangeContainer.style.display = 'none';
+        }
+    });
+</script>
+
+<%- include('../partials/admin/footer') %>

@@ -108,6 +108,8 @@ a:hover {
 }
 .bg-light {
     background: var(--light-color);
+    padding-bottom: 0;
+
 }
 .bg-light-blue {
     background: var(--light-blue-color);

@@ -62,6 +62,13 @@ const orderSchema =new Schema({
     couponApplied:{
        type:Boolean,
        default:false
+    },
+    paymentId: {
+        type: String
+    },
+    paymentStatus: {
+        type: String,
+        enum: ['Pending', 'Completed', 'Failed']
     }
 })
 const Order =mongoose.model("Order",orderSchema);

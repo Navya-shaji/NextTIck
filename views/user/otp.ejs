@@ -56,7 +56,6 @@
                 if (timeLeft <= 0) {
                     clearInterval(countdown);
                     timerElement.textContent = "Time is up!";
-                    // document.getElementById('alertButton').disabled = true; // Disable the submit button
                 } else {
                     timerElement.textContent = `Time left: ${timeLeft} seconds`;
                 }
@@ -70,7 +69,6 @@
 
 
 
-        // OTP input navigation and submission handler
         document.addEventListener('DOMContentLoaded', function() {
             const inputs = document.querySelectorAll('.otp-input');
             const submitBtn = document.querySelector('.submit-btn');
@@ -160,7 +158,6 @@
 };
 
 
-// resent otp fetching
 document.getElementById('resendOtpLink').addEventListener('click', function(e) {
             e.preventDefault();
 

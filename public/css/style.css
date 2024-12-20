@@ -5400,6 +5400,7 @@ button.bg-danger:focus {
 
 .bg-light {
   background-color: #f8f9fa !important; }
+  
 
 a.bg-light:hover, a.bg-light:focus,
 button.bg-light:hover,
@@ -8524,7 +8525,7 @@ h1, h2, h3, h4, h5,
     position: relative;
     height: 750px;
     z-index: 0;
-    background: #dbcc8f; }
+    background:white; }
     .owl-carousel.home-slider .slider-item {
       background-size: cover;
       background-repeat: no-repeat;
@@ -9544,7 +9545,8 @@ textarea.form-control {
 
 .goto-here {
   width: 100%;
-  display: block; }
+  display: block;
+; }
 
 .about-author .desc h3 {
   font-size: 24px; }
@@ -9681,7 +9683,7 @@ textarea.form-control {
   padding: 7em 0;
   color: rgba(255, 255, 255, 0.8);
   background: #4e4e4e;
-  background: #000000; }
+  background: whitesmoke; }
   .ftco-footer .ftco-footer-logo {
     text-transform: uppercase;
     letter-spacing: .1em; }

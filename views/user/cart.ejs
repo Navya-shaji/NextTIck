@@ -1,24 +1,22 @@
-<%- include("../../views/partials/user/header") %>
+<%- include("../../views/partials/user/header.ejs") %>
 
 
 <style>
-   /* General Styling */
 .detail-qty {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px; /* Increased gap for better alignment */
-    width: auto; /* Auto width for better layout adaptability */
-    height: 40px; /* Slightly increased height */
-}
+    gap: 10px;
+    width: auto; 
+    height: 40px; }
 
 .detail-qty button {
     background-color: #f5f5f5;
     border: 1px solid #ddd;
     border-radius: 4px;
-    width: 35px; /* Increased button size */
+    width: 35px; 
     height: 35px;
-    font-size: 18px; /* Larger font size */
+    font-size: 18px;
     font-weight: bold;
     cursor: pointer;
     color: #333;
@@ -30,33 +28,33 @@
 }
 
 .qty-val {
-    width: 50px; /* Increased width for better readability */
+    width: 50px; 
     text-align: center;
-    font-size: 16px; /* Larger font size */
+    font-size: 16px;
     border: none;
     outline: none;
     background-color: transparent;
     pointer-events: none;
 }
 
-/* Table Layout */
+
 .table.shopping-summery {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 30px;
-    top:30px; /* Increased bottom margin */
+    top:30px; 
 }
 
 .table.shopping-summery th,
 .table.shopping-summery td {
-    padding: 15px; /* Increased padding */
+    padding: 15px; 
     border: 1px solid #ddd;
     vertical-align: middle;
-    font-size: 16px; /* Increased font size for better readability */
+    font-size: 16px;
 }
 
 .table.shopping-summery .image.product-thumbnail img {
-    width: 80px; /* Increased size of the image */
+    width: 80px; 
     height: 80px;
     object-fit: cover;
     border-radius: 5px;
@@ -64,13 +62,13 @@
 
 .table.shopping-summery .product-des {
     text-align: left;
-    padding-left: 10px; /* Added padding for better spacing */
+    padding-left: 10px; 
 }
 
 .cart-action a.btn {
     background-color: #424874;
     color: #fff;
-    padding: 12px 20px; /* Adjusted padding for more space */
+    padding: 12px 20px;
     border-radius: 5px;
     text-decoration: none;
     transition: background-color 0.3s ease;
@@ -80,11 +78,11 @@
     background-color: #36395E;
 }
 
-/* Item Status */
+
 .item-status {
     padding: 8px 15px;
     border-radius: 4px;
-    font-size: 14px; /* Slightly larger font size */
+    font-size: 14px; 
     font-weight: 500;
     text-align: center;
 }
@@ -94,25 +92,24 @@
     color: #1976d2;
 }
 
-/* Cart Totals */
+
 .cart-totals {
     background: #fafafa;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    margin-top: 30px; /* Added top margin */
+    margin-top: 30px; 
 }
 
 .cart_total_amount span {
-    font-size: 24px; /* Increased font size for better visibility */
+    font-size: 24px;
     color: #424874;
 }
 
-/* Button for Proceed to Checkout */
 .btn-success {
     background-color: #28a745;
     color: white;
-    padding: 12px 20px; /* Adjusted padding for better button size */
+    padding: 12px 20px; 
     border-radius: 5px;
     font-size: 16px;
     font-weight: bold;
@@ -124,30 +121,28 @@
     border-color: darkgray;
 }
 
-/* Improved Spacing Between Sections */
 .mt-50, .mb-50 {
     margin-top: 50px;
     margin-bottom: 50px;
 }
 
 .divider.center_icon i {
-    font-size: 24px; /* Adjusted size of the divider icon */
+    font-size: 24px; 
 }
 
-/* Mobile responsiveness */
 @media (max-width: 768px) {
     .table.shopping-summery th,
     .table.shopping-summery td {
-        padding: 10px; /* Reduced padding for smaller screens */
+        padding: 10px; 
         font-size: 14px;
     }
 
     .detail-qty {
-        gap: 8px; /* Adjusted gap for small screens */
+        gap: 8px;
     }
 
     .qty-val {
-        width: 40px; /* Adjusted width */
+        width: 40px; 
     }
 
     .cart-totals {
@@ -161,11 +156,7 @@
 <main class="main">
     <div class="page-header breadcrumb-wrap">
         <div class="container">
-            <!-- <div class="breadcrumb"> -->
-                <!-- <a href="/" rel="nofollow">Home</a> -->
-                <!-- <span></span> Shop
-                <span></span> Cart -->
-            <!-- </div>  -->
+           
         </div>
     </div>
     <section class="mt-50 mb-50">
@@ -182,7 +173,7 @@
                                         <th scope="col">Price</th>
                                         <th scope="col">Quantity</th>
                                         <th scope="col">Subtotal</th>
-                                        <th scope="col">Status</th>
+                                        <!-- <th scope="col">Status</th> -->
                                         <th scope="col">Remove</th>
                                     </tr>
                                 </thead>
@@ -222,7 +213,7 @@
                                                     ₹<%= item.totalPrice || 0 %>
                                                 </span>
                                             </td>
-                                            <td class="text-center" data-title="Status">
+                                            <!-- <td class="text-center" data-title="Status">
                                                 <span class="item-status status-<%= item.status?.toLowerCase() %>">
                                                     <%= item.status || 'Unknown' %>
                                                 </span>
@@ -231,7 +222,7 @@
                                                         <%= item.cancellationReason %>
                                                     </div>
                                                 <% } %>
-                                            </td>
+                                            </td> -->
                                             <td class="action" data-title="Remove">
                                                 <% if (item.status === 'placed') { %>
                                                     <button type="button" 
@@ -414,4 +405,4 @@
     }
 </script>
 
-<%- include("../../views/partials/user/footer") %>
+<%- include("../../views/partials/user/footer.ejs") %>

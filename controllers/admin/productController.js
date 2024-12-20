@@ -93,13 +93,13 @@ const addProducts = async (req, res) => {
             const savedProduct = await newProduct.save();
             console.log(savedProduct);
 
-            return res.redirect("/admin/addProducts");
+            return res.redirect("/addProducts");
         } else {
             return res.status(400).json("Product already exists. Please try with another name.");
         }
     } catch (error) {
         console.error("Error saving product", error);
-        return res.redirect("/admin/pageerror");
+        return res.redirect("/pageerror");
     }
 };
 
@@ -127,9 +127,7 @@ const getAllProducts = async(req,res)=>{
     }).countDocuments();
 
     const category = await Category.find({isListed:true});
-    // console.log(category)
     const brand = await Product.find({isBlocked:false});
-    // console.log(brand)
 
     if(category && brand){
         res.render("products",{
@@ -148,74 +146,129 @@ const getAllProducts = async(req,res)=>{
     res.redirect("/pageerror")
   }
 }
-
-
-
-
 const addProductOffer = async (req, res) => {
     try {
+        const { productId, percentage } = req.body;
 
-        const { productId, offerPrice } = req.body;
-        console.log(req.body)
-   
-        if (!productId || !offerPrice) {
-            return res.status(400).json({ message: "Product ID and Offer Price are required." });
+        // Input validation
+        if (!productId || !percentage) {
+            return res.status(400).json({
+                status: false,
+                message: "Product ID and percentage are required."
+            });
         }
 
-    
+        if (isNaN(percentage) || percentage < 0 || percentage > 100) {
+            return res.status(400).json({
+                status: false,
+                message: "Percentage must be a number between 0 and 100."
+            });
+        }
+
+        // Fetch product by ID
         const product = await Product.findById(productId);
-
         if (!product) {
-            return res.status(404).json({ message: "Product not found." });
+            return res.status(404).json({
+                status: false,
+                message: "Product not found."
+            });
         }
 
-  
-        product.offerPrice = offerPrice;
-        product.isOnOffer = true; 
+        // Calculate and update sales price
+        const discount = Math.floor(product.regularPrice * (percentage / 100));
+        product.salesPrice = product.regularPrice - discount;
+        product.productOffer = percentage;
         await product.save();
 
-        res.status(200).json({
-            message: "Offer added successfully.",
-            product,
+        res.json({
+            status: true,
+            message: `Offer applied successfully (${percentage}% discount).`,
+            product: product
         });
     } catch (error) {
         console.error("Error adding product offer:", error);
-        res.status(500).json({ message: "Internal server error." });
+        res.status(500).json({
+            status: false,
+            message: "Internal server error.",
+            error: process.env.NODE_ENV === "development" ? error.message : undefined
+        });
     }
 };
 
 
+const removeProductOffer=async(req,res)=>{
+  try {
+    const {productId}=req.body
+    const findProduct=await Product.findOne({_id:productId})
+    const percentage=findProduct.productOffer;
+    findProduct.salesPrice=findProduct.salesPrice+Math.floor(findProduct.regularPrice*(percentage/100))
+    findProduct.productOffer=0,
+    await findProduct.save(),
+    res.json({status:true})
+  } catch (error) {
+    res.redirect("/pageerror")
+  }
+}
+        // console.log(req.body)
+   
+//         if (!productId || !offerPrice) {
+//             return res.status(400).json({ message: "Product ID and Offer Price are required." });
+//         }
+
+    
+//         const product = await Product.findById(productId);
+
+//         if (!product) {
+//             return res.status(404).json({ message: "Product not found." });
+//         }
+
+  
+//         product.offerPrice = offerPrice;
+//         product.isOnOffer = true; 
+//         await product.save();
+
+//         res.status(200).json({
+//             message: "Offer added successfully.",
+//             product,
+//         });
+//     } catch (error) {
+//         console.error("Error adding product offer:", error);
+//         res.status(500).json({ message: "Internal server error." });
+//     }
+// };
 
 
-const removeProductOffer = async (req, res) => {
-    try {
-        const { productId } = req.body;
+
+
+// const removeProductOffer = async (req, res) => {
+//     try {
+//         const { productId } = req.body;
 
        
-        if (!productId) {
-            return res.status(400).json({ message: "Product ID is required." });
-        }
+//         if (!productId) {
+//             return res.status(400).json({ message: "Product ID is required." });
+//         }
 
       
-        const product = await Product.findById(productId);
+//         const product = await Product.findById(productId);
 
-        if (!product) {
-            return res.status(404).json({ message: "Product not found." });
-        }
+//         if (!product) {
+//             return res.status(404).json({ message: "Product not found." });
+//         }
 
-        product.offerPrice = null;
-        product.isOnOffer = false; 
-        await product.save();
+//         product.offerPrice = null;
+//         product.isOnOffer = false; 
+//         await product.save();
 
-        res.status(200).json({
-            message: "Offer removed successfully.",
-            product,
-        });
-    } catch (error) {
-        console.error("Error removing product offer:", error);
-        res.status(500).json({ message: "Internal server error." });
-    }
-};
+//         res.status(200).json({
+//             message: "Offer removed successfully.",
+//             product,
+//         });
+//     } catch (error) {
+//         console.error("Error removing product offer:", error);
+//         res.status(500).json({ message: "Internal server error." });
+//     }
+// };
 
 
 
@@ -320,7 +373,7 @@ const existingProduct = await Product.findOne({
     
 })
 
-if(existingProduct){
+if(existingProduct && existingProduct._id != id){
     return res.status(400).json({error:"Product with this name already exists. Please try with another name"})
 }
   const images =[];

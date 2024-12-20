@@ -1,79 +1,248 @@
 <%- include("../../views/partials/user/header") %>
+
+<style>
+    /* General Page Styling */
+    .breadcrumb-wrap {
+        background-color: #f7f7f7;
+        padding: 20px 0;
+        margin-bottom: 30px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .breadcrumb a {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    .breadcrumb span {
+        color: #6c757d;
+    }
+
+    /* Wishlist Table Styling */
+    .wishlist-table {
+        border: 1px solid #eaeaea;
+        border-radius: 8px;
+        overflow: hidden;
+        margin-top: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .shopping-summery th {
+        background-color: #f9f9f9;
+        color: #333;
+        padding: 15px;
+        font-size: 16px;
+        text-transform: uppercase;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .shopping-summery td {
+        padding: 15px;
+        font-size: 14px;
+        text-align: center;
+        vertical-align: middle;
+        border-bottom: 1px solid #eaeaea;
+    }
+
+    .product-thumbnail img {
+        max-width: 80px;
+        height: auto;
+        border-radius: 5px;
+    }
+
+    .product-name a {
+        color: #333;
+        font-weight: bold;
+        text-decoration: none;
+    }
+
+    .product-name a:hover {
+        color: #007bff;
+    }
+
+    .font-xs {
+        font-size: 12px;
+        color: #999;
+        margin-top: 5px;
+    }
+
+    .btn-add-cart {
+        background-color: #28a745;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 5px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-add-cart:hover {
+        background-color: #218838;
+    }
+
+    .btn-remove {
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 5px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-remove:hover {
+        background-color: #c82333;
+    }
+</style>
+
 <main class="main">
+    <div class="page-header breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/" rel="nofollow">Home</a>
+                <span></span> Shop
+                <span></span> My Wishlist
+            </div>
+        </div>
+    </div>
 
-
-   <div class="page-header breadcrumb-wrap">
-       <div class="container">
-           <div class="breadcrumb">
-               <a href="/" rel="nofollow">Home</a>
-               <span></span> Shop
-               <span></span> My Wishlist
-           </div>
-       </div>
-   </div>
-
-
-   <section class="mt-50 mb-50">
-       <div class="container">
-           <div class="row">
-               <div class="col-12">
-                   <div class="table-responsive">
-                       <table class="table shopping-summery text-center clean">
-                           <thead>
-                               <tr class="main-heading">
-                                   <th scope="col">Image</th>
-                                   <th scope="col">Name</th>
-                                   <th scope="col">Price</th>
-                                   <th scope="col">Add to Cart</th>
-                                   <th scope="col">Remove</th>
-                               </tr>
-                           </thead>
-                           <tbody>
-                             
-                                       <tr>
-                                           <td class="image product-thumbnail">
-                                               <img src="" />
-                                           </td>
-                                           <td class="product-des product-name">
-                                               <h5 class="product-name">
-                                                   <a href="">
-                                                      
-                                                   </a>
-                                               </h5>
-                                               <p class="font-xs">
-                                                   <br />
-                                                  
-                                               </p>
-                                           </td>
-                                           <td class="price" data-title="Price">₹<span>
-                                          
-                                           </span></td>
-                                           <td class="text-center" data-title="Add to Cart">
-                                               <a href="#" onclick="" class="btn btn-sm">Add to Cart</a>
-                                           </td>
-                                           <td class="action" data-title="Remove">
-                                               <a class="btn btn-sm" href="#" onclick="">
-                                                   <i class="fi-rs-trash"></i>
-                                               </a>
-                                           </td>
-                                       </tr>
-                                   <tr>
-                                       <td colspan="5" class="text-center">
-                                           <p class="lead mb-4">No items found in Wishlist</p>
-                                       </td>
-                                   </tr>
-                           </tbody>
-                       </table>
-                   </div>
-               </div>
-           </div>
-       </div>
-   </section>
+    <section class="mt-50 mb-50">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="table-responsive">
+                        <table class="table shopping-summery text-center clean">
+                            <thead>
+                                <tr class="main-heading">
+                                    <th scope="col">Image</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Brand & Category</th>
+                                    <th scope="col">Price</th>
+                                    <th scope="col">Add to Cart</th>
+                                    <th scope="col">Remove</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (wishlist.length > 0) { %>
+                                    <% wishlist.forEach(item => { 
+                                        const product = item.productId;
+                                    %>
+                                        <tr>
+                                            <!-- Product Image -->
+                                            <td class="image product-thumbnail">
+                                                <% if (product.productImage && product.productImage.length > 0) { %>
+                                                    <img src="/uploads/re-image/<%= product.productImage[0] %>" alt="<%= product.productName %>" />
+                                                <% } else { %>
+                                                    <img src="/uploads/re-image/default.png" alt="No Image Available" />
+                                                <% } %>
+                                            </td>
+                                            
+                                            <!-- Product Name -->
+                                            <td class="product-des product-name">
+                                                <a href="#"><%= product.productName %></a>
+                                            </td>
+                                            
+                                            <!-- Category and Brand -->
+                                            <td>
+                                                <p class="font-xs">
+                                                    <strong>Category:</strong> <%= product.category?.name || 'N/A' %><br />
+                                                    <strong>Brand:</strong> <%= product.brand || 'N/A' %>
+                                                </p>
+                                            </td>
+                                            
+                                            <!-- Product Price -->
+                                            <td class="price" data-title="Price">
+                                                ₹<%= product.salesPrice || '0.00' %>
+                                            </td>
+                                            
+                                            <!-- Add to Cart -->
+                                            <td>
+                                                <button class="btn btn-sm btn-add-cart">Add to Cart</button>
+                                            </td>
+                                            
+                                            <!-- Remove from Wishlist -->
+                                            <td>
+                                                <button class="btn btn-sm btn-remove" onclick="removeFromWishlist('<%= product._id %>')">Remove</button>
+                                            </td>
+                                        </tr>
+                                    <% }); %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="6" class="text-center">
+                                            <p class="lead mb-4">No items found in your wishlist.</p>
+                                        </td>
+                                    </tr>
+                                <% } %>
+                            </tbody>
+                            
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 </main>
+
 <%- include("../../views/partials/user/footer") %>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function removeFromWishlist(productId) {
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to undo this action!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, remove it!",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Send DELETE request to remove the product from the wishlist
+            fetch(`/wishlist/remove/${productId}`, {
+                method: "DELETE",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+                .then((res) => res.json())
+                .then((data) => {
+                    if (data.success) {
+                        // Show success message after item removal
+                        Swal.fire({
+                            title: "Removed!",
+                            text: "The item has been removed from your wishlist.",
+                            icon: "success", // Ensure success icon is used
+                            confirmButtonText: "OK",
+                        }).then(() => {
 
-
-
-
-
+                            window.location.reload(); 
+                        });
+                    } else {
+                        // Show error message if removal fails
+                        Swal.fire({
+                            title: "success!",
+                            text: data.message || "Unable to remove the item.",
+                            icon: "success", // Error icon
+                            confirmButtonText: "OK",
+                        }).then(() => {
+                            // Reload the wishlist page to reflect changes
+                            window.location.reload(); // Page reload after success message
+                        });
+                    }
+                })
+                .catch((error) => {
+                    // Handle any error that occurs during the fetch
+                    Swal.fire({
+                        title: "Error!",
+                        text: "Something went wrong. Please try again.",
+                        icon: "error", // Error icon
+                        confirmButtonText: "OK",
+                    });
+                });
+        }
+    });
+}
+</script>

@@ -31,7 +31,7 @@
         <div class="row">
           <!-- Category Creation Form -->
           <div class="col-md-3">
-            <form method="POST" action="/admin/addCategory" id="categoryCreateForm" onsubmit="return validateCategoryForm()">
+            <form method="POST" action="/admin/addCategory" id="categoryCreateForm" onsubmit="return validateForm()">
               <div class="mb-4">
                 <label for="product_name" class="form-label">Name</label>
                 <input
@@ -147,9 +147,9 @@
  
   <script>
     function handleFormSubmit(event) {
-        event.preventDefault(); // Prevent default form submission
+        event.preventDefault(); 
         if (!validateForm()) {
-            return; // Stop if validation fails
+            return; 
         }
     
         const name = document.getElementsByName("name")[0].value.trim();
@@ -163,8 +163,7 @@
             body: JSON.stringify({ name, description })
         })
         .then(response => {
-            // Check if the response status is OK (status 200)
-            // console.log(response)
+           
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
@@ -179,7 +178,7 @@
                     text: "The category has been added successfully!",
                     confirmButtonText: "OK"
                 }).then(() => {
-                    location.reload(); // Reload the page after the alert
+                    location.reload(); 
                 });
             } else {
                 throw new Error(data.error || "An error occurred while adding the category");
@@ -189,19 +188,17 @@
             Swal.fire({
                 icon: "error",
                 title: "Oops!",
-                // text: error.message
                 text:'Category already'
             });
         });
     }
     
     function validateForm() {
-        clearErrorMessage(); // Clear previous errors
+        clearErrorMessage(); 
         const name = document.getElementsByName("name")[0].value.trim();
         const description = document.getElementById("descriptionId").value.trim();
         let isValid = true;
     
-        // Validate name field
         if (name === "") {
             displayErrorMessage("name-error", "Please enter a name");
             isValid = false;
@@ -210,7 +207,6 @@
             isValid = false;
         }
     
-        // Validate description field
         if (description === "") {
             displayErrorMessage("description-error", "Please enter a description");
             isValid = false;
@@ -221,13 +217,13 @@
     
     function displayErrorMessage(elementId, message) {
         const errorElement = document.getElementById(elementId);
-        if (errorElement) { // Ensure the element exists
+        if (errorElement) { 
             errorElement.innerHTML = message;
             errorElement.style.display = "block";
         }
     }
     async function addOffer(categoryId) {
-      // alert(categoryId)
+
     const { value: amount } = await Swal.fire({
         title: "Offer in Percentage",
         input: "number",
@@ -269,7 +265,7 @@
 
             const data = await response.json();
 
-            Swal.close(); // Close the loading spinner
+            Swal.close(); 
 
             if (response.ok && data.status === true) {
                 Swal.fire("Offer Added", "The offer has been added successfully", "success").then(() => {
@@ -321,7 +317,7 @@ async function removeOffer(categoryId) {
 
             const data = await response.json();
 
-            Swal.close(); // Close the loading spinner
+            Swal.close();
 
             if (response.ok && data.status === true) {
                 Swal.fire("Offer Removed", "The offer has been successfully removed", "success").then(() => {

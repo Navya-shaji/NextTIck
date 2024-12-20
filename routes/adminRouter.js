@@ -6,8 +6,8 @@ const categoryController=require("../controllers/admin/categoryController")
 const brandController=require("../controllers/admin/brandControllers")
 const productController=require("../controllers/admin/productController")
 const orderController = require('../controllers/admin/orderController')
+const couponController = require("../controllers/admin/couponController")
 const {userAuth,adminAuth}=require("../middlewares/auth")
-// const orderController = require('../controllers/orderController');
 const multer=require("multer");
 const storage=require("../helpers/multer");
 const uploads = multer({storage:storage})
@@ -15,7 +15,6 @@ const uploads = multer({storage:storage})
 
 
 //Error Management.......................
-// router.get("/",adminAuth.adminAuth,adminController.loadDashboard);
 router.get("/pageerror",adminController.pageerror)
 
 //login Management...................
@@ -33,7 +32,6 @@ router.get("/unblock/:id", adminAuth, customerController.customerunBlocked);
 //Category Management.....................
 router.get("/category", adminAuth, categoryController.categoryInfo);
 router.post("/addCategory", adminAuth, categoryController.addCategory);
-// router.post("/removeCategory",adminAuth,categoryController.removeCategory);
 router.post("/addCategoryOffer",adminAuth,categoryController.addCategoryOffer)
 router.post("/removeCategoryOffer",adminAuth,categoryController.removeCategoryOffer)
 router.get("/listCategory", adminAuth, categoryController.getUnlistedCategory); // Correct route for 'List' action
@@ -48,12 +46,10 @@ router.post("/addBrand",adminAuth,uploads.single("image"),brandController.addBra
 router.post('/blockBrand/:id', brandController.blockBrand);
 router.post("/unblockBrand/:id", adminAuth, brandController.unblockBrand);
 router.get("/deleteBrand",adminAuth,brandController.deleteBrand)
-// router.post("/updateBrand",uploads.single("logo"),adminAuth.adminAuth,brandController.updateBrand);
 
 //Product Management...........................
 router.get("/addProducts",adminAuth,productController.getProductAddPage);
 router.post("/addProducts",adminAuth,uploads.array("images",4),productController.addProducts);
-//Product listing............
 router.get("/products",adminAuth,productController.getAllProducts)
 router.post("/addProductOffer",adminAuth,productController.addProductOffer)
 router.post("/removeProductOffer",adminAuth,productController.removeProductOffer)
@@ -62,17 +58,25 @@ router.get("/unblockProduct",adminAuth,productController.unblockProduct);
 router.get("/editProduct",adminAuth,productController.getEditProduct);
 router.post("/editProduct/:id",adminAuth,uploads.array("image",4),productController.editProduct);
 router.post("/deleteImage",adminAuth,productController.deleteSingleImage);
-// List all orders
+
+
+//  orders.................
 router.get('/orderList', adminAuth, orderController.listOrders);
-
-// Get cancelled orders
 router.get('/orders/cancelled', adminAuth, orderController.getCancelledOrders);
-
-// Get order details
 router.get('/orders/:orderId', adminAuth, orderController.getAdminOrderDetails);
-
-// Update order status
 router.post('/orders/update-status', adminAuth, orderController.updateOrderStatus);
 
+//coupon Management ............
+
+router.get("/coupon",adminAuth,couponController.loadcoupon)
+router.post("/createcoupon",adminAuth,couponController.createCoupon)
+router.get("/editcoupon",adminAuth,couponController.editCoupon)
+router.get("/updatecoupon",adminAuth,couponController.updateCoupon)
+router.delete("/deletecoupon/:id", adminAuth, couponController.deleteCoupon);
+
+router.get('/dashboard', adminAuth, adminController.loadDashboard);
+router.get('/sales-report', adminAuth, adminController.loadSalesReport);
+router.post('/sales-report/generate', adminAuth, adminController.generateSalesReport);
+router.get('/sales-report/download', adminAuth, adminController.downloadSalesReport);
 
 module.exports=router

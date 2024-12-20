@@ -9,7 +9,8 @@ const cartController = require("../controllers/user/cartController");
 const shopController =require("../controllers/user/shopController");
 const checkoutController=require("../controllers/user/checkoutController");
 const orderController=require("../controllers/user/orderController")
-
+const wishlistController=require("../controllers/user/wishlistController");
+const walletController=require("../controllers/user/walletController");
 
 
 
@@ -25,6 +26,7 @@ router.post("/verify-otp",userController.verifyOtp)
 router.post("/resend-otp",userController.resendOtp)
 router.get('/auth/google',passport.authenticate("google",{scope:['profile','email']}));
 router.get('/auth/google/callback',passport.authenticate('google',{failureRedirect:'/signup'}),(req,res)=>{
+    req.session.user = req.session.passport.user 
     res.redirect('/',)
 })
 
@@ -34,7 +36,7 @@ router.get("/login",userController.loadLogin)
 router.post("/login",userController.login)
 
 //Product Management....................
-router.get("/productDetails",userAuth,productController.productDetail);
+router.get("/productDetails",productController.productDetail);
 
 
 //profile Management.............................
@@ -51,6 +53,8 @@ router.get("/change-email",userAuth,profileController.changeEmail);
 router.post("/change-email",userAuth,profileController.changeEmailValid);
 router.post("/verify-email-otp",userAuth,profileController.verifyEmailOtp);
 router.post("/update-email",userAuth,profileController.updateEmail)
+router.get("/profile", profileController.userProfile);
+router.delete("/orders/:orderId", profileController.deleteOrder);
 
 
 router.get("/change-password", userAuth, profileController.renderChangePasswordPage);
@@ -66,18 +70,18 @@ router.get("/edit-address/:id",userAuth,profileController.editAddress);
 router.post("/postEditAddress/:id",userAuth,profileController.postEditAddress);
 router.get("/delete-address/:id",userAuth,profileController.deleteAddress);
 
+
+ //wishlist Management............................
+
+router.get("/wishlist",userAuth,wishlistController.loadWishlist);
+router.post("/addToWishlist",userAuth,wishlistController.addToWishlist)
+router.delete('/wishlist/remove/:id', wishlistController.removeFromWishlist);
+
 //shoping management........................
 
-// Main shop page
 router.get('/shop', shopController.loadshoppingPage);
-
-// Search products
 router.get('/search', shopController.searchProducts);
-
-// Filter products (can be handled by the main shop route with query parameters)
 router.get('/filter', shopController.loadshoppingPage);
-
-// Sort products (can be handled by the main shop route with query parameters)
 router.get('/sort', shopController.loadshoppingPage);
 
 //cart management................................................................................................................
@@ -93,20 +97,32 @@ router.post("/checkout",userAuth,checkoutController.postCheckout);
 router.get("/ orderConfirm",checkoutController. orderConfirm);
 
 
-// Profile page with orders
-router.get("/profile", profileController.userProfile);
-
-// Delete order
-router.delete("/orders/:orderId", profileController.deleteOrder);
-
 router.get('/history', userAuth, orderController.getOrderHistory);
-
-// POST /orders/cancel - Cancel an order
 router.post('/orders/cancel', userAuth, orderController.cancelOrder);
-
-// GET /orders/status/:orderId - Get order status
 router.get('/status/:orderId', userAuth, orderController.getOrderStatus);
 router.get('/orders/:orderId', userAuth, orderController.getOrderDetails);
+router.put('/:orderId/status',userAuth, orderController.changeOrderStatus); 
+router.get('/orders/view/:id',userAuth, orderController.viewOrderDetails); 
+router.get("/orderConfirmation",userAuth,checkoutController.orderConfirm);
+router.post('/orders/update-status',userAuth, orderController.updateOrderStatus);
+// Route to show return reason page
+router.get('/return-reason', userAuth, orderController.showReturnReasonPage);
 
-router.get("/orderConfirmation",checkoutController.orderConfirm);
+// Route to submit the return reason
+router.post('/process-return',userAuth, orderController. submitReturnReason);
+
+// General route to update order status
+router.post('/update-status', userAuth, orderController.updateOrderStatus);
+
+router.get('/return-reason/:orderId',userAuth,orderController. showReturnReasonPage);
+// router.post('/submit-return-reason',userAuth, orderController.submitReturnReason);
+
+
+// wallet...........................................
+
+router.get('/balance', profileController.getWalletBalance);
+router.post('/add-money', profileController.addMoney);
+router.get('/history', profileController.getWalletHistory);
+router.post('/refund', profileController.refundToWallet);
+router.post('/verify-payment', checkoutController.verifyPayment);
 module.exports = router

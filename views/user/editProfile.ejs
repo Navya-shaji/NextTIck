@@ -63,19 +63,15 @@
     </div>
 </div>
 
-<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<!-- Custom JS -->
+
 <script>
-    // JavaScript code for handling modal and saving addresses
     document.addEventListener('DOMContentLoaded', () => {
         const saveAddressBtn = document.getElementById('saveAddressBtn');
         const addressForm = document.getElementById('addressForm');
 
-        // Simulated address data
         const addressList = [];
 
-        // Save new address
         saveAddressBtn.addEventListener('click', () => {
             const newAddress = {
                 addressType: document.getElementById('addressType').value,
@@ -91,10 +87,8 @@
             addressList.push(newAddress);
             console.log('Address saved:', newAddress);
 
-            // Reset form
             addressForm.reset();
 
-            // Close the modal
             const modal = bootstrap.Modal.getInstance(document.getElementById('addAddressModal'));
             modal.hide();
         });

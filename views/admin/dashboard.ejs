@@ -1,10 +1,296 @@
 <%- include("../../views/partials/admin/header") %>
-<section class="content-main">
-    <div class="content-header">
-        <div>
-            <h2 class="content-title card-title">Dashboard </h2>
+
+<div class="container-fluid mt-4">
+    <h1 class="mb-4">Admin Dashboard</h1>
+    <ul class="nav flex-column">
+        <li class="nav-item">
+            <a class="nav-link" href="/admin/dashboard">Dashboard</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/admin/sales-report">Sales Report</a>
+        </li>
+        <!-- Add other admin navigation items here -->
+    </ul>
+
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <select id="reportType" class="form-select">
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+                <option value="yearly">Yearly</option>
+                <option value="custom">Custom Date Range</option>
+            </select>
         </div>
-       
+        <div class="col-md-6" id="dateRangeContainer" style="display: none;">
+            <div class="input-group">
+                <input type="date" id="startDate" class="form-control">
+                <span class="input-group-text">to</span>
+                <input type="date" id="endDate" class="form-control">
+            </div>
+        </div>
+        <div class="col-md-3">
+            <button id="generateReport" class="btn btn-primary">Generate Report</button>
+        </div>
     </div>
-</section>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Overall Sales Count</h5>
+                    <h2 id="salesCount" class="card-text">0</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Overall Order Amount</h5>
+                    <h2 id="orderAmount" class="card-text">$0</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Overall Discount</h5>
+                    <h2 id="totalDiscount" class="card-text">$0</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Sales Overview</h5>
+                    <canvas id="salesChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Discount Distribution</h5>
+                    <canvas id="discountChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Coupon Usage</h5>
+                    <canvas id="couponChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h3>Detailed Sales Report</h3>
+            <div class="table-responsive">
+                <table id="salesTable" class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Discount</th>
+                            <th>Coupon</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Sales data will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <button id="downloadPDF" class="btn btn-secondary me-2">Download PDF</button>
+            <button id="downloadExcel" class="btn btn-secondary">Download Excel</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const reportType = document.getElementById('reportType');
+        const dateRangeContainer = document.getElementById('dateRangeContainer');
+        const startDate = document.getElementById('startDate');
+        const endDate = document.getElementById('endDate');
+        const generateReport = document.getElementById('generateReport');
+        const downloadPDF = document.getElementById('downloadPDF');
+        const downloadExcel = document.getElementById('downloadExcel');
+
+        let salesChart, discountChart, couponChart;
+
+        reportType.addEventListener('change', function() {
+            dateRangeContainer.style.display = this.value === 'custom' ? 'block' : 'none';
+        });
+
+        generateReport.addEventListener('click', fetchSalesData);
+        downloadPDF.addEventListener('click', () => downloadReport('pdf'));
+        downloadExcel.addEventListener('click', () => downloadReport('excel'));
+
+        function fetchSalesData() {
+            const params = new URLSearchParams({
+                reportType: reportType.value,
+                startDate: startDate.value,
+                endDate: endDate.value
+            });
+
+            fetch(`/admin/sales-report?${params}`)
+                .then(response => response.json())
+                .then(data => {
+                    updateDashboard(data);
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function updateDashboard(data) {
+            document.getElementById('salesCount').textContent = data.totalSales;
+            document.getElementById('orderAmount').textContent = `$${data.totalAmount.toFixed(2)}`;
+            document.getElementById('totalDiscount').textContent = `$${data.totalDiscount.toFixed(2)}`;
+
+            updateSalesChart(data);
+            updateDiscountChart(data);
+            updateCouponChart(data);
+            updateSalesTable(data);
+        }
+
+        function updateSalesChart(data) {
+            const ctx = document.getElementById('salesChart').getContext('2d');
+            if (salesChart) {
+                salesChart.destroy();
+            }
+            salesChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.orders.map(order => new Date(order.date).toLocaleDateString()),
+                    datasets: [{
+                        label: 'Sales Amount',
+                        data: data.orders.map(order => order.amount),
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateDiscountChart(data) {
+            const ctx = document.getElementById('discountChart').getContext('2d');
+            if (discountChart) {
+                discountChart.destroy();
+            }
+            discountChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Discount', 'Non-Discount'],
+                    datasets: [{
+                        label: 'Amount',
+                        data: [data.totalDiscount, data.totalAmount - data.totalDiscount],
+                        backgroundColor: ['rgba(255, 99, 132, 0.2)', 'rgba(75, 192, 192, 0.2)'],
+                        borderColor: ['rgb(255, 99, 132)', 'rgb(75, 192, 192)'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateCouponChart(data) {
+            const coupons = {};
+            data.orders.forEach(order => {
+                if (order.couponCode !== 'N/A') {
+                    coupons[order.couponCode] = (coupons[order.couponCode] || 0) + 1;
+                }
+            });
+
+            const ctx = document.getElementById('couponChart').getContext('2d');
+            if (couponChart) {
+                couponChart.destroy();
+            }
+            couponChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(coupons),
+                    datasets: [{
+                        data: Object.values(coupons),
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true
+                }
+            });
+        }
+
+        function updateSalesTable(data) {
+            const tableBody = document.querySelector('#salesTable tbody');
+            tableBody.innerHTML = '';
+            data.orders.forEach(order => {
+                const row = tableBody.insertRow();
+                row.insertCell(0).textContent = order.orderId;
+                row.insertCell(1).textContent = new Date(order.date).toLocaleDateString();
+                row.insertCell(2).textContent = `$${order.amount.toFixed(2)}`;
+                row.insertCell(3).textContent = `$${order.discount.toFixed(2)}`;
+                row.insertCell(4).textContent = order.couponCode;
+            });
+        }
+
+        function downloadReport(format) {
+            const params = new URLSearchParams({
+                reportType: reportType.value,
+                startDate: startDate.value,
+                endDate: endDate.value,
+                format: format
+            });
+
+            window.location.href = `/admin/sales-report/download?${params}`;
+        }
+
+        // Initial report generation
+        fetchSalesData();
+    });
+</script>
+
 <%- include("../../views/partials/admin/footer") %>

@@ -3,74 +3,15 @@ const Product = require("../../models/productSchema");
 const Cart = require("../../models/cartSchema");
 const Address = require("../../models/addressSchema");
 const Order = require('../../models/orderSchema');
+const Razorpay = require('razorpay');
+const crypto = require('crypto');
 const { compareSync } = require("bcrypt");
 
-
-// const getcheckoutPage = async (req, res) => {
-//     console.log("Fetching cart details...");
-//     try {
-//         const user = req.session.user;
-//         const productId = req.query.id || null;
-//         const quantity = parseInt(req.query.quantity) || 1; 
-
-//         if (!user) {
-//             return res.redirect("/login");
-//         }
-
-//         const address = await Address.findOne({userId:user._id});
-//         if (!productId) {
-//             const cart = await Cart.findOne({ userId: user._id }).populate("items.productId");
-
-//             if (!cart || !cart.items || cart.items.length === 0) {
-//                 return res.redirect("/");
-//             }
-
-//             const products = cart.items.map(item => {
-//                 const product = item.productId; 
-//                 const productImage = product?.productImage || []; 
-//                 return {
-//                     _id: product._id,
-//                     productName: product.productName,
-//                     productImage: productImage.length > 0 ? productImage : ["default-image.jpg"], 
-//                     salePrice: product.salePrice || 0, 
-//                     quantity: item.quantity || 1 
-//                 };
-//             });
-
-//             const subtotal = products.reduce((sum, item) => {
-//                 return sum + item.salePrice * item.quantity;
-//             }, 0);
-
-//             return res.render("checkout", { user, product: products, subtotal ,quantity:null,address:address.address});
-//         }
-
-//         if (productId) {
-//             const product = await Product.findById(productId);
-//             if (!product) {
-//                 return res.redirect("/pageNotFound");
-//             }
-
-//             console.log("Single product details:", product);
-
-//             const productData = {
-//                 _id: product._id,
-//                 productName: product.productName,
-//                 productImage: product.productImage?.length > 0 ? product.productImage : ["default-image.jpg"],
-//                 salePrice: product.salePrice || 0,
-//                 quantity: quantity // Use the quantity from the query
-//             };
-
-//             const subtotal = productData.salePrice * quantity;
-
-//             // Render the checkout page with the specific product details
-//             return res.render("checkout", { user, product: [productData], subtotal,quantity:quantity ,address:address.address});
-//         }
-//     } catch (error) {
-//         console.error("Error fetching checkout page:", error.message);
-//         return res.redirect("/pageNotFound");
-//     }
-// };
-
+// Initialize Razorpay
+const razorpay = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET
+});
 
 
 const getcheckoutPage = async (req, res) => {
@@ -84,13 +25,10 @@ const getcheckoutPage = async (req, res) => {
             return res.redirect("/login");
         }
 
-        // Fetch the user's address
         const address = await Address.findOne({ userId: user._id });
         
-        // If no address found, set it to an empty object to avoid null issues
         const addressData = address || { address: [] };
 
-        // If no specific product is queried, show cart items
         if (!productId) {
             const cart = await Cart.findOne({ userId: user._id }).populate("items.productId");
 
@@ -98,7 +36,6 @@ const getcheckoutPage = async (req, res) => {
                 return res.redirect("/");
             }
 
-            // Map cart items to extract product details
             const products = cart.items.map(item => {
                 const product = item.productId;
                 const productImage = product?.productImage || [];
@@ -132,12 +69,12 @@ const getcheckoutPage = async (req, res) => {
             });
         }
 
-        // If a specific product is queried
         if (productId) {
             const product = await Product.findById(productId);
             if (!product) {
                 return res.redirect("/pageNotFound");
             }
+
 
             console.log("Single product details:", product);
 
@@ -146,7 +83,7 @@ const getcheckoutPage = async (req, res) => {
                 productName: product.productName,
                 productImage: product.productImage?.length > 0 ? product.productImage : ["default-image.jpg"],
                 salePrice: product.salesPrice || 0,
-                quantity: quantity // Use the quantity from the query
+                quantity: quantity 
             };
 
             const subtotal = productData.salePrice * quantity;
@@ -178,10 +115,9 @@ const getcheckoutPage = async (req, res) => {
 
 const postCheckout = async (req, res) => {
     try {
-        const userId = req.session.user; // Get the user ID from the session
-
+        const userId = req.session.user; 
         if (!userId) {
-            return res.redirect("/login"); // Redirect to login if user is not logged in
+            return res.redirect("/login"); 
         }
 
         const { address, products, subtotal, total, paymentMethod } = req.body;
@@ -193,7 +129,34 @@ const postCheckout = async (req, res) => {
             return res.status(400).json({ success: false, message: "No products provided" });
         }
 
-        // Check stock and reduce quantity directly from passed data
+
+            // Create Razorpay order only if payment method is online
+            if (paymentMethod === 'online') {
+                const options = {
+                    amount: total * 100, // amount in smallest currency unit (paise)
+                    currency: "INR",
+                    receipt: `order_${Date.now()}`
+                };
+    
+                const order = await razorpay.orders.create(options);
+    
+                return res.status(200).json({
+                    success: true,
+                    order_id: order.id,
+                    key_id: process.env.RAZORPAY_KEY_ID,
+                    amount: total * 100,
+                    currency: "INR",
+                    name: "Your Store Name",
+                    description: "Purchase Description",
+                    prefill: {
+                        name: userId.name,
+                        email: userId.email,
+                        contact: userId.phone
+                    }
+                });
+            }
+
+
         for (let product of JSON.parse(products)) {
             console.log("Processing product:", product);
 
@@ -204,7 +167,6 @@ const postCheckout = async (req, res) => {
                 });
             }
 
-            // Deduct product quantity
             product.stock -= product.quantity;
             console.log(`Stock updated for ${product.productName}: ${product.stock}`);
         }
@@ -213,10 +175,10 @@ const postCheckout = async (req, res) => {
             product: product._id,
             price: product.salesPrice,
             quantity: product.quantity,
+
         }))
 
         console.log(orderedItems)
-        // Create a new order
         const newOrder = new Order({
             userId: userId,
             orderItems: orderedItems,
@@ -228,7 +190,6 @@ const postCheckout = async (req, res) => {
             paymentMethod: paymentMethod,
         });
 
-        // Clear the user's cart
         await Cart.findOneAndUpdate({ userId: userId }, { $set: { items: [] } });
 
         // Save the order
@@ -248,7 +209,104 @@ const postCheckout = async (req, res) => {
 };
 
 
+const verifyPayment = async (req, res) => {
+    try {
+        const {
+            razorpay_order_id,
+            razorpay_payment_id,
+            razorpay_signature,
+            orderDetails
+        } = req.body;
 
+        // Log the received data for debugging
+        console.log('Verification Data:', {
+            razorpay_order_id,
+            razorpay_payment_id,
+            razorpay_signature
+        });
+
+        if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+            return res.status(400).json({ 
+                success: false, 
+                message: "Missing payment verification parameters" 
+            });
+        }
+
+        // Create the signature verification string
+        const shasum = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET);
+        const generated_signature = shasum
+            .update(`${razorpay_order_id}|${razorpay_payment_id}`)
+            .digest('hex');
+
+        // Log both signatures for debugging
+        console.log('Generated Signature:', generated_signature);
+        console.log('Received Signature:', razorpay_signature);
+
+        if (generated_signature !== razorpay_signature) {
+            return res.status(400).json({ 
+                success: false, 
+                message: "Invalid payment signature",
+                debug: {
+                    generated: generated_signature,
+                    received: razorpay_signature
+                }
+            });
+        }
+
+        // Verify the payment with Razorpay API
+        const payment = await razorpay.payments.fetch(razorpay_payment_id);
+        
+        if (payment.status !== 'captured') {
+            return res.status(400).json({ 
+                success: false, 
+                message: "Payment not captured" 
+            });
+        }
+
+        // Create order in your database
+        const { address, products, subtotal, total } = orderDetails;
+        const orderedItems = JSON.parse(products).map(product => ({
+            product: product._id,
+            price: product.salesPrice,
+            quantity: product.quantity,
+        }));
+
+        const newOrder = new Order({
+            userId: req.session.user,
+            orderItems: orderedItems,
+            address: address,
+            shippingAddress: address,
+            totalPrice: subtotal,
+            finalAmount: total,
+            status: "Pending",
+            paymentMethod: "online",
+            paymentId: razorpay_payment_id,
+            paymentStatus: "Completed",
+            createdOn: new Date()
+        });
+
+        // Clear the cart
+        await Cart.findOneAndUpdate(
+            { userId: req.session.user }, 
+            { $set: { items: [] } }
+        );
+
+        const savedOrder = await newOrder.save();
+
+        return res.status(200).json({ 
+            success: true, 
+            message: "Payment verified and order placed",
+            orderId: savedOrder._id
+        });
+    } catch (error) {
+        console.error("Error verifying payment:", error);
+        return res.status(500).json({ 
+            success: false, 
+            message: "Internal server error",
+            error: error.message 
+        });
+    }
+};
 
 
 const  orderConfirm = async(req,res)=>{
@@ -271,4 +329,5 @@ module.exports = {
     getcheckoutPage,
     postCheckout,
     orderConfirm,
+    verifyPayment
 };

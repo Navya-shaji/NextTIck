@@ -46,6 +46,10 @@ const addCategory = async (req, res) => {
             description,
         });
 
+
+
+
+
         await newCategory.save();
         return res.json({ message: "Category added successfully" });
     } catch (error) {
@@ -79,7 +83,7 @@ const addCategoryOffer = async (req, res) => {
 
         for (const product of products) {
             product.productOffer = 0;
-            product.salePrice = product.regularPrice;
+            product.salesPrice = product.regularPrice;
             await product.save();
         }
 

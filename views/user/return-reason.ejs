@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Return Order</title>
+    <!-- Include SweetAlert2 library -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <h1>Return Order</h1>
+    <form id="returnForm" action="/process-return" method="POST">
+        <input type="hidden" name="orderId" value=""> <!-- Replace with actual order ID -->
+        <label for="reason">Reason for Return:</label>
+        <textarea name="reason" id="reason" rows="4" required></textarea>
+        <br>
+        <button type="submit">Submit</button>
+    </form>
+
+    <script>
+        document.getElementById('returnForm').addEventListener('submit', async (e) => {
+            e.preventDefault();  // Prevent the default form submission
+
+            const form = e.target;
+            const formData = new FormData(form);
+            const orderId = formData.get('orderId');
+            const reason = formData.get('reason');
+
+            try {
+                const response = await fetch('/process-return', {
+                    method: 'POST',
+                    body: JSON.stringify({ orderId, reason }),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Display a SweetAlert message for success
+                    Swal.fire({
+                        title: 'Success!',
+                        text: result.message,
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        window.location.href = '/profile';  // Redirect to the profile or orders page
+                    });
+                } else {
+                    // Display a SweetAlert message for error
+                    Swal.fire({
+                        title: 'Error!',
+                        text: result.message,
+                        icon: 'error',
+                        confirmButtonText: 'Try Again'
+                    });
+                }
+            } catch (error) {
+                // Display a SweetAlert message for network or server error
+                Swal.fire({
+                    title: 'Oops!',
+                    text: 'There was an error submitting your request. Please try again later.',
+                    icon: 'error',
+                    confirmButtonText: 'Try Again'
+                });
+            }
+        });
+    </script>
+</body>
+</html>

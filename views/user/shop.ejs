@@ -1,4 +1,4 @@
-<%- include("../../views/partials/user/header.ejs") %>
+<%- include("../../views/partials/user/header") %>
 <head>
   <link rel="stylesheet" href="/styles/shop-page.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +7,6 @@
 <div class="main-container">
   <section class="shop-page">
     <div class="shop-topbar">
-      <!-- <h1 class="shop-title">Our Shop</h1> -->
       <div class="search-bar">
         <form action="/search" method="GET" class="search-form">
           <input type="text" name="query" placeholder="Search items..." class="search-input" value="<%= query.query || '' %>" />
@@ -15,12 +14,15 @@
         </form>
       </div>
     </div>
-  
     <div class="product-list-container">
       <aside class="sidebar">
+        <!-- Categories Dropdown -->
         <div class="filter-section">
-          <div class="filter-title">Categories</div>
-          <div class="category-brand-container">
+          <div class="filter-title" onclick="toggleDropdown('categoryDropdown')">
+            Categories
+            <span class="dropdown-arrow">▼</span>
+          </div>
+          <div id="categoryDropdown" class="category-brand-container dropdown-content">
             <ul>
               <% categories.forEach(function(category) { %>
                 <li class="filter-item">
@@ -32,10 +34,14 @@
             </ul>
           </div>
         </div>
-
+    
+        <!-- Brands Dropdown -->
         <div class="filter-section">
-          <div class="filter-title">Brands</div>
-          <div class="category-brand-container">
+          <div class="filter-title" onclick="toggleDropdown('brandDropdown')">
+            Brands
+            <span class="dropdown-arrow">▼</span>
+          </div>
+          <div id="brandDropdown" class="category-brand-container dropdown-content">
             <ul>
               <% brands.forEach(function(brand) { %>
                 <li class="filter-item">
@@ -47,7 +53,9 @@
             </ul>
           </div>
         </div>
-
+      </aside>
+    </div>
+    
         <div class="filter-section">
           <div class="filter-title">Filter by Price</div>
           <form action="/shop" method="GET" id="price-filter-form">
@@ -68,7 +76,6 @@
       <main class="product-content">
         <div class="sort-options">
           <form id="sortForm" action="/shop" method="GET">
-            <!-- Preserve existing query parameters -->
             <% for (const [key, value] of Object.entries(query)) { %>
               <% if (key !== 'sort' && key !== 'page') { %>
                 <input type="hidden" name="<%= key %>" value="<%= value %>">
@@ -110,12 +117,13 @@
                 <p>Rating: <%= product.averageRating ? product.averageRating.toFixed(1) : 'N/A' %> / 5</p>
                 <p>In Stock: <%= product.quantity %></p>
               </a>
-              <button class="add-to-cart-btn" onclick="addToCartHandler(event, '<%= product._id %>')" <%= product.quantity > 0 ? '' : 'disabled' %>>
+              <button class="add-to-cart-btn" onclick=" (event, '<%= product._id %>')" <%= product.quantity > 0 ? '' : 'disabled' %>>
                 <%= product.quantity > 0 ? 'Add to Cart' : 'Out of Stock' %>
               </button>
             </div>
           <% }); %>
         </div>
+        
 
         <!-- Pagination -->
         <div class="pagination">
@@ -137,6 +145,8 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
 
 
@@ -165,7 +175,6 @@ function addToCartHandler(event, productId) {
     })
     .then(data => {
         if (data.success) {
-            // Show success message
             Swal.fire({
                 title: 'Success!',
                 text: data.message || 'Product added to cart successfully!',
@@ -173,12 +182,10 @@ function addToCartHandler(event, productId) {
                 showConfirmButton: false,
                 timer: 1500
             }).then(() => {
-                // Update cart count if available
                 if (data.cartCount !== undefined) {
                     updateCartCount(data.cartCount);
                 }
                 
-                // Redirect to cart page if specified
                 if (data.redirect) {
                     window.location.href = data.redirect;
                 }
@@ -190,7 +197,6 @@ function addToCartHandler(event, productId) {
     .catch(error => {
         console.error('Error:', error);
         
-        // Handle unauthorized/login required error
         if (error.message.includes('Please login')) {
             Swal.fire({
                 title: 'Login Required',
@@ -205,7 +211,6 @@ function addToCartHandler(event, productId) {
                 }
             });
         } 
-        // Handle quantity limit error
         else if (error.message.includes('Maximum quantity')) {
             Swal.fire({
                 title: 'Quantity Limit Reached',
@@ -214,7 +219,6 @@ function addToCartHandler(event, productId) {
                 confirmButtonText: 'OK'
             });
         }
-        // Handle out of stock error
         else if (error.message.includes('out of stock') || error.message.includes('available in stock')) {
             Swal.fire({
                 title: 'Stock Limited',
@@ -223,7 +227,6 @@ function addToCartHandler(event, productId) {
                 confirmButtonText: 'OK'
             });
         }
-        // Handle other errors
         else {
             Swal.fire({
                 title: 'Error!',
@@ -234,11 +237,9 @@ function addToCartHandler(event, productId) {
         }
     });
 }
-  // Sorting functionality
   document.getElementById('sort').addEventListener('change', function() {
     const form = document.getElementById('sortForm');
     
-    // Reset to first page when sorting changes
     const pageInput = form.querySelector('input[name="page"]');
     if (pageInput) {
       pageInput.value = '1';
@@ -247,7 +248,6 @@ function addToCartHandler(event, productId) {
     form.submit();
   });
   
-  // Price filter submission
   document.getElementById('price-filter-form').addEventListener('submit', function(e) {
     e.preventDefault();
     
@@ -257,12 +257,10 @@ function addToCartHandler(event, productId) {
     
     if (minPrice) currentUrl.searchParams.set('minPrice', minPrice);
     if (maxPrice) currentUrl.searchParams.set('maxPrice', maxPrice);
-    currentUrl.searchParams.set('page', '1'); // Reset to first page
-    
+    currentUrl.searchParams.set('page', '1');
     window.location.href = currentUrl.toString();
   });
   
-  // In-stock filter
   document.querySelector('input[name="inStock"]').addEventListener('change', function() {
     const currentUrl = new URL(window.location.href);
     if (this.checked) {
@@ -270,23 +268,53 @@ function addToCartHandler(event, productId) {
     } else {
       currentUrl.searchParams.delete('inStock');
     }
-    currentUrl.searchParams.set('page', '1'); // Reset to first page
+    currentUrl.searchParams.set('page', '1'); 
     window.location.href = currentUrl.toString();
   });
   </script>
-<script>
 
+
+<script>
 function addToWishlist(productId) {
-  // Implement wishlist functionality
-  console.log('Add to wishlist:', productId);
+
+  $.ajax({
+    url: "/addToWishlist", 
+    method: "POST",
+    data: { productId: productId },
+    success: (response) => {
+      if (response.status) {
+        Swal.fire({
+          title: "Added to wishlist",
+          text: "The product has been added to your wishlist.",
+          icon: "success",
+          timer: 2000,
+        });
+      } else {
+        Swal.fire({
+          title: "Already in wishlist",
+          text: response.message || "This product is already in your wishlist.",
+          icon: "info",
+          timer: 2000,
+        });
+      }
+    },
+    error: (xhr, status, error) => {
+
+      console.error("AJAX Error: ", error, xhr.responseText);
+      Swal.fire({
+        title: "Error",
+        text: "There was an error adding the product to your wishlist. Please try again.",
+        icon: "error",
+        timer: 2000,
+      });
+    },
+  });
 }
 
 function addToCart(productId) {
-  // Implement add to cart functionality
   console.log('Add to cart:', productId);
 }
 
-// Apply filters and sorting
 document.getElementById('sort').addEventListener('change', function() {
   const currentUrl = new URL(window.location.href);
   currentUrl.searchParams.set('sort', this.value);
@@ -302,6 +330,21 @@ document.querySelector('input[name="inStock"]').addEventListener('change', funct
   }
   window.location.href = currentUrl.toString();
 });
+
+
+  function toggleDropdown(id) {
+    const dropdown = document.getElementById(id);
+    dropdown.classList.toggle('show');
+
+    const arrow = dropdown.previousElementSibling.querySelector('.dropdown-arrow');
+    if (dropdown.classList.contains('show')) {
+      arrow.style.transform = 'rotate(180deg)';
+    } else {
+      arrow.style.transform = 'rotate(0deg)';
+    }
+  }
+
+
 </script>
 <%- include("../../views/partials/user/footer.ejs") %>
 

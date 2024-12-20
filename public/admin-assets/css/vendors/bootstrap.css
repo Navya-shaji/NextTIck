@@ -8643,6 +8643,8 @@ fieldset:disabled .btn {
 
 .bg-light {
   background-color: #f8f9fa !important;
+  padding-bottom: 0;
+
 }
 
 .bg-dark {

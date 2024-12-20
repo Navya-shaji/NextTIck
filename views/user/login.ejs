@@ -12,34 +12,31 @@
     </div>
     <div class="login-section">
       <h2>Welcome Back</h2>
-      <form action="/login" method="POST" class="login-form" id="loginform" novalidate>
-
+      <form action="/login" method="POST" class="login-form" id="loginForm" novalidate>
         <div class="form-group">
           <label for="email">Email</label>
-          <input type="email" id="email" name="email" placeholder="Enter your email" >
-          <div id="error2" class="error-message"></div>
+          <input type="email" id="email" name="email" placeholder="Enter your email" required>
+          <div id="emailError" class="error-message"></div>
         </div>
         <div class="form-group">
           <label for="password">Password</label>
-          <input type="password" id="password" name="password" placeholder="Enter your password" >
-          <div id="error2" class="error-message"></div>
-        </div class="form-group d-flex justify-content-end">
-        <a href="/forgot-password" class="forgot-password-link ms-auto">Forgot Password</a>
-          <div>
-    
-
+          <input type="password" id="password" name="password" placeholder="Enter your password" required>
+          <div id="passwordError" class="error-message"></div>
+        </div>
+        <div class="form-group d-flex justify-content-end">
+          <a href="/forgot-password" class="forgot-password-link ms-auto">Forgot Password</a>
+        </div>
+        
+        <% if(locals.message && message.length > 0) { %>
+          <div class="alert alert-danger text-center">
+            <%= message %>
           </div>
-          <%if(locals.message && message.length>0){%>
-            <div class="alert alert-danger text-center">
-              <%=message%>
-            </div>
-            <%}%>
+        <% } %>
 
         <button type="submit" class="btn">Login</button>
         <div class="divider">or</div>
-        <a href = "/auth/google" class="google-btn">
+        <a href="/auth/google" class="google-btn">
           <img src="images/icon.jpg" alt="Google Icon">
-           
           Sign up with Google
         </a>
       </form>
@@ -49,52 +46,80 @@
     </div>
   </div>
 
+  <script src="/js/login-validation.js"></script>
+</body>
+</html>
 <script>
-  const emailid = document.getElementById("email");
-  const passid = document.getElementById("password");
-  const error1 = document.getElementById("error1");
-  const error2 = document.getElementById("error2");
-  const loginform = document.getElementById("loginform");
+document.addEventListener("DOMContentLoaded", function () {
+  const loginForm = document.getElementById("loginForm");
+  const emailInput = document.getElementById("email");
+  const passwordInput = document.getElementById("password");
+  const emailError = document.getElementById("emailError");
+  const passwordError = document.getElementById("passwordError");
 
-  function emailValidateChecking(e) {
-      const emailval = emailid.value;
-      const emailpattern =
-      /^[a-zA-Z0-9._-]+@([a-zA-Z0-9.-]+)\.([a-zA-Z]{2,4})$/;
-
-      if (!emailpattern.test(emailval)) {
-      error1.style.display = "block";
-      error1.innerHTML = "Invalid Format";
-      } else {
-      error1.style.display = "none";
-      error1.innerHTML = "";
-      }
+  function validateEmail(email) {
+    const emailPattern = /^[a-zA-Z0-9._-]+@([a-zA-Z0-9.-]+)\.([a-zA-Z]{2,4})$/;
+    return emailPattern.test(email);
   }
 
-  function passValidateChecking(e) {
-      const passval = passid.value;
-      if (passval.length <8) {
-      error2.style.display = "block";
-      error2.innerHTML = "Should contain at least 6 characters";
-      } else {
-      error2.style.display = "none";
-      error2.innerHTML = "";
-      }
+  function showError(element, message) {
+    element.textContent = message;
+    element.style.display = "block";
   }
 
-  document.addEventListener("DOMContentLoaded", function () {
-      loginform.addEventListener("submit", function (e) {
-      emailValidateChecking();
-      passValidateChecking();
+  function clearError(element) {
+    element.textContent = "";
+    element.style.display = "none";
+  }
 
-      if (!emailid || !passid || !error1 || !error2 || !loginform) {
-          console.error("One or more elements not found");
-      }
+  function validateForm(e) {
+    let isValid = true;
 
-      if (error1.innerHTML || error2.innerHTML) {
-          e.preventDefault();
-      }
-      });
+    // Email validation
+    if (!emailInput.value.trim()) {
+      showError(emailError, "Email is required");
+      isValid = false;
+    } else if (!validateEmail(emailInput.value)) {
+      showError(emailError, "Invalid email format");
+      isValid = false;
+    } else {
+      clearError(emailError);
+    }
+
+    // Password validation
+    if (!passwordInput.value) {
+      showError(passwordError, "Password is required");
+      isValid = false;
+    } else if (passwordInput.value.length < 8) {
+      showError(passwordError, "Password should be at least 8 characters long");
+      isValid = false;
+    } else {
+      clearError(passwordError);
+    }
+
+    if (!isValid) {
+      e.preventDefault();
+    }
+  }
+
+  loginForm.addEventListener("submit", validateForm);
+
+  // Real-time validation
+  emailInput.addEventListener("input", function() {
+    if (this.value && !validateEmail(this.value)) {
+      showError(emailError, "Invalid email format");
+    } else {
+      clearError(emailError);
+    }
   });
-  </script>
-  </body>
-  </html>
+
+  passwordInput.addEventListener("input", function() {
+    if (this.value && this.value.length < 8) {
+      showError(passwordError, "Password should be at least 8 characters long");
+    } else {
+      clearError(passwordError);
+    }
+  });
+});
+
+</script>

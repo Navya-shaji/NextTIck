@@ -1,12 +1,12 @@
 const User=require("../../models/userSchema");
 const Address=require("../../models/addressSchema")
 const Order=require("../../models/orderSchema")
+const wallet=require("../../models/walletSchema")
 const nodemailer = require("nodemailer");
 const bcrypt =require("bcrypt");
 const env = require("dotenv").config();
 const session = require("express-session");
 const { securePassword } = require("./userController");
-
 
 
 function generateOtp(){
@@ -156,25 +156,22 @@ const postNewPassword = async (req, res) => {
 };
 
 
-// Render User Profile with Orders
 const userProfile = async (req, res) => {
     try {
-        // Ensure the user is logged in
         const user = req.session.user;
+
         if (!user) {
             return res.redirect("/login");
         }
 
-        // Fetch the user's orders from the database
         const orders = await Order.find({ userId: user._id }).sort({ createdOn: -1 });
 
-        // Render the profile page with user details and orders
         const address  = await Address.findOne({ userId: user._id })
-        console.log("address",address)
         res.render("profile", {
             user: user,
-            orders: orders, // Pass the orders array to the view
-            userAddress: address || {}, // Add address if available
+            orders: orders, 
+            userAddress: address || {},
+            wallet 
         });
     } catch (error) {
         console.error("Error fetching user profile:", error.message);
@@ -389,7 +386,6 @@ const postAddAddress = async (req, res) => {
             userAddress.address.push({ addressType, name, city, landMark, state, pincode, phone, altPhone });
             await userAddress.save();
         }
-    //    return res.redirect('/userProfile')
         return res.status(200).json({ success: true, message: "Address added successfully" });
        
     } catch (error) {
@@ -531,6 +527,100 @@ const deleteOrder = async (req, res) => {
     }
 };
 
+
+
+const getWalletBalance = async (req, res) => {
+    try {
+        let wallet = await Wallet.findOne({ user: req.user._id });
+        if (!wallet) {
+            wallet = new Wallet({ user: req.user._id });
+            await wallet.save();
+        }
+        res.json({ balance: wallet.balance });
+    } catch (error) {
+        console.error('Error fetching wallet balance:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+const addMoney = async (req, res) => {
+    try {
+        const { amount } = req.body;
+        if (!amount || amount <= 0) {
+            return res.status(400).json({ error: 'Invalid amount' });
+        }
+
+        let wallet = await Wallet.findOne({ user: req.user._id });
+        if (!wallet) {
+            wallet = new Wallet({ user: req.user._id });
+        }
+
+        wallet.balance += amount;
+        wallet.history.push({
+            status: 'credit',
+            payment: amount,
+            date: new Date()
+        });
+
+        await wallet.save();
+        res.json({ message: 'Money added successfully', balance: wallet.balance });
+    } catch (error) {
+        console.error('Error adding money to wallet:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+const getWalletHistory = async (req, res) => {
+    try {
+        const wallet = await Wallet.findOne({ user: req.user._id });
+        if (!wallet) {
+            return res.json({ history: [] });
+        }
+        res.json({ history: wallet.history });
+    } catch (error) {
+        console.error('Error fetching wallet history:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+const refundToWallet = async (req, res) => {
+    try {
+        const { orderId, amount } = req.body;
+        if (!orderId || !amount || amount <= 0) {
+            return res.status(400).json({ error: 'Invalid order or amount' });
+        }
+
+        let wallet = await Wallet.findOne({ user: req.user._id });
+        if (!wallet) {
+            wallet = new Wallet({ user: req.user._id });
+        }
+
+        wallet.balance += amount;
+        wallet.history.push({
+            status: 'credit',
+            payment: amount,
+            date: new Date()
+        });
+
+        await wallet.save();
+        res.json({ message: 'Refund processed successfully', balance: wallet.balance });
+    } catch (error) {
+        console.error('Error processing refund:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+const getWalletForUser = async (userId) => {
+    try {
+      // Replace this with your database query logic
+      const wallet = await WalletModel.findOne({ userId });
+      return wallet || { balance: 0 }; // Default balance if wallet not found
+    } catch (error) {
+      console.error('Error fetching wallet:', error);
+      throw new Error('Could not fetch wallet data');
+    }
+  };
+  
+
 module.exports = {
     getForgotPassPage,
     forgotEmailValid,
@@ -557,6 +647,11 @@ module.exports = {
     getOrders,
     cancelOrder,
     renderChangePasswordPage ,
-    deleteOrder
+    deleteOrder,
+    getWalletBalance,
+    addMoney ,
+    getWalletHistory,
+    refundToWallet,
+    getWalletForUser
     
 }

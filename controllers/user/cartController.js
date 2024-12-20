@@ -6,9 +6,9 @@ const Cart = require("../../models/cartSchema");
 const getCart = async (req, res) => {
   try {
     const userId = req.session.user;
-    if (!userId) {
-      return res.redirect("/login");
-    }
+    // if (!userId) {
+    //   return res.redirect("/login");
+    // }
 
     const user = await User.findById(userId);
 
@@ -64,7 +64,6 @@ const addToCart = async (req, res) => {
   try {
     const userId = req.session.user;
     const { productId, quantity = 1 } = req.body;
-    // console.log("req.body", req.body);
 
     if (!userId) {
       return res.status(401).json({
@@ -72,7 +71,7 @@ const addToCart = async (req, res) => {
         message: "Please login to add to cart",
       });
     }
-    console.log(1);
+
     // Find product and check stock
     const product = await Product.findById(productId);
     if (!product) {
@@ -81,7 +80,7 @@ const addToCart = async (req, res) => {
         message: "Product not found",
       });
     }
-    console.log(2);
+
     // Check stock availability
     if (product.quantity < 1) {
       return res.status(400).json({
@@ -89,23 +88,21 @@ const addToCart = async (req, res) => {
         message: "Product is out of stock",
       });
     }
-    console.log(3);
+
     // Find or create cart
     let cart = await Cart.findOne({ userId });
-    console.log(4);
     if (!cart) {
       cart = new Cart({ userId, items: [] });
     }
-    console.log(5);
-    // Check existing item in cart
+
+    // Check if product already exists in cart
     const existingItem = cart.items.find(
-      (item) =>
-        item.productId.toString() === productId && item.status === "placed"
+      (item) => item.productId.toString() === productId
     );
 
     if (existingItem) {
       // Check quantity limits
-      const newQuantity = existingItem.quantity + quantity;
+      const newQuantity = parseInt(existingItem.quantity) + parseInt(quantity);
 
       if (newQuantity > 5) {
         return res.status(400).json({
@@ -123,34 +120,32 @@ const addToCart = async (req, res) => {
 
       // Update existing item
       existingItem.quantity = newQuantity;
-      existingItem.price = product.price.toString();
-      existingItem.totalPrice = newQuantity * parseFloat(product.price);
+      existingItem.totalPrice = newQuantity * parseFloat(product.salesPrice);
     } else {
-    // Add new item
-    if (quantity > product.quantity) {
-      return res.status(400).json({
-        success: false,
-        message: `Only ${product.quantity} items available in stock`,
+      // Add new item if it doesn't exist
+      if (quantity > product.quantity) {
+        return res.status(400).json({
+          success: false,
+          message: `Only ${product.quantity} items available in stock`,
+        });
+      }
+
+      cart.items.push({
+        productId,
+        quantity,
+        price: product.salesPrice.toString(),
+        totalPrice: quantity * parseFloat(product.salesPrice),
+        status: "placed", // Default status for cart items
       });
-        }
     }
-    console.log(6);
-    cart.items.push({
-      productId,
-      quantity,
-      price: product.salesPrice,
-      totalPrice: quantity * parseFloat(product.salesPrice),
-      status: "placed",
-    });
-    console.log(7);
+
+    // Save the updated cart
     await cart.save();
 
     res.json({
       success: true,
       message: "Product added to cart successfully",
     });
-    console.log(8);
-    
   } catch (error) {
     console.error("Add to cart error:", error);
     res.status(500).json({
@@ -159,6 +154,7 @@ const addToCart = async (req, res) => {
     });
   }
 };
+
 
 // Update Cart Quantity
 const updateQuantity = async (req, res) => {
@@ -202,8 +198,7 @@ const updateQuantity = async (req, res) => {
 
     const cartItem = cart.items.find(
       (item) =>
-        item.productId.toString() === productId && item.status === "placed"
-    );
+        item.productId.toString() === productId  );
 
     if (!cartItem) {
       return res.status(404).json({

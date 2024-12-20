@@ -7,11 +7,12 @@ const passport = require("./config/passport");
 const db = require("./config/db");
 const userRouter = require("./routes/userRouter");
 const adminRouter = require("./routes/adminRouter");
+const nocache=require("nocache")
 db();
 
 app.use(express.json()); //middleware
 app.use(express.urlencoded({ extended: true }));
-
+app.use(nocache())
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
