@@ -1,7 +1,7 @@
 <%- include ("../../views/partials/user/header.ejs")  %>
 <style>
-  /* General Styles */
-  .choose-wrap {
+
+.choose-wrap {
     background-size: cover;
     background-position: center;
     width: 100%;
@@ -120,10 +120,61 @@
   }
 }
 
+.product-offer-box {
+    display: inline-block;
+    background-color: red;
+    color: white;
+    font-size: 8px;
+    font-weight: bold;
+    padding: 2px 6px; 
+    border-radius: 4px; /* Adds rounded corners */
+    text-align: center;
+    margin-left: 10px; /* Optional: Adds spacing to the left */
+    position: absolute;
+    left: 0; /* Positions the box at the left side */
+    top: 8%; /* Optional: Centers the box vertically */
+    transform: translateY(-50%); /* Optional: Adjusts to perfectly center it */
+}
+
+/* Wishlist Button Styling */
+.wishlist-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 20px;
+  color: #ff5c8e; /* Pink color for the heart */
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.wishlist-btn:hover {
+  transform: scale(1.2); /* Slightly enlarge the heart on hover */
+}
+
+.wishlist-btn.liked {
+  color: #d63031; /* Dark red for liked state */
+}
+
+.wishlist-btn:active {
+  transform: scale(1.1); /* Small scale down effect when clicked */
+}
+.category-offer-box {
+    display: inline-block;
+    background-color: #28a745; /* Different color to distinguish from product offer */
+    color: white;
+    font-size: 8px;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-align: center;
+    position: absolute;
+    left: 0;
+    top: 15%; /* Position it below the product offer */
+    transform: translateY(-50%);
+}
 
 </style>
 
-    <!-- END nav -->
 
 	<section id="home-section" class="hero">
 			<div class="home-slider owl-carousel">
@@ -225,18 +276,26 @@
   <section class="ftco-section bg-light">
     <div class="container">
       <div class="row">
+
         <% if (products && products.length > 0) { %>
           <% products.forEach(product => { %>
             <div class="col-sm-12 col-md-6 col-lg-3 ftco-animate d-flex">
               <div class="product d-flex flex-column">
                 <div class="media-container position-relative">
                   <a href="/productDetails?id=<%= product._id %>" class="img-prod">
+
+
                     <img class="img-fluid" src="/uploads/re-image/<%= product.productImage[0] %>" alt="<%= product.productName %>">
-                    <% if (product.discount > 0) { %>
-                      <span class="status"><%= product.discount %>% Off</span>
-                    <% } %>
+
+                    <span class="product-offer-box"><%=product.productOffer%> %Offer</span>
+                    <!-- Add category offer here -->
+                      <span class="category-offer-box"><%=product.category.offer%>% Category Offer</span>
+
+                    
                     <div class="overlay"></div>
+                    
                   </a>
+
                   <video class="product-video" loop muted playsinline preload="metadata" style="display: none;">
                     <source src="/uploads/videos/<%= product.productVideo %>" type="video/mp4">
                     Your browser does not support the video tag.
@@ -250,6 +309,7 @@
                     <div class="cat">
                       <span><%= product.category.name %></span>
                     </div>
+
                     <div class="rating">
                       <p class="text-right mb-0">
                         <% for (let i = 0; i < 5; i++) { %>
@@ -258,24 +318,34 @@
                       </p>
                     </div>
                   </div>
+
                   <h3><a href="/productDetails?id=<%= product._id %>"><%= product.productName %></a></h3>
+                
                   <div class="pricing">
-                    <% if (product.discount > 0) { %>
+                    <% 
+                      let finalPrice = product.regularPrice;
+                      let maxOffer = Math.max(product.discount || 0, (product.category && product.category.offer) || 0, product.productOffer || 0);
+                      if (maxOffer > 0) {
+                        finalPrice = product.regularPrice - (product.regularPrice * maxOffer / 100);
+                    %>
                       <p class="price">
                         <span class="mr-2 price-dc">₹<%= product.regularPrice.toFixed(2) %></span>
-                        <span class="price-sale">₹<%= (product.regularPrice - (product.regularPrice * product.discount / 100)).toFixed(2) %></span>
+                        <span class="price-sale">₹<%= finalPrice.toFixed(2) %></span>
                       </p>
                     <% } else { %>
                       <p class="price"><span>₹<%= product.regularPrice.toFixed(2) %></span></p>
                     <% } %>
                   </div>
+
                   <p class="bottom-area d-flex px-3">
                     <a href="#" class="add-to-cart text-center py-2 mr-1" onclick="addToCartHandler(event, '<%= product._id %>')">
                       <span>Add to cart <i class="ion-ios-add ml-1"></i></span>
                     </a>
+
                     <a href="#" class="buy-now text-center py-2">
                       Buy now <span><i class="ion-ios-cart ml-1"></i></span>
                     </a>
+
                   </p>
                 </div>
               </div>
@@ -292,7 +362,7 @@
 <section class="ftco-section ftco-choose ftco-no-pb ftco-no-pt">
   <div class="container">
     <div class="row no-gutters">
-      <!-- Men's Watches -->
+
       <div class="col-lg-4 col-md-6 col-12">
         <div
           class="choose-wrap divider-one img p-5 d-flex align-items-end"
@@ -306,7 +376,7 @@
           </div>
         </div>
       </div>
-      <!-- Women's Watches -->
+
       <div class="col-lg-8 col-md-6 col-12">
         <div class="row no-gutters choose-wrap divider-two align-items-stretch">
           <div class="col-md-12">
@@ -324,7 +394,7 @@
               </div>
             </div>
           </div>
-          <!-- Sale & Best Sellers -->
+
           <div class="col-md-12">
             <div class="row no-gutters">
               <div class="col-md-6">
@@ -488,13 +558,15 @@
      
 
    
-  <%- include ("../../views/partials/user/footer.ejs")  %>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
 <script>
+
+  //addToCart function.............................
+
  function addToCartHandler(event, productId) {
     event.preventDefault();
 
@@ -509,7 +581,7 @@
         })
     })
     .then(response => {
-      alert(response)
+     
       console.log(response)
         if (!response.ok) {
             return response.json().then(data => {
@@ -520,8 +592,8 @@
     })
     .then(data => {
         if (data.success) {
-            // success message
-            Swal.fire({
+
+          Swal.fire({
                 title: 'Success!',
                 text: data.message || 'Product added to cart successfully!',
                 icon: 'success',
@@ -584,6 +656,8 @@
     });
 }
 
+
+
 function updateCartCount(count) {
     const cartCountElements = document.querySelectorAll('.cart-count');
     cartCountElements.forEach(element => {
@@ -628,8 +702,79 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
+//function for adding to wishlist page.................
+
+function addToWishlist(productId) {
+
+$.ajax({
+  url: "/addToWishlist", 
+  method: "POST",
+  data: { productId: productId },
+  success: (response) => {
+    if (response.status) {
+      Swal.fire({
+        title: "Added to wishlist",
+        text: "The product has been added to your wishlist.",
+        icon: "success",
+        timer: 2000,
+      });
+    } else {
+      Swal.fire({
+        title: "Already in wishlist",
+        text: response.message || "This product is already in your wishlist.",
+        icon: "info",
+        timer: 2000,
+      });
+    }
+  },
+  error: (xhr, status, error) => {
+
+    console.error("AJAX Error: ", error, xhr.responseText);
+    Swal.fire({
+      title: "Error",
+      text: "There was an error adding the product to your wishlist. Please try again.",
+      icon: "error",
+      timer: 2000,
+    });
+  },
+});
+}
+
+function addToCart(productId) {
+console.log('Add to cart:', productId);
+}
+
+document.getElementById('sort').addEventListener('change', function() {
+const currentUrl = new URL(window.location.href);
+currentUrl.searchParams.set('sort', this.value);
+window.location.href = currentUrl.toString();
+});
+
+document.querySelector('input[name="inStock"]').addEventListener('change', function() {
+const currentUrl = new URL(window.location.href);
+if (this.checked) {
+  currentUrl.searchParams.set('inStock', 'true');
+} else {
+  currentUrl.searchParams.delete('inStock');
+}
+window.location.href = currentUrl.toString();
+});
+
+
+function toggleDropdown(id) {
+  const dropdown = document.getElementById(id);
+  dropdown.classList.toggle('show');
+
+  const arrow = dropdown.previousElementSibling.querySelector('.dropdown-arrow');
+  if (dropdown.classList.contains('show')) {
+    arrow.style.transform = 'rotate(180deg)';
+  } else {
+    arrow.style.transform = 'rotate(0deg)';
+  }
+}
+
 
   </script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-  
+  <%- include ("../../views/partials/user/footer.ejs")  %>

@@ -1,43 +1,189 @@
-
-body {
-    background-color: #ffffff;
-}
-.navbar {
-    background-color:  #edbfde;
-}
-.navbar-aside {
-    background-color: #edbfde;
-}
-.menu-item a.menu-link {
-    color: #0a0a0a;
-}
-
-.menu-item a.menu-link:hover,
-.menu-item a.menu-link.active {
-    background-color: #f5f6f5; 
-    color: #030304;
-}
-.dropdown-menu {
-    background-color: #ffffff;
-}
-
-.dropdown-item:hover {
-    background-color: #050306;
-    color: #b96faa;
-}
-
-p{
-    color:black
-}
-
-.menu-aside .menu-item .icon {
-    color: #03080c;
+:root {
+    --primary: #000000;
+    --primary-light: #333333;
+    --secondary: #f5f5f5;
+    --text-dark: #000000;
+    --text-light: #ffffff;
+    --hover: #e0e0e0;
+    --border: #cccccc;
+  }
+  
+  body {
+    background-color: var(--secondary);
+    font-family: 'Roboto', Arial, sans-serif;
+    color: var(--text-dark);
+    line-height: 1.6;
+  }
+  
+  .navbar, .navbar-aside {
+    background-color: var(--primary);
+    color: var(--text-light);
+    border-bottom: 1px solid var(--border);
+  }
+  
+  .menu-item a.menu-link {
+    color: var(--text-light);
+    transition: background-color 0.3s ease;
+    padding: 10px 15px;
+    display: block;
+  }
+  
+  .menu-item a.menu-link:hover,
+  .menu-item a.menu-link.active {
+    background-color: var(--primary-light);
+    color: var(--text-light);
+  }
+  
+  .dropdown-menu {
+    background-color: var(--text-light);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border: 1px solid var(--border);
+  }
+  
+  .dropdown-item {
+    color: var(--text-dark);
+    transition: background-color 0.3s ease;
+  }
+  
+  .dropdown-item:hover {
+    background-color: var(--hover);
+    color: var(--text-dark);
+  }
+  
+  p {
+    color: var(--text-dark);
+  }
+  
+  .menu-aside .menu-item .icon {
+    color: var(--text-light);
     margin-right: 10px;
+    font-size: 18px;
+  }
+  
+  /* Button styles */
+  .btn-primary {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: var(--text-light);
+    transition: all 0.3s ease;
+  }
+  
+  .btn-primary:hover {
+    background-color: var(--primary-light);
+    border-color: var(--primary-light);
+  }
+  
+  /* Card styles */
+  .card {
+    background-color: var(--text-light);
+    border: 1px solid var(--border);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    transition: box-shadow 0.3s ease;
+  }
+  
+  .card:hover {
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
+  
+  /* Form elements */
+  input[type="text"], input[type="email"], input[type="password"], select, textarea {
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 10px 12px;
+    transition: all 0.3s ease;
+    background-color: var(--text-light);
+    color: var(--text-dark);
+  }
+  
+  input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, select:focus, textarea:focus {
+    border-color: var(--primary);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Table styles */
+  .table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+  
+  .table th, .table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  
+  .table thead th {
+    background-color: var(--primary);
+    color: var(--text-light);
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid var(--border);
+  }
+  
+  .table tbody tr:nth-child(even) {
+    background-color: var(--secondary);
+  }
+  
+  .table tbody tr:hover {
+    background-color: var(--hover);
+  }
+  
+  /* Additional styles for better UX */
+  .sidebar {
+    background-color: var(--primary);
+    color: var(--text-light);
+    padding: 20px;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 250px;
+    overflow-y: auto;
+  }
+  
+  .main-content {
+    margin-left: 250px;
+    padding: 20px;
+  }
+  
+  .header {
+    background-color: var(--text-light);
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .header-title {
     font-size: 24px;
-}
-
-
-
-
-
-
+    font-weight: bold;
+    color: var(--primary);
+  }
+  
+  .user-menu {
+    display: flex;
+    align-items: center;
+  }
+  
+  .user-menu img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+  
+  .notification-badge {
+    background-color: var(--primary);
+    color: var(--text-light);
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 12px;
+    position: absolute;
+    top: -5px;
+    right: -5px;
+  }
+  

@@ -153,7 +153,7 @@
                                  <td>#<%= order.orderId %></td>
                                  <td><%= new Date(order.createdOn).toLocaleDateString() %></td>
                                  <td><%= order.status %></td>
-                                 <td>$<%= order.finalAmount ? order.finalAmount.toFixed(2) : '0.00' %></td>
+                                 <td>₹<%= order.finalAmount ? order.finalAmount.toFixed(2) : '0.00' %></td>
                                  <td>
                                   <form action="/orders/view/<%= order._id %>" method="GET" class="d-inline">
                                    <button type="submit" class="btn-small btn-info d-block w-100">
@@ -172,7 +172,8 @@
                                       <button 
                                         type="button" 
                                         class="btn btn-danger cancel-order-btn" 
-                                        data-order-id="<%= order._id %>">
+                                        data-order-id="<%= order._id %>"
+                                        >
                                         Cancel Order
                                       </button>
                                     <% } %>
@@ -205,54 +206,77 @@
                  </div>
                </div>
 
-               <div class="tab-pane fade" id="track-orders" role="tabpanel" aria-labelledby="track-orders-tab">
-                 <div class="card">
-                   <div class="card-header">
-                     <h5 class="mb-0">Wallet</h5>
-                   </div>
-                   <div class="card-body contact-from-area">
-                     <div class="row">
-                       <div class="col-lg-8 mx-auto text-center mt-90">
-                         <form>
-                           <div class="form-group">
-                             <label for="walletAmount" class="h4">Amount</label>
-                             <div class="h3"></div>
-                           </div>
-                           <button type="button" class="btn btn-success" onclick="">Add Money</button>
-                         </form>
-                       </div>
-                     </div>
-                   </div>
-                 </div>
-               </div>
+               <div class="tab-pane fade" id="wallet-history" role="tabpanel" aria-labelledby="wallet-history-tab">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Wallet History</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Date </th>
+                                        <th>Type</th>
+                                        <th>Status</th>
+                                        <th>Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% if (wallet && wallet.transactions && wallet.transactions.length > 0) { %>
+                                        <% wallet.transactions
+                                            .sort((a, b) => new Date(b.date) - new Date(a.date))
+                                            .forEach(transaction => { %>
+                                            <tr>
+                                                <td><%= new Date(transaction.date).toLocaleDateString() %></td>
+                                                <td>
+                                                    <span class="badge <%= transaction.type === 'Deposit' ? 'bg-success' : 
+                                                                          transaction.type === 'Refund' ? 'bg-info' : 
+                                                                          'bg-danger' %>">
+                                                        <%= transaction.type.toUpperCase() %>
+                                                    </span>
+                                                </td>
+                                                <td><%= transaction.description || 'Wallet Transaction' %></td>
+                                                <td class="<%= transaction.type === 'Withdrawal' || transaction.type === 'Purchase' ? 'text-danger' : 'text-success' %>">
+                                                    <%= transaction.type === 'Withdrawal' || transaction.type === 'Purchase' ? '-' : '+' %>₹<%= transaction.amount %>
+                                                </td>
+                                            </tr>
+                                        <% }) %>
+                                    <% } else { %>
+                                        <tr>
+                                            <td colspan="4" class="text-center">No transactions found.</td>
+                                        </tr>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            
+              
+              <div class="tab-pane fade" id="track-orders" role="tabpanel" aria-labelledby="track-orders-tab">
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="mb-0">Wallet</h5>
+                  </div>
+                  <div class="card-body contact-from-area">
+                    <div class="row">
+                      <div class="col-lg-8 mx-auto text-center mt-90">
+                        <form>
+                          <div class="form-group">
+                            <label for="walletAmount" class="h4">Amount</label>
+                            <input type="number" id="walletAmount" class="form-control" placeholder="Enter amount to add" />
+                          </div>
+                          <button type="button" class="btn btn-success" id="addMoneyBtn" >Add Money</button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-               <div class="tab-pane fade" id="wallet-history" role="tabpanel" aria-labelledby="orders-tab">
-                 <div class="card">
-                   <div class="card-header">
-                     <h5 class="mb-0">Wallet History</h5>
-                   </div>
-                   <div class="card-body">
-                     <div class="table-responsive">
-                       <table class="table">
-                         <thead>
-                           <tr>
-                             <th>Date</th>
-                             <th>Status</th>
-                             <th>Amount</th>
-                           </tr>
-                         </thead>
-                         <tbody>
-                           <tr>
-                             <td></td>
-                             <td></td>
-                             <td></td>
-                           </tr>
-                         </tbody>
-                       </table>
-                     </div>
-                   </div>
-                 </div>
-               </div>
 
                <div class="tab-pane fade" id="referal" role="tabpanel" aria-labelledby="track-orders-tab">
                  <div class="card">
@@ -275,6 +299,8 @@
  </section>
 </main>
 <%- include("../../views/partials/user/footer.ejs") %>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
 
 <!-- SweetAlert Script -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.14/dist/sweetalert2.all.min.js"></script>
@@ -284,12 +310,69 @@
     document.querySelectorAll('.cancel-order-btn').forEach(button => {
         button.addEventListener('click', function () {
             const orderId = this.getAttribute('data-order-id');
-            cancelOrder(orderId); // Call the cancelOrder function
+            cancelOrder(orderId);
+            console.log(orderId)
         });
     });
 });
 
-function cancelOrder(orderId) {
+// function cancelOrder(orderId) {
+//     Swal.fire({
+//         title: "Are you sure?",
+//         text: "Do you want to cancel this order?",
+//         icon: "warning",
+//         showCancelButton: true,
+//         confirmButtonColor: "#d33",
+//         cancelButtonColor: "#3085d6",
+//         confirmButtonText: "Yes, cancel it!"
+//     }).then((result) => {
+//         if (result.isConfirmed) {
+//             fetch('/orders/update-status', {
+//                 method: 'POST',
+//                 headers: {
+//                     'Content-Type': 'application/json'
+//                 },
+//                 body: JSON.stringify({
+//                     orderId: orderId,
+//                     status: "Cancelled"
+//                 })
+//             })
+//             .then(response => response.json())
+//             .then(data => {
+//                 if (data.success) {
+//                     Swal.fire({
+//                         title: "Cancelled!",
+//                         text: data.message || "Order has been cancelled successfully.",
+//                         icon: "success",
+//                         timer: 1500,
+//                         showConfirmButton: false
+//                     }).then(() => {
+//                         location.reload(); 
+//                     });
+//                 } else {
+                   
+//                     Swal.fire({
+//                         title: "Error",
+//                         text: data.message || "Failed to cancel the order.",
+//                         icon: "error"
+//                     });
+//                 }
+//             })
+//             .catch(error => {
+//                 console.error("Error:", error);
+//                 Swal.fire({
+//                     title: "Error",
+//                     text: "An error occurred while cancelling the order.",
+//                     icon: "error"
+//                 });
+//             });
+//         }
+//     });
+// }
+
+
+//.......................................................................................................
+function cancelOrder(orderId, orderAmount) {
     Swal.fire({
         title: "Are you sure?",
         text: "Do you want to cancel this order?",
@@ -300,8 +383,7 @@ function cancelOrder(orderId) {
         confirmButtonText: "Yes, cancel it!"
     }).then((result) => {
         if (result.isConfirmed) {
-            // Send the cancellation request
-            fetch('/orders/update-status', {
+            fetch('/orders/cancel', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -314,7 +396,9 @@ function cancelOrder(orderId) {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Show success message
+                    // Call function to refund money to wallet
+                    // refundToWallet(orderAmount);
+                    
                     Swal.fire({
                         title: "Cancelled!",
                         text: data.message || "Order has been cancelled successfully.",
@@ -322,10 +406,9 @@ function cancelOrder(orderId) {
                         timer: 1500,
                         showConfirmButton: false
                     }).then(() => {
-                        location.reload(); // Reload the page to reflect changes
+                        location.reload(); 
                     });
                 } else {
-                    // Show error message from the backend
                     Swal.fire({
                         title: "Error",
                         text: data.message || "Failed to cancel the order.",
@@ -335,7 +418,6 @@ function cancelOrder(orderId) {
             })
             .catch(error => {
                 console.error("Error:", error);
-                // Show general error message
                 Swal.fire({
                     title: "Error",
                     text: "An error occurred while cancelling the order.",
@@ -345,6 +427,46 @@ function cancelOrder(orderId) {
         }
     });
 }
+
+// function refundToWallet(amount) {
+//     fetch('/wallet/refund', {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json'
+//         },
+//         body: JSON.stringify({
+//             amount: amount
+//         })
+//     })
+//     .then(response => response.json())
+//     .then(data => {
+//         if (data.success) {
+//             Swal.fire({
+//                 title: "Refunded!",
+//                 text: `₹${amount} has been added to your wallet.`,
+//                 icon: "success",
+//                 timer: 1500,
+//                 showConfirmButton: false
+//             });
+//         } else {
+//             Swal.fire({
+//                 title: "Error",
+//                 text: data.message || "Failed to refund money to wallet.",
+//                 icon: "error"
+//             });
+//         }
+//     })
+//     .catch(error => {
+//         console.error("Error:", error);
+//         Swal.fire({
+//             title: "Error",
+//             text: "An error occurred while refunding money to the wallet.",
+//             icon: "error"
+//         });
+//     });
+// }
+// //......................................................................................
+
 document.addEventListener('DOMContentLoaded', () => {
 
   document.querySelectorAll('.return-order-btn').forEach(button => {
@@ -373,4 +495,83 @@ function redirectToReturnReason(orderId) {
     });
 }
 
-</script>
+  document.getElementById('addMoneyBtn').addEventListener('click', async () => {
+    try {
+      // Define the amount and user ID (from your frontend logic)
+      const amount = 500; // Amount in INR
+      const userId = 'exampleUserId123'; // Replace with actual user ID
+
+      // Send a request to your server to create a Razorpay order
+      const response = await fetch('/createRazorpayOrder', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ amount, userId }),
+      });
+
+      const data = await response.json();
+
+      if (!data.success) {
+        throw new Error(data.message || 'Failed to create Razorpay order');
+      }
+
+      const { order } = data;
+
+      // Open Razorpay Checkout with the order details
+      const options = {
+        key: 'YOUR_RAZORPAY_KEY', // Replace with your Razorpay API key
+        amount: order.amount, // Amount in paisa (e.g., 500 INR = 50000 paisa)
+        currency: 'INR',
+        name: 'Your App Name',
+        description: 'Add Money to Wallet',
+        image: 'https://your-logo-url.com/logo.png',
+        order_id: order.id, // Razorpay order ID
+        handler: async function (response) {
+          try {
+            // Send payment success data to backend to update wallet
+            const paymentData = {
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature,
+              userId: 'exampleUserId123', // Replace with actual user ID
+            };
+
+            const result = await fetch('/updateWalletAfterPayment', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(paymentData),
+            });
+
+            const data = await result.json();
+            if (data.success) {
+              alert('Wallet updated successfully!');
+              location.reload(); // Refresh to show updated wallet history
+            } else {
+              alert('Failed to update wallet: ' + data.message);
+            }
+          } catch (error) {
+            console.error('Error updating wallet:', error);
+            alert('An error occurred. Please contact support.');
+          }
+        },
+        prefill: {
+          name: 'Customer Name', // Replace with the customer's name
+          email: 'customer@example.com', // Replace with the customer's email
+          contact: '9876543210', // Replace with the customer's phone number
+        },
+        theme: {
+          color: '#3399cc',
+        },
+      };
+
+      const rzp = new Razorpay(options);
+      rzp.open();
+    } catch (error) {
+      console.error('Error during payment:', error);
+      alert('Failed to initiate payment. Please try again.');
+    }
+  });
+  </script>

@@ -74,7 +74,7 @@ const deleteBrand = async (req, res) => {
         if (!id) {
             return res.status(400).redirect("/pageerror");
         }
-        await Brand.deleteOne({ _id: id });
+        await Brand.deleteMany({ _id:  _id });
         res.redirect("/admin/brands");
     } catch (error) {
         console.error("Error deleting brand:", error);
@@ -85,14 +85,12 @@ const deleteBrand = async (req, res) => {
 
 const updateBrand = async (req, res) => {
     try {
-        console.log("update working");
         const id = req.body.brandId;
         const brandName = req.body.brandName;
         const image = req.file;
 
         const findBrand = await Brand.findOne({ brandName: brandName });
         if (findBrand) {
-            console.log("find brand");
             return res.status(400).json({ success: false, message: "Brand already exists" });
         } else {
             const updateBrand = await Brand.updateOne(

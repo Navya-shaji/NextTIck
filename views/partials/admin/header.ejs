@@ -2,36 +2,407 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>NextTick</title>
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <meta name="description" content="">
+    <title>NextTick Admin Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta property="og:title" content="">
-    <meta property="og:type" content="">
-    <meta property="og:url" content="">
-    <meta property="og:image" content="">
-    <link rel="shortcut icon" type="image/x-icon" href="#">
-    <link href="/admin-assets/css/main.css" rel="stylesheet" type="text/css" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.16.6/dist/sweetalert2.min.css">
-<script src="https://kit.fontawesome.com/16d4885483.js" crossorigin="anonymous"></script>
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-<link rel="stylesheet" href="/styles/dashboard.css">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.16.6/dist/sweetalert2.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        .navbar-aside {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 250px;
+            background-color: #ffffff;
+            box-shadow: 0 0 15px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        .main-wrap {
+            margin-left: 250px;
+            transition: all 0.3s;
+        }
+        .navbar-aside .aside-top {
+            padding: 1rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .menu-aside {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .menu-aside .menu-item {
+            border-bottom: 1px solid #e9ecef;
+        }
+        .menu-aside .menu-link {
+            padding: 10px 1rem;
+            color: #495057;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s;
+        }
+        .menu-aside .menu-link:hover {
+            background-color: #f1f3f5;
+            color: #007bff;
+            text-decoration: none;
+        }
+        .menu-aside .icon {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+        .main-header {
+            background-color: #ffffff;
+            border-bottom: 1px solid #e9ecef;
+            padding: 0.5rem 1rem;
+        }
+        .main-header .col-search .input-group {
+            background-color: #f1f3f5;
+            border-radius: 25px;
+            overflow: hidden;
+        }
+        .main-header .col-search input {
+            border: none;
+            background-color: transparent;
+        }
+        .main-header .col-search button {
+            background-color: #007bff;
+            border: none;
+            color: #ffffff;
+        }
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 0 15px rgba(0,0,0,0.05);
+        }
+        .content-main {
+            padding: 2rem;
+        }
+        @media (max-width: 992px) {
+            .navbar-aside {
+                margin-left: -250px;
+            }
+            .navbar-aside.show {
+                margin-left: 0;
+            }
+            .main-wrap {
+                margin-left: 0;
+            }
+        }
+        .menu-link {
+    display: inline-block;
+    padding: 10px 20px;
+    text-decoration: none;
+    color: #000000; /* Black text */
+    background-color: #f8f8f8; /* Off-white background */
+    border-radius: 5px;
+    border: 2px solid #000000; /* Black border */
+    outline: 2px solid #cccccc; /* Light gray outline */
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.2s;
+    text-align: center;
+    margin: 0 10px 10px 0; /* Adds space between buttons */
+}
+
+.menu-link:hover {
+    background-color: #eaeaea; /* Slightly darker off-white on hover */
+    transform: scale(1.05); /* Slightly enlarges */
+    outline-color: #999999; /* Darker outline on hover */
+}
+
+.menu-link:active {
+    background-color: #dcdcdc; /* Even darker off-white for active state */
+    transform: scale(0.95); /* Slightly compresses */
+    outline-color: #666666; /* Even darker outline for active state */
+}
+
+h6 {
+    font-family: 'Arial', sans-serif; /* Modern, clean font */
+    font-size: 18px; /* Larger size for emphasis */
+    font-weight: bold; /* Bold for prominence */
+    color: #333333; /* Dark gray text for a sleek look */
+    letter-spacing: 1px; /* Slightly spaced letters */
+    text-transform: uppercase; /* Converts text to uppercase */
+    margin: 10px 0; /* Adds spacing around the heading */
+    text-align: center; /* Centers the text */
+    border-bottom: 2px solid #007bff; /* Adds an underline in blue */
+    padding-bottom: 5px; /* Adds spacing under the text */
+    display: inline-block; /* Makes the underline fit the text width */
+}
+.dropdown-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px; /* Adjust the button size */
+    height: 50px; /* Adjust the button size */
+    background-color: #000000; /* Black background */
+    border-radius: 50%; /* Circle shape */
+    transition: transform 0.2s, background-color 0.3s;
+    border: 2px solid #000000; /* Black border */
+    cursor: pointer;
+}
+
+.dropdown-toggle img {
+    width: 130%; /* Reduces the size of the image */
+    height: auto;
+    border-radius: 50%; /* Makes the image circular */
+    transition: opacity 0.3s; /* Smooth fade effect for image */
+}
+
+.dropdown-toggle:hover {
+    background-color: #333333; /* Dark gray on hover */
+    transform: scale(1.1); /* Slightly enlarges on hover */
+}
+
+.dropdown-toggle:active {
+    background-color: #555555; /* Lighter gray for active state */
+    transform: scale(0.95); /* Slightly compresses on click */
+}
+
+.dropdown-toggle img:hover {
+    opacity: 0.8; /* Slightly fades the image on hover */
+}
+
+/* Dropdown container styling */
+.nav-item {
+    position: relative;
+}
+
+/*/* Dropdown container styling */
+.nav-item {
+    position: relative;
+}
+
+/* Profile button styling */
+.user-profile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px; /* Circular button width */
+    height: 50px; /* Circular button height */
+    background-color: #000000; /* Black background */
+    border-radius: 50%; /* Ensures circular shape */
+    overflow: hidden; /* Ensures the image fits within the circle */
+    border: 2px solid #ffffff; /* Optional: White border for contrast */
+    transition: transform 0.3s;
+    cursor: pointer;
+}
+
+.user-profile:hover {
+    transform: scale(1.1); /* Slight enlargement on hover */
+}
+
+/* Profile image styling */
+.profile-image {
+    width: 100%; /* Ensures the image fills the container */
+    height: 100%; /* Ensures the image fills the container */
+    object-fit: cover; /* Ensures proper aspect ratio and cropping */
+    object-position: center; /* Centers the image */
+    border-radius: 50%; /* Keeps the image circular */
+}
+
+/* Dropdown menu styling */
+.custom-dropdown {
+    background-color: #f8f8f8; /* Light off-white background */
+    border: 1px solid #e0e0e0; /* Subtle border */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow */
+    border-radius: 8px; /* Rounded corners */
+    margin-top: 10px; /* Slight spacing from the profile */
+    padding: 10px 0;
+    min-width: 150px; /* Adjust dropdown width */
+}
+
+/* Dropdown item styling */
+.dropdown-item {
+    font-size: 14px;
+    padding: 8px 15px;
+    display: flex;
+    align-items: center;
+    color: #000000; /* Black text */
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.dropdown-item:hover {
+    background-color: #e0e0e0; /* Light gray hover */
+    color: #d9534f; /* Red text on hover for contrast */
+}
+
+.dropdown-item i {
+    margin-right: 8px; /* Spacing between icon and text */
+}
+
+table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        font-size: 16px;
+        text-align: left;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    thead {
+        background-color: #007bff;
+        color: #ffffff;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: bold;
+    }
+
+    th, td {
+        padding: 15px;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    th {
+        text-align: center;
+    }
+
+    td {
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    tbody tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    tbody tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    .btn-small {
+        padding: 8px 12px;
+        font-size: 14px;
+        color: #ffffff;
+        background-color: #007bff;
+        border: none;
+        border-radius: 5px;
+        transition: background-color 0.3s, transform 0.2s;
+        cursor: pointer;
+    }
+
+    .btn-small:hover {
+        background-color: #0056b3;
+        transform: scale(1.05);
+    }
+
+    @media (max-width: 992px) {
+        table {
+            font-size: 14px;
+        }
+
+        th, td {
+            padding: 10px;
+        }
+    }
+    body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+.navbar-aside {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 250px;
+    background-color: #ffffff;
+    box-shadow: 0 0 15px rgba(0,0,0,0.05);
+    transition: all 0.3s;
+    z-index: 1000;
+    padding: 1rem; /* Added padding for better spacing */
+}
+
+.main-wrap {
+    margin-left: 250px;
+    transition: all 0.3s;
+    padding: 1rem; /* Added padding for better spacing */
+}
+
+.menu-aside {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.menu-aside .menu-item {
+    border-bottom: 1px solid #e9ecef;
+}
+
+.menu-aside .menu-link {
+    padding: 10px 1rem;
+    color: #495057;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s;
+    margin: 0 5px; /* Adjusted margin for better spacing */
+}
+
+.menu-aside .menu-link:hover {
+    background-color: #f1f3f5;
+    color: #007bff;
+    text-decoration: none;
+}
+
+/* Other existing styles remain unchanged */
+
+.btn-small {
+    padding: 8px 12px;
+    font-size: 14px;
+    color: #ffffff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s, transform 0.2s;
+    cursor: pointer;
+    margin: 5px; /* Added margin for better spacing */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px auto; /* Center the table */
+    font-size: 16px;
+    text-align: left;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+h6 {
+    font-family: 'Arial', sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+    color: #333333;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin: 10px 0;
+    text-align: center; /* Center the heading text */
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 5px;
+    display: inline-block;
+}
 
 
-
-
+    </style>
 </head>
 <body>
     <div class="screen-overlay"></div>
     <aside class="navbar-aside" id="offcanvas_aside">
         <div class="aside-top">
             <a href="#" class="brand-wrap">
-                <!-- <img src="/images/watch1.png"  class="logo" alt="NextTick Dashboard"> -->
-                 <p>NextTick Dashboard</p>
+                <!-- <img src="images/Watches photo idea.jpeg" height="46" class="logo" alt="NextTick Dashboard"> -->
+                 <h6>NextTick Dashboard</h6>
             </a>
             <div>
-                <button class="btn btn-icon btn-aside-minimize"> <i class="text-muted material-icons md-menu_open"></i> </button>
+                <button class="btn btn-icon btn-aside-minimize"> <i class="material-icons md-menu_open"></i> </button>
             </div>
         </div>
         <nav>
@@ -45,17 +416,16 @@
                     <a class="menu-link" href="/admin/users"> <i class="icon material-icons md-person"></i>
                         <span class="text">Customers</span>
                     </a>
-
                 </li>
                 <li class="menu-item">
-                    <a class="menu-link" href="/admin/category"> <i class="icon material-icons md-person"></i>
+                    <a class="menu-link" href="/admin/category"> <i class="icon material-icons md-category"></i>
                         <span class="text">Category</span>
                     </a>
-
                 </li>
                 <li class="menu-item">
                     <a class="menu-link" href="/admin/brands"> <i class="icon material-icons md-stars"></i>
-                        <span class="text">Brands</span> </a>
+                        <span class="text">Brands</span>
+                    </a>
                 </li>
                 <li class="menu-item">
                     <a class="menu-link" href="/admin/addProducts"> <i class="icon material-icons md-add_box"></i>
@@ -67,16 +437,16 @@
                         <span class="text">Products</span>
                     </a>
                 </li>
-            
                 <li class="menu-item"> 
                     <a class="menu-link" href="/admin/coupon"> <i class="icon material-icons md-class"></i>
-                        <span class="text">Coupon</span> </a>
+                        <span class="text">Coupon</span>
+                    </a>
                 </li>
                 <li class="menu-item">
                     <a class="menu-link" href="/admin/banner"> <i class="icon material-icons md-photo_size_select_actual"></i>
-                        <span class="text">Banner</span> </a>
+                        <span class="text">Refferal offer</span>
+                    </a>
                 </li>
-
                 <li class="menu-item">
                     <a class="menu-link" href="/admin/orderList"> <i class="icon material-icons md-shopping_cart"></i>
                         <span class="text">Orders</span>
@@ -88,29 +458,27 @@
     <main class="main-wrap">
         <header class="main-header navbar">
             <div class="col-search">
+               
             </div>
             <div class="col-nav">
                 <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"> <i class="material-icons md-apps"></i> </button>
                 <ul class="nav">
+                  
+                    <li class="nav-item">
+                        <a class="nav-link btn-icon darkmode" href="#"> <i class="material-icons md-nights_stay"></i> </a>
+                    </li>
                     <li class="dropdown nav-item">
-                        <a 
-                        class="dropdown-toggle" 
-                        data-bs-toggle="dropdown" 
-                        href="#" 
-                        id="dropdownAccount" 
-                        aria-expanded="false">
-                        <img 
-                          class="img-xs rounded-circle" 
-                          src="/images/person.png" 
-                          alt="User">
-                           
-                      </a>
-    
-                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item " href="/admin/logout"><i class="material-icons md-exit_to_app"></i>Logout</a>
+                        <a class="dropdown-toggle user-profile" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false">
+                            <img class="profile-image" src="/images/Watches photo idea.jpeg" >
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end custom-dropdown" aria-labelledby="dropdownAccount">
+                            <a class="dropdown-item text-danger" href="/admin/logout">
+                                <i class="material-icons md-exit_to_app"></i> Logout
+                            </a>
                         </div>
                     </li>
+                    
                 </ul>
             </div>
         </header>
+      

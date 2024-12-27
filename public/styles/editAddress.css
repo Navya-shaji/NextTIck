@@ -1,35 +1,152 @@
-.btn-save {
-    background-color: #ffc107;
-    color: black;
-    border: none;
-}
-.btn-save:hover {
-    background-color: #e0ac07;
-}
+/* Global Styles */
 body {
-    background-color: #f8f9fa;
+    background-color: #f5f5f5;
+    color: #000;
+    font-family: system-ui, -apple-system, sans-serif;
 }
-.nav-tabs .nav-link.active {
-    border-bottom: 3px solid #ffc107;
+
+/* Navbar Styles */
+.navbar {
+    background-color: #000 !important;
+    padding: 15px 0;
 }
-.address-card {
-    background: white;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    padding: 20px;
-    margin-top: 20px;
+
+.navbar-brand {
+    color: #fff !important;
+    font-size: 1.5rem;
 }
+
+.nav-link {
+    color: #fff !important;
+    font-weight: 500;
+    transition: opacity 0.3s;
+}
+
 .nav-link:hover {
-    color: orange;
+    opacity: 0.8;
 }
+
 .nav-link.active {
-    color: orange;
-    font-weight: bold;
+    border-bottom: 2px solid #fff;
 }
-hr {
-    border-top: 1px solid #e6e6e6;
+
+.navbar-toggler {
+    border-color: #fff;
 }
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* Address Card Styles */
+.address-card {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    margin-top: 2rem;
+    max-width: 800px;
+}
+
+.address-card h2 {
+    color: #000;
+    border-bottom: 2px solid #000;
+    padding-bottom: 10px;
+}
+
+/* Form Styles */
+.form-label {
+    color: #000;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.form-control {
+    border: 2px solid #000;
+    border-radius: 5px;
+    padding: 0.8rem;
+    transition: all 0.3s;
+}
+
+.form-control:focus {
+    box-shadow: none;
+    border-color: #333;
+    background-color: #f8f8f8;
+}
+
+.form-control::placeholder {
+    color: #666;
+}
+
+/* Error Message Styles */
 .error-message {
-    color: red;
+    color: #ff0000;
     font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+/* Button Styles */
+.btn-save {
+    background-color: #000;
+    color: #fff;
+    padding: 12px 30px;
+    border-radius: 5px;
+    border: 2px solid #000;
+    font-weight: 500;
+    transition: all 0.3s;
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.btn-save:hover {
+    background-color: #fff;
+    color: #000;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .address-card {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+
+    .form-control {
+        padding: 0.6rem;
+    }
+}
+
+/* Custom Input Styles */
+input[type="tel"]::-webkit-outer-spin-button,
+input[type="tel"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Row Spacing */
+.row {
+    margin-bottom: 0.5rem;
+}
+
+/* SweetAlert Customization */
+.swal2-popup {
+    border: 2px solid #000;
+}
+
+.swal2-title {
+    color: #000 !important;
+}
+
+.swal2-confirm {
+    background-color: #000 !important;
+    color: #fff !important;
+}
+
+.swal2-cancel {
+    background-color: #666 !important;
 }

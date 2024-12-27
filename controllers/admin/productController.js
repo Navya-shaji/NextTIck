@@ -64,14 +64,12 @@ const addProducts = async (req, res) => {
                     images.push(`resized-${req.files[i].filename}`);
                 }
             }
-            console.log(images);
             
           
             const categoryId = await Category.findOne({ name: products.category });
             if (!categoryId) {
                 return res.status(400).json("Invalid category name");
             }
-            console.log(products);
             
          
             const newProduct = new Product({
@@ -91,7 +89,6 @@ const addProducts = async (req, res) => {
             
 
             const savedProduct = await newProduct.save();
-            console.log(savedProduct);
 
             return res.redirect("/addProducts");
         } else {
@@ -142,7 +139,6 @@ const getAllProducts = async(req,res)=>{
         res.render("page-404")
     }
   } catch (error) {
-    console.log(error)
     res.redirect("/pageerror")
   }
 }
@@ -150,7 +146,6 @@ const addProductOffer = async (req, res) => {
     try {
         const { productId, percentage } = req.body;
 
-        // Input validation
         if (!productId || !percentage) {
             return res.status(400).json({
                 status: false,
@@ -165,7 +160,6 @@ const addProductOffer = async (req, res) => {
             });
         }
 
-        // Fetch product by ID
         const product = await Product.findById(productId);
         if (!product) {
             return res.status(404).json({
@@ -174,7 +168,6 @@ const addProductOffer = async (req, res) => {
             });
         }
 
-        // Calculate and update sales price
         const discount = Math.floor(product.regularPrice * (percentage / 100));
         product.salesPrice = product.regularPrice - discount;
         product.productOffer = percentage;
@@ -209,67 +202,6 @@ const removeProductOffer=async(req,res)=>{
     res.redirect("/pageerror")
   }
 }
-        // console.log(req.body)
-   
-//         if (!productId || !offerPrice) {
-//             return res.status(400).json({ message: "Product ID and Offer Price are required." });
-//         }
-
-    
-//         const product = await Product.findById(productId);
-
-//         if (!product) {
-//             return res.status(404).json({ message: "Product not found." });
-//         }
-
-  
-//         product.offerPrice = offerPrice;
-//         product.isOnOffer = true; 
-//         await product.save();
-
-//         res.status(200).json({
-//             message: "Offer added successfully.",
-//             product,
-//         });
-//     } catch (error) {
-//         console.error("Error adding product offer:", error);
-//         res.status(500).json({ message: "Internal server error." });
-//     }
-// };
-
-
-
-
-// const removeProductOffer = async (req, res) => {
-//     try {
-//         const { productId } = req.body;
-
-       
-//         if (!productId) {
-//             return res.status(400).json({ message: "Product ID is required." });
-//         }
-
-      
-//         const product = await Product.findById(productId);
-
-//         if (!product) {
-//             return res.status(404).json({ message: "Product not found." });
-//         }
-
-//         product.offerPrice = null;
-//         product.isOnOffer = false; 
-//         await product.save();
-
-//         res.status(200).json({
-//             message: "Offer removed successfully.",
-//             product,
-//         });
-//     } catch (error) {
-//         console.error("Error removing product offer:", error);
-//         res.status(500).json({ message: "Internal server error." });
-//     }
-// };
-
 
 
 const blockProduct = async(req,res)=>{
@@ -317,50 +249,6 @@ const getEditProduct = async (req, res) => {
     }
 };
 
-
-
-// const editProduct = async(req,res)=>{
-//     try {
-        
-//         const id=req.params.id
-//         console.log(req.body)
-//         const data = req.body
-// const existingProduct = await Product.findOne({
-//     productName:req.body.productName,
-//     id:{$ne:id}
-    
-// })
-
-// if(existingProduct){
-//     return res.status(400).json({error:"Product with this name already exists. Please try with another name"})
-// }
-//   const images =[];
-//   if(req.files && req.files.length>0){
-//     for(let i=0;i<req.files;i++){
-//         images.push(req.files[i].filename)
-//     }
-//   }
-//   const category = Category.findOne({name:data.name})
-//   const updateFields ={
-//     productName:data.productName,
-//     description:data.description,
-//     brand:data.brand,
-//     category:category._id,
-//     regularPrice:data.regularPrice,
-//     salesPrice:data.salePrice,
-//     quantity:data.quantity,
-//     color:data.color
-//   }
-//   if(req.files.length>0){
-//     updateFields.$push ={productImmage:{$each:images}};
-//   }
-//   await Product.findByIdAndUpdate(id,updateFields,{new:true})
-//   res.redirect("/admin/products")
-//    } catch (error) {
-//        console.error(error);
-//        res.redirect("/pageerror") 
-//     }
-// }
 
 const editProduct = async(req,res)=>{
     try {
@@ -411,9 +299,7 @@ if(existingProduct && existingProduct._id != id){
 const deleteSingleImage = async(req,res)=>{
     try {
         const {imageNameToserver,productIdToServer}=req.body;
-        console.log(req.body);
         
-        console.log(imageNameToserver)
         const product=await Product.findByIdAndUpdate(productIdToServer,{$pull:{productImage:imageNameToserver}})
         const imagePath = path.join("public","uploads","re-image",imageNameToserver);
         if(fs.existsSync(imagePath)){
@@ -431,25 +317,6 @@ const deleteSingleImage = async(req,res)=>{
         res.redirect("/pageerror")
     }
 }
-
-// const deleteSingleImage = async(req,res)=>{
-//     try {
-//         const {imageNametoServer,productIdServer}=req.body;
-//         const product=await Product.findByIdAndUpdate(productIdToServer,{$pull:{peoductImage:imageNameToServer}})
-//         const imagePath = path.join("public","uploads","re-image",imageNametoServer);
-//         if(fs.existsSync(imagePath)){
-//             await fs.unlinkSync(imagePath);
-//             console.log(`Image ${ImageNameToServer} deleted successfully`);
-            
-//         }else{
-//             console.log(`Image ${ImageNameToServer} not found`);
-            
-//         }
-//         res.send({status:true})
-//     } catch (error) {
-//         res.redirect("/pageerror")
-//     }
-// }
 
 const updateproduct = async(req,res)=>{
     try {

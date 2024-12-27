@@ -272,6 +272,51 @@
     max-width: 150px;
   }
 }
+.product-offer-box {
+    display: inline-block;
+    background-color: red;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 2px 6px; 
+    border-radius: 4px; 
+    text-align: center;
+    margin-left: 10px; 
+}
+.product-offer-box-two {
+    display: inline-block;
+    padding: 5px 10px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #ffffff;
+    background-color: #ff5722; /* A vibrant color like orange */
+    border-radius: 5px; /* Rounded corners */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
+    text-align: center; /* Center the text */
+    text-transform: uppercase; /* Convert text to uppercase */
+    margin-top: 0px;
+}
+
+.product-offer-box-two {
+    display: inline-block;
+    padding: 8px 15px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #ffffff; /* Text color: White */
+    background-color: #343a40; /* Background color: Dark Gray */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Subtle shadow for a 3D effect */
+    text-align: center; /* Center the text */
+    margin: 5px; /* Add spacing around the span */
+    text-transform: capitalize; /* Capitalize first letter of each word */
+    transition: transform 0.2s ease, background-color 0.2s ease; /* Smooth transition effects */
+}
+
+.product-offer-box-two:hover {
+    background-color: #495057; /* Slightly lighter gray on hover */
+    transform: scale(1.05); /* Enlarge slightly on hover */
+}
+
 
 </style>
 
@@ -286,6 +331,7 @@
                         <div>
                             <img src="/uploads/re-image/<%=product.productImage[i]%>"  alt="Product Thumbnail 1" class="thumbnail active" onclick="changeImage(this)">
                         </div>
+
                    <%}%>
                  
                 </div>
@@ -294,25 +340,37 @@
                 <h1><%=product.productName%></h1>
                 <div class="rating">
                     ★★★★☆ <span style="color: #6c757d; font-size: 14px;">(25 reviews)</span>
+                    <!-- <span class="product-offer-box-two">categoryOffer:<%=category.categoryOffer%> %Offer</span> -->
+
+                    <div class="product-meta">
+                        <span class="wishlist-btn" onclick="addToWishlist('<%= product._id %>')">❤️</span>
+
+                         
+                        </div>
                 </div>
+
                 <p><%=product.brand%></p>
                 <p><%=product.description%></p>
                 <div class="price">
-                    <%=product.regularPrice%><span class="old-price"></span>
+                    <%=product.salesPrice%><span class="old-price"></span>
+                    <span class="product-offer-box"><%=product.productOffer%> %Offer</span>
                 </div>
+
                 <div class="quantity">
                     <button id="decrease-btn" onclick="updateQuantity(`<%= product._id %>`,-1)">-</button>
                     <span id="quantity">1</span>
                     <button id="increase-btn" onclick="updateQuantity(`<%= product._id %>`,1)">+</button>
                 </div>
                 <p id="stock-info">Stock left: <span id="stock-count"><%=quantity%></span></p>
-                
+               
                 <button class="add-to-cart" ><a onclick="addToCartHandler(event, '<%= product._id %>')"  >Add to Cart</a></button>
-                <div class="product-meta">
-                 
-                </div>
+               
             </div>
         </div>
+
+        
+                                
+                           
     
     <div class="rp" >
         <h1>Related Product</h1>
@@ -348,7 +406,6 @@
 
         function addToCart() {
             const quantity = document.getElementById('quantity').textContent;
-            // alert(`Added ${quantity} item(s) to cart!`);
         }
 
         function zoomImage(e) {
@@ -372,98 +429,97 @@
 <%- include("../../views/partials/user/footer") %>
 
 <script>
-    function addToCartHandler(event, productId) {
+   function addToCartHandler(event, productId) {
     event.preventDefault();
+
+    const quantity = parseInt(document.getElementById('quantity').textContent, 10);
+    if (isNaN(quantity) || quantity <= 0) {
+        return Swal.fire({
+            title: 'Invalid Quantity',
+            text: 'Please select a valid quantity.',
+            icon: 'warning',
+            confirmButtonText: 'OK'
+        });
+    }
 
     fetch('/addToCart', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            productId: productId,
-            quantity: document.getElementById('quantity').innerHTML
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId, quantity })
+    })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(data => {
+                    throw new Error(data.message || 'Failed to add product to cart');
+                });
+            }
+            return response.json();
         })
-    })
-    .then(response => {
-    //   alert(response)
-      console.log(response)
-        if (!response.ok) {
-            return response.json().then(data => {
+        .then(data => {
+            if (data.success) {
+                Swal.fire({
+                    title: 'Success!',
+                    text: data.message || 'Product added to cart successfully!',
+                    icon: 'success',
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(() => {
+                    if (data.cartCount !== undefined) {
+                        updateCartCount(data.cartCount);
+                    }
+                    if (data.redirect) {
+                        window.location.href = data.redirect;
+                    }
+                });
+            } else {
                 throw new Error(data.message || 'Failed to add product to cart');
-            });
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.success) {
-            Swal.fire({
-                title: 'Success!',
-                text: data.message || 'Product added to cart successfully!',
-                icon: 'success',
-                showConfirmButton: false,
-                timer: 1500
-            }).then(() => {
-                if (data.cartCount !== undefined) {
-                    updateCartCount(data.cartCount);
-                }
-                
-                if (data.redirect) {
-                    window.location.href = data.redirect;
-                }
-            });
-        } else {
-            throw new Error(data.message || 'Failed to add product to cart');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        
-        if (error.message.includes('Please login')) {
-            Swal.fire({
-                title: 'Login Required',
-                text: 'Please login to add items to your cart',
-                icon: 'info',
-                showCancelButton: true,
-                confirmButtonText: 'Login',
-                cancelButtonText: 'Cancel'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = '/login';
-                }
-            });
-        } 
-        else if (error.message.includes('Maximum quantity')) {
-            Swal.fire({
-                title: 'Quantity Limit Reached',
-                text: error.message,
-                icon: 'warning',
-                confirmButtonText: 'OK'
-            });
-        }
-        else if (error.message.includes('out of stock') || error.message.includes('available in stock')) {
-            Swal.fire({
-                title: 'Stock Limited',
-                text: error.message,
-                icon: 'warning',
-                confirmButtonText: 'OK'
-            });
-        }
-        else {
-            Swal.fire({
-                title: 'Error!',
-                text: error.message || 'Something went wrong. Please try again.',
-                icon: 'error',
-                confirmButtonText: 'OK'
-            });
-        }
-    });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            if (error.message.includes('Please login')) {
+                Swal.fire({
+                    title: 'Login Required',
+                    text: 'Please login to add items to your cart',
+                    icon: 'info',
+                    showCancelButton: true,
+                    confirmButtonText: 'Login',
+                    cancelButtonText: 'Cancel'
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        window.location.href = '/login';
+                    }
+                });
+            } else if (error.message.includes('Maximum quantity')) {
+                Swal.fire({
+                    title: 'Quantity Limit Reached',
+                    text: error.message,
+                    icon: 'warning',
+                    confirmButtonText: 'OK'
+                });
+            } else if (error.message.includes('out of stock') || error.message.includes('available in stock')) {
+                Swal.fire({
+                    title: 'Stock Limited',
+                    text: error.message,
+                    icon: 'warning',
+                    confirmButtonText: 'OK'
+                });
+            } else {
+                Swal.fire({
+                    title: 'Error!',
+                    text: error.message || 'Something went wrong. Please try again.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
 }
+
 
 async function updateQuantity(productId, change){
     const quantityElement = document.getElementById(`quantity`);
     const newQuantity = parseInt(quantityElement.innerHTML) + change;
-    if(newQuantity >= 1 && newQuantity <= 5 && newQuantity <= <%=quantity%>){
+    if(newQuantity >= 1 && newQuantity <= 5 && newQuantity <= `<%=quantity%>`){
         quantityElement.innerHTML = newQuantity
     }else if(newQuantity < 1){
         Swal.fire({
@@ -475,7 +531,7 @@ async function updateQuantity(productId, change){
                 title: 'Maximum quantity reached',
                 confirmButtonText: 'OK'
             });
-    }else if(newQuantity>= <%=quantity%>){
+    }else if(newQuantity>=` <%=quantity%>`){
         Swal.fire({
                 title: 'maximun quantity reached',
               
@@ -483,5 +539,51 @@ async function updateQuantity(productId, change){
             });
     }
 }
+
+  
+  function addToWishlist(productId) {
+  
+    $.ajax({
+      url: "/addToWishlist", 
+      method: "POST",
+      data: { productId: productId },
+      success: (response) => {
+        if (response.status) {
+          Swal.fire({
+            title: "Added to wishlist",
+            text: "The product has been added to your wishlist.",
+            icon: "success",
+            timer: 2000,
+          });
+        } else {
+          Swal.fire({
+            title: "Already in wishlist",
+            text: response.message || "This product is already in your wishlist.",
+            icon: "info",
+            timer: 2000,
+          });
+        }
+      },
+      error: (xhr, status, error) => {
+  
+        console.error("AJAX Error: ", error, xhr.responseText);
+        Swal.fire({
+          title: "Error",
+          text: "There was an error adding the product to your wishlist. Please try again.",
+          icon: "error",
+          timer: 2000,
+        });
+      },
+    });
+  }
+    const productOffer = `<%= product.productOffer %>`;
+    const categoryOffer = `<%= category.categoryOffer %>`;
+
+    const higherOffer = Math.max(productOffer, categoryOffer);
+
+    const offerDisplay = document.getElementById('offer-display');
+    offerDisplay.textContent = `${higherOffer} %Offer`;
+
+    offerDisplay.classList.add(higherOffer === productOffer ? 'product-offer-box' : 'product-offer-box-two');
 
 </script>

@@ -1,7 +1,7 @@
 const User=require("../../models/userSchema");
 const Address=require("../../models/addressSchema")
 const Order=require("../../models/orderSchema")
-const wallet=require("../../models/walletSchema")
+const Wallet=require("../../models/walletSchema")
 const nodemailer = require("nodemailer");
 const bcrypt =require("bcrypt");
 const env = require("dotenv").config();
@@ -17,6 +17,7 @@ function generateOtp(){
     }
     return otp;
 }
+
 
 const sendVerificationEmail =  async(email,otp)=>{
     try{
@@ -47,7 +48,6 @@ const sendVerificationEmail =  async(email,otp)=>{
         return false;
     }
 }
-
 
 
 
@@ -165,13 +165,14 @@ const userProfile = async (req, res) => {
         }
 
         const orders = await Order.find({ userId: user._id }).sort({ createdOn: -1 });
+        const address = await Address.findOne({ userId: user._id });
+        const userWallet = await Wallet.findOne({ userId: user._id }); 
 
-        const address  = await Address.findOne({ userId: user._id })
         res.render("profile", {
             user: user,
-            orders: orders, 
-            userAddress: address || {},
-            wallet 
+            orders: orders,
+            userAddress: address || {}, 
+            wallet: userWallet || { balance: 0 }, 
         });
     } catch (error) {
         console.error("Error fetching user profile:", error.message);
@@ -179,7 +180,8 @@ const userProfile = async (req, res) => {
     }
 };
 
-//change email.......................
+
+//change email....................................................................
 
 const changeEmail=async (req,res)=>{
     try {
@@ -188,6 +190,7 @@ const changeEmail=async (req,res)=>{
         res.redirect("/pageNotFound")
     }
 }
+
 
 const changeEmailValid=async(req,res)=>{
     try {
@@ -248,7 +251,7 @@ const updateEmail=async(req,res)=>{
     }
 }
 
-//password changing.......................
+//password changing.................................................................
 
 
 const renderChangePasswordPage = async (req, res) => {
@@ -288,6 +291,7 @@ const changePasswordValid = async (req, res) => {
     }
 };
 
+
 const verifyChangepassOtp = async (req, res) => {
     try {
         const enteredOtp = req.body.otp;
@@ -301,6 +305,7 @@ const verifyChangepassOtp = async (req, res) => {
         res.status(500).json({ success: false, message: "An error occurred. Please try again later" });
     }
 };
+
 
 const resetPassword = async (req, res) => {
     try {
@@ -328,6 +333,8 @@ const resetPassword = async (req, res) => {
     }
 };
 
+
+
 const updateProfile = async (req, res) => {
     try {
         const { name, phone, email, userId } = req.body;
@@ -349,6 +356,7 @@ const updateProfile = async (req, res) => {
 };
 
 
+
 const getAddressPage = async (req, res) => {
     try {
         const userId = req.session.user._id;
@@ -360,6 +368,7 @@ const getAddressPage = async (req, res) => {
     }
 };
 
+
 const addAddress = async (req, res) => {
     try {
         const user = req.session.user._id;
@@ -369,6 +378,8 @@ const addAddress = async (req, res) => {
         res.redirect("/pageNotFound");
     }
 };
+
+
 
 const postAddAddress = async (req, res) => {
     try {
@@ -395,6 +406,9 @@ const postAddAddress = async (req, res) => {
     }
 };
 
+
+
+
 const editAddress = async (req, res) => {
     try {
         const addressId = req.params.id;
@@ -414,6 +428,8 @@ const editAddress = async (req, res) => {
         res.redirect("/pageNotFound");
     }
 };
+
+
 
 const postEditAddress = async (req, res) => {
     try {
@@ -452,6 +468,8 @@ const postEditAddress = async (req, res) => {
     }
 };
 
+
+
 const deleteAddress = async (req, res) => {
     try {
         const addressId = req.params.id;
@@ -485,6 +503,8 @@ const getOrders = async (req, res) => {
     }
 };
 
+
+
 const cancelOrder = async (req, res) => {
     try {
         const orderId = req.params.id;
@@ -506,14 +526,13 @@ const cancelOrder = async (req, res) => {
 
 const deleteOrder = async (req, res) => {
     try {
-        const { orderId } = req.params; // Get the order ID from the URL
+        const { orderId } = req.params; 
         const user = req.session.user;
 
         if (!user) {
             return res.status(401).json({ success: false, message: "Unauthorized" });
         }
 
-        // Find and delete the order
         const order = await Order.findOneAndDelete({ _id: orderId, userId: user._id });
 
         if (!order) {
@@ -543,6 +562,7 @@ const getWalletBalance = async (req, res) => {
     }
 };
 
+
 const addMoney = async (req, res) => {
     try {
         const { amount } = req.body;
@@ -570,6 +590,7 @@ const addMoney = async (req, res) => {
     }
 };
 
+
 const getWalletHistory = async (req, res) => {
     try {
         const wallet = await Wallet.findOne({ user: req.user._id });
@@ -582,6 +603,8 @@ const getWalletHistory = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+
+
 
 const refundToWallet = async (req, res) => {
     try {
@@ -609,11 +632,12 @@ const refundToWallet = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+
+
 const getWalletForUser = async (userId) => {
     try {
-      // Replace this with your database query logic
       const wallet = await WalletModel.findOne({ userId });
-      return wallet || { balance: 0 }; // Default balance if wallet not found
+      return wallet || { balance: 0 };
     } catch (error) {
       console.error('Error fetching wallet:', error);
       throw new Error('Could not fetch wallet data');

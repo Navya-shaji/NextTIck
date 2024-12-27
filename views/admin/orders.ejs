@@ -50,6 +50,7 @@
         </div>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -70,7 +71,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 const data = await response.json();
                 
                 if (data.success) {
-                    alert('Status updated successfully');
+                    // alert('Status updated successfully');
+                    // SweetAlert Example for Status Update
+Swal.fire({
+    title: 'Success!',
+    text: 'Status updated successfully',
+    icon: 'success', // Can be 'success', 'error', 'warning', 'info', or 'question'
+    confirmButtonText: 'OK'
+});
+
                 } else {
                     alert('Failed to update status: ' + data.message);
                     // Reset to previous value

@@ -80,7 +80,6 @@ const customerunBlocked = async (req, res) => {
 };
 
 
-
 module.exports = {
     customerInfo,
     customerBlocked,

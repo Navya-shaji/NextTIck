@@ -1,5 +1,75 @@
 <%- include("../../views/partials/admin/header") %>
+<style>
+    .content-title {
+      font-size: 24px; /* Adjust the font size */
+      color: #333; /* Set text color */
+      margin-bottom: 10px; /* Add space below */
+      font-family: 'Roboto', sans-serif; /* Set font family */
+    }
+  
+    .card-title {
+      text-align: center; /* Center the text */
+      font-weight: bold; /* Make the text bold */
+      background-color: #f8f9fa; /* Add a light background */
+      padding: 10px; /* Add padding */
+      border-radius: 8px; /* Round the corners */
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+    }
+    .card-header {
+    background-color: #ffffff; /* White background for the header */
+    border-bottom: 1px solid #ddd; /* Light border at the bottom */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    margin-bottom: 20px; /* Space below the header */
+  }
 
+  .text-center {
+    text-align: center; /* Center align content */
+  }
+
+  /* Search Bar Styling */
+  .search-bar {
+    max-width: 400px; /* Restrict the width for a cleaner look */
+    margin: 0 auto; /* Center align the search bar */
+    display: flex; /* Align elements inline */
+  }
+
+  .search-bar input {
+    flex: 1; /* Make input take up available space */
+    border: 1px solid #ddd; /* Light border for input */
+    border-right: none; /* Remove right border */
+    border-radius: 5px 0 0 5px; /* Rounded left corners */
+    padding: 10px; /* Add padding inside the input */
+    font-size: 14px; /* Adjust text size */
+  }
+
+  .search-bar input:focus {
+    outline: none;
+    border-color: #007BFF; /* Highlight border on focus */
+  }
+
+  .search-bar button {
+    border: 1px solid #ddd; /* Light border for button */
+    border-left: none; /* Remove left border */
+    background-color: #007BFF; /* Blue background for button */
+    color: white; /* White text for contrast */
+    border-radius: 0 5px 5px 0; /* Rounded right corners */
+    padding: 10px 15px; /* Button padding */
+    font-size: 14px; /* Adjust text size */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s ease;
+  }
+
+  .search-bar button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+  }
+
+  .search-bar button:focus {
+    outline: none;
+  }
+  </style>
+  
 <div class="content-header row">
     <div class="d-flex justify-content-between align-items-center">
         <h2 class="content-title card-title">Customers</h2>

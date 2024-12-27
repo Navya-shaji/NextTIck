@@ -7,65 +7,126 @@
     <!-- Include SweetAlert2 library -->
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        .form-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 1rem;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        textarea {
+            width: 100%;
+            padding: 0.5rem;
+        }
+        button {
+            padding: 0.5rem 1rem;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .error-text {
+            color: red;
+            display: none;
+            margin-top: 0.5rem;
+        }
+    </style>
 </head>
 <body>
-    <h1>Return Order</h1>
-    <form id="returnForm" action="/process-return" method="POST">
-        <input type="hidden" name="orderId" value=""> <!-- Replace with actual order ID -->
-        <label for="reason">Reason for Return:</label>
-        <textarea name="reason" id="reason" rows="4" required></textarea>
-        <br>
-        <button type="submit">Submit</button>
-    </form>
+    <div class="form-container">
+        <h1>Return Order</h1>
+        <form id="returnForm">
+            <!-- Use data attribute to store order ID -->
+            <div class="form-group">
+                <p>Order ID: <span id="displayOrderId"></span></p>
+            </div>
+            <div class="form-group">
+                <label for="reason">Reason for Return:</label>
+                <textarea 
+                    name="reason" 
+                    id="reason" 
+                    rows="4" 
+                    required 
+                    placeholder="Please provide detailed reason for return"></textarea>
+                <div id="reasonError" class="error-text">Please provide a reason for return</div>
+            </div>
+            <button type="submit">Submit Return Request</button>
+        </form>
+    </div>
 
     <script>
-        document.getElementById('returnForm').addEventListener('submit', async (e) => {
-            e.preventDefault();  // Prevent the default form submission
-
-            const form = e.target;
-            const formData = new FormData(form);
-            const orderId = formData.get('orderId');
-            const reason = formData.get('reason');
-
-            try {
-                const response = await fetch('/process-return', {
-                    method: 'POST',
-                    body: JSON.stringify({ orderId, reason }),
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                const result = await response.json();
-
-                if (result.success) {
-                    // Display a SweetAlert message for success
-                    Swal.fire({
-                        title: 'Success!',
-                        text: result.message,
-                        icon: 'success',
-                        confirmButtonText: 'OK'
-                    }).then(() => {
-                        window.location.href = '/profile';  // Redirect to the profile or orders page
-                    });
-                } else {
-                    // Display a SweetAlert message for error
-                    Swal.fire({
-                        title: 'Error!',
-                        text: result.message,
-                        icon: 'error',
-                        confirmButtonText: 'Try Again'
-                    });
-                }
-            } catch (error) {
-                // Display a SweetAlert message for network or server error
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const orderId = urlParams.get('orderId');
+            
+            const displayOrderId = document.getElementById('displayOrderId');
+            if (orderId) {
+                displayOrderId.textContent = orderId;
+            } else {
                 Swal.fire({
-                    title: 'Oops!',
-                    text: 'There was an error submitting your request. Please try again later.',
+                    title: 'Error',
+                    text: 'No order ID provided',
                     icon: 'error',
-                    confirmButtonText: 'Try Again'
+                    confirmButtonText: 'Go Back'
+                }).then(() => {
+                    window.history.back();
                 });
             }
+
+            document.getElementById('returnForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const reason = document.getElementById('reason').value.trim();
+                
+                if (!reason) {
+                    document.getElementById('reasonError').style.display = 'block';
+                    return;
+                }
+
+                try {
+                    const response = await fetch('process-return', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            orderId: orderId,
+                            reason: reason
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        await Swal.fire({
+                            title: 'Success!',
+                            text: 'Your return request has been submitted successfully',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        });
+                        window.location.href = '/profile';
+                    } else {
+                        throw new Error(result.message || 'Failed to submit return request');
+                    }
+                } catch (error) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: error.message || 'There was an error processing your request. Please try again.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
         });
     </script>
 </body>

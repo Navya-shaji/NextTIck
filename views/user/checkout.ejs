@@ -123,10 +123,11 @@
                                                     </p>
                                                 </label>
                                             </div>
-                                            <div>
-                                                <button class="btn btn-sm btn-outline-primary me-2" onclick="editAddress('<%= addr._id %>')">Edit</button>
-                                                <button class="btn btn-sm btn-outline-danger" onclick="deleteAddress('<%= addr._id %>')">Delete</button>
-                                            </div>
+                                            <div class="d-flex justify-content-between">
+                                                <a href="/edit-address/<%=addr.id %>" class="btn btn-sm btn-primary">Edit</a>
+                                                <a href="/delete-address/<%=addr.id %>" class="btn btn-sm btn-danger">Delete</a>
+      
+                                              </div>
                                         </div>
                                     </div>
                                 <% }); %>
@@ -134,7 +135,12 @@
                         <% } else { %>
                             <p>No saved addresses found.</p>
                         <% } %>
-                        <button class="btn btn-primary mt-3" onclick="showAddAddressForm()">Add New Address</button>
+                        <!-- <button class="btn btn-primary mt-3" onclick="showAddAddressForm()">Add New Address</button> -->
+                        <a href="/add-address">
+                            <button class="btn btn-primary">
+                                Add Address
+                            </button>
+                        </a>
                     </div>
                 </div>
 
@@ -230,27 +236,27 @@
                         <input type="hidden" id="addressId">
                         <div class="mb-3">
                             <label for="name" class="form-label">Name</label>
-                            <input type="text" class="form-control" id="name" required>
+                            <input type="text" class="form-control" id="name" >
                         </div>
                         <div class="mb-3">
                             <label for="addressType" class="form-label">Address Type</label>
-                            <input type="text" class="form-control" id="addressType" required>
+                            <input type="text" class="form-control" id="addressType" >
                         </div>
                         <div class="mb-3">
                             <label for="street" class="form-label">Street</label>
-                            <input type="text" class="form-control" id="street" required>
+                            <input type="text" class="form-control" id="street" >
                         </div>
                         <div class="mb-3">
                             <label for="city" class="form-label">City</label>
-                            <input type="text" class="form-control" id="city" required>
+                            <input type="text" class="form-control" id="city" >
                         </div>
                         <div class="mb-3">
                             <label for="state" class="form-label">State</label>
-                            <input type="text" class="form-control" id="state" required>
+                            <input type="text" class="form-control" id="state" >
                         </div>
                         <div class="mb-3">
                             <label for="pincode" class="form-label">Pincode</label>
-                            <input type="text" class="form-control" id="pincode" required>
+                            <input type="text" class="form-control" id="pincode" >
                         </div>
                         <div class="mb-3">
                             <label for="landmark" class="form-label">Landmark</label>
@@ -258,7 +264,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="phone" class="form-label">Phone</label>
-                            <input type="tel" class="form-control" id="phone" required>
+                            <input type="tel" class="form-control" id="phone" >
                         </div>
                         <div class="mb-3">
                             <label for="altPhone" class="form-label">Alternate Phone</label>
@@ -281,7 +287,10 @@
     <script>
         let selectedAddressId = null;
         let subtotal = `<%= subtotal %>`;
-        let discount = 0;
+        // let discount = 0;
+
+        // let discountt = document.getElementById("discountAmount").textContent;
+        // console.log(discount)
         
         function handleAddressSelection(addressId) {
             selectedAddressId = addressId;
@@ -347,7 +356,6 @@
                 if (data.success) {
                     Swal.fire('Success', 'Address saved successfully', 'success');
                     bootstrap.Modal.getInstance(document.getElementById('addressModal')).hide();
-                    // Refresh the address list
                     location.reload();
                 } else {
                     Swal.fire('Error', data.message || 'Failed to save address', 'error');
@@ -377,7 +385,6 @@
                     .then(data => {
                         if (data.success) {
                             Swal.fire('Deleted!', 'Your address has been deleted.', 'success');
-                            // Refresh the address list
                             location.reload();
                         } else {
                             Swal.fire('Error', data.message || 'Failed to delete address', 'error');
@@ -393,18 +400,22 @@
 
         function applyCoupon() {
             const couponCode = document.getElementById('couponCode').value;
+            const totalAmountElement = document.getElementById("totalAmount");
+            const totalAmount = totalAmountElement.textContent.replace(/[₹\s]/g, "");
+            const discounttElement = document.getElementById("discountAmount");
             fetch('/apply-coupon', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ couponCode, subtotal })
+                body: JSON.stringify({ couponCode, totalAmount })
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    discount = data.discount;
-                    updateOrderSummary();
+                    discounttElement.textContent=data.discount
+                    totalAmountElement.textContent = data.totalAmount
+                    // updateOrderSummary();
                     Swal.fire('Success', 'Coupon applied successfully', 'success');
                 } else {
                     Swal.fire('Error', data.message || 'Failed to apply coupon', 'error');
@@ -422,6 +433,7 @@
             discountAmount.textContent = `₹${discount.toFixed(2)}`;
             const total = subtotal - discount;
             totalAmount.textContent = `₹${total.toFixed(2)}`;
+             discount = document.getElementById("discountAmount").textContent;
         }
 
         function placeOrder() {
@@ -454,6 +466,10 @@
         }
 
         function placeOrderCOD() {
+            const discountString = document.getElementById("discountAmount").textContent.replace(/₹/g, "").trim();
+const discount = parseFloat(discountString,10);
+
+console.log(discount)
             fetch('/checkout', {
                 method: 'POST',
                 headers: {
@@ -497,7 +513,8 @@
         }
 
   function placeOrderRazorpay() {
-    // First create the order on your backend
+    const discountString = document.getElementById("discountAmount").textContent.replace(/₹/g, "").trim();
+    const discount = parseFloat(discountString,10);
     fetch('/checkout', {
         method: 'POST',
         headers: {
@@ -518,7 +535,7 @@
         }
 
         const options = {
-            key: data.key_id, // This will come from your backend
+            key: data.key_id, 
             amount: data.amount,
             currency: data.currency,
             name: data.name,
@@ -585,14 +602,14 @@ function verifyRazorpayPayment(response, orderDetails) {
                 window.location.href = `/orderConfirmation`;
             });
         } else {
-            throw new Error(data.message || 'Payment verification failed');
+            throw new Error(data.message || 'Payment verification failed ');
         }
     })
     .catch(error => {
         console.error('Error:', error);
         Swal.fire({
             icon: 'error',
-            title: 'Payment Verification Failed',
+            title: 'Payment Verification Failed ',
             text: error.message || 'Failed to verify payment'
         });
     });

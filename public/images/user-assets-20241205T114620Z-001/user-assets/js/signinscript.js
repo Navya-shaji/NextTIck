@@ -10,11 +10,11 @@ const signform = document.getElementById('signForm')
 
 
 function emailvalidateChecking(e){
-  console.log("email validateChecking");
+  // console.log("email validateChecking");
   const emailval=emailid.value
   const emailpattern = /^([a-zA-Z0-9._-]+)@([a-zA-Z.-]+)\.([a-zA-Z]{2,4})$/;
   if(!emailpattern.test(emailval)){
-    console.log("no format");
+    // console.log("no format");
     error2.style.display="block"
     error2.innerHTML="Invalid Format"
   }else{
@@ -66,7 +66,7 @@ if(nameval.trim()===""){
 }
 
 function mobvalidateChecking(){
-  console.log("mobile ahdjashda");
+  // console.log("mobile ahdjashda");
   const mobval=mobileid.value
   if(mobval.trim()===""){
     error3.style.display="block"
@@ -81,16 +81,16 @@ function mobvalidateChecking(){
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  console.log("loadeddddddd");
+  // console.log("loadeddddddd");
   signform.addEventListener('submit', function(e) {
-    console.log("submissssssss");
+    // console.log("submissssssss");
     emailvalidateChecking();
     namevalidateChecking();
     mobvalidateChecking();
     passvalidateChecking();
 
    
-  console.log(emailid, nameid, mobileid, passid, error1, error2, error3, error4, signform);
+  // console.log(emailid, nameid, mobileid, passid, error1, error2, error3, error4, signform);
 
   // lines to check for null elements
   if (!emailid || !nameid || !mobileid || !passid || !error1 || !error2 || !error3 || !error4 || !signform) {

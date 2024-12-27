@@ -45,7 +45,7 @@ const userSchema = new Schema({
   wallet: [
     {
       type: Schema.Types.ObjectId, // Fixed typo (schema -> Schema)
-      ref: "Wishlist",
+      ref: "Wallet",
     },
   ],
   orderHistory: [
@@ -88,6 +88,13 @@ const userSchema = new Schema({
       },
     },
   ],
+  coupons: [
+    {
+        couponName: {
+            type: String,
+        }
+    }
+]
 });
 
 const User = mongoose.model("User", userSchema);

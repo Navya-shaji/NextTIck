@@ -29,12 +29,10 @@
 
         tryInitOrHookIntoEvents(options, this);
 
-        // Try doing init, otherwise hook into window.resize and document.scroll and try again then.
         function tryInitOrHookIntoEvents(options, $that) {
             var success = tryInit(options, $that);
 
             if (!success) {
-                console.log('TSS: Body width smaller than options.minWidth. Init is delayed.');
 
                 $(document).on('scroll.' + options.namespace, function (options, $that) {
                     return function (evt) {

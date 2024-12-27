@@ -45,7 +45,7 @@ router.get("/brands",adminAuth,brandController.getBrandPage);
 router.post("/addBrand",adminAuth,uploads.single("image"),brandController.addBrand);
 router.post('/blockBrand/:id', brandController.blockBrand);
 router.post("/unblockBrand/:id", adminAuth, brandController.unblockBrand);
-router.get("/deleteBrand",adminAuth,brandController.deleteBrand)
+router.post("/deleteBrand",adminAuth,brandController.deleteBrand)
 
 //Product Management...........................
 router.get("/addProducts",adminAuth,productController.getProductAddPage);
@@ -74,6 +74,8 @@ router.get("/editcoupon",adminAuth,couponController.editCoupon)
 router.get("/updatecoupon",adminAuth,couponController.updateCoupon)
 router.delete("/deletecoupon/:id", adminAuth, couponController.deleteCoupon);
 
+
+//Admin DashBoard & Sales Report................................
 router.get('/dashboard', adminAuth, adminController.loadDashboard);
 router.get('/sales-report', adminAuth, adminController.loadSalesReport);
 router.post('/sales-report/generate', adminAuth, adminController.generateSalesReport);

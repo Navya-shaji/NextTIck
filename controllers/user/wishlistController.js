@@ -3,10 +3,11 @@ const Product = require("../../models/productSchema");
 const User = require("../../models/userSchema");        
 
 
+//loading wishlist page....................................................
 
 const loadWishlist = async (req, res) => {
   try {
-      const userId = req.user._id; 
+      const userId = req.session.user._id; 
       const wishlist = await Wishlist.findOne({ userId })
           .populate({
               path: 'products.productId',
@@ -25,6 +26,7 @@ const loadWishlist = async (req, res) => {
   }
 };
 
+//adding to wishlist......................................................................
 
 const addToWishlist = async (req, res) => {
     try {
@@ -58,24 +60,21 @@ const addToWishlist = async (req, res) => {
   };
 
 
+  //removing products from wishlist...................................................
+  
  const removeFromWishlist = async (req, res) => {
   try {
-    const productId = req.params.id; // Extract productId from route params
-    const userId = req.session.user._id; // Extract userId from session
-    console.log('Product ID:', productId, 'User ID:', userId);
-
-    // Validate that productId is provided
+    const productId = req.params.id; 
+    const userId = req.session.user._id; 
     if (!productId) {
       return res.status(400).json({ status: false, message: 'Product ID is required' });
     }
 
-    // Update the wishlist by removing the product
     const result = await Wishlist.updateOne(
       { userId },
       { $pull: { products: { productId } } }
     );
 
-    // Check if any product was removed
     if (result.modifiedCount > 0) {
       return res.status(200).json({ status: true, message: 'Product removed from wishlist' });
     } else {

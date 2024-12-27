@@ -26,7 +26,7 @@ body {
 /* Left Side: Image Section */
 .image-section {
   flex: 1;
-  background-color: #f0f0f0;
+  background-color: #ffffff;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -80,7 +80,7 @@ body {
   padding: 12px;
   font-size: 1rem;
   color: #fff;
-  background-color: #cd7aeb;
+  background-color: #040205;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -89,7 +89,7 @@ body {
 }
 
 .btn:hover {
-  background-color: #b065d8;
+  background: color #000;;
   transform: scale(1.02);
 }
 
@@ -168,4 +168,7 @@ table td button:hover {
 
 .is-invalid {
   border: 1px solid red;
+}
+.submit{
+  width: 100%;
 }

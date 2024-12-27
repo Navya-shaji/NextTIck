@@ -42,7 +42,6 @@ const loadHomepage = async (req, res) => {
     try {
      
       const products = await Product.find({}).populate('category'); 
-        console.log(req.session)
 
       const userData = req.session.user ?? req.session.passport?.user
       res.render('home', { products, user:userData });
@@ -191,11 +190,9 @@ const resendOtp = async (req, res) => {
             return res.status(400).json({ success: false, message: "Email not found in session." });
         }
 
-        // Generate OTP
         const otp = generateOtp(); 
         req.session.userOtp = otp;
 
-        // Send Verification Email
         const emailSent = await sendVerificationEmail(email, otp); 
         if (emailSent) {
             console.log("Resend OTP:", otp); 
@@ -264,26 +261,23 @@ const login = async (req, res) => {
 
 
 //Logout..........................................................
-
+ 
 const logout =async(req,res)=>{
     try {
         req.session.destroy((err)=>{
             if(err)
 {
-    console.log("Session destruction error",err.message);
     return res.redirect("/pageNotFound")
     
 }      
 return res.redirect("/login")
   })
     } catch (error) {
-      console.log("Logout error",error)  
       res.redirect("/pageNotFound")
     }
 }
 
 
-//shopping Page.......................................................
 
 
 module.exports={
@@ -297,7 +291,5 @@ module.exports={
     loadLogin,
     login,
     logout,
-    
-    
 
 }

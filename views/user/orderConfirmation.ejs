@@ -1,5 +1,80 @@
 
-<%- include("../../views/partials/user/header.ejs") %>
+<style>
+
+/* Navbar Styles */
+/* Styling for H1 and P */
+.main h1, 
+.main p {
+    text-align: center; /* Center align the text */
+    color: #28a745; /* Green color */
+}
+
+/* Additional Styling for H1 */
+.main h1 {
+    font-size: 2.8rem; /* Slightly larger font size */
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+/* Additional Styling for P */
+.main p {
+    font-size: 1.5rem; /* Larger font size for better readability */
+    font-weight: 500;
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+/* Navbar Brand Styling */
+.navbar-brand {
+    font-size: 2rem; /* Adjust the font size */
+    font-weight: bold; /* Make the text bold */
+    color: #010802; /* Green color for brand */
+    text-decoration: none; /* Remove underline */
+    transition: color 0.3s ease, transform 0.3s ease; /* Smooth transition */
+}
+
+.navbar-brand:hover {
+    /* color: #0b0b0b; Darker green on hover */
+    transform: scale(1.1); /* Slightly enlarge on hover */
+    text-decoration: none; /* Ensure no underline on hover */
+}
+/* Container for Centering */
+.continue-shopping {
+    display: flex; /* Flexbox for alignment */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    font-size: 1.2rem; /* Adjust font size */
+    font-weight: bold; /* Make text bold */
+    color: white; /* Text color */
+    background-color: #28a745; /* Green background */
+    padding: 10px 20px; /* Padding for button */
+    border-radius: 25px; /* Rounded edges */
+    text-decoration: none; /* Remove underline */
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth hover effects */
+    cursor: pointer; /* Change cursor to pointer */
+    width: max-content; /* Adjust width to content */
+    margin: 20px auto; /* Center button within container */
+}
+
+/* Icon Styling */
+.continue-shopping i {
+    margin-right: 10px; /* Space between icon and text */
+    font-size: 1.5rem; /* Adjust icon size */
+}
+
+/* Hover Effect */
+.continue-shopping:hover {
+    background-color: #1e7e34; /* Darker green on hover */
+    transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+
+</style>
+
+    <a class="navbar-brand" href="/">NextTick</a>
+  
+  </div>
+</nav>
+
 <main class="main" style="padding-top: 200px;">
   <section class="mt-50 mb-50">
     <div class="container">
@@ -9,8 +84,10 @@
             <h1 class="mb-4">Thank You for Your Order!</h1>
             <p class="mb-4">Your order has been placed successfully.</p>
             <a href="/shop" class="btn btn-success">
-              <i class="fi-rs-shopping-bag mr-10"></i>Continue Shopping
-            </a>
+              <div class="continue-shopping">
+                <i class="fi-rs-shopping-bag mr-10"></i>Continue Shopping
+              </div>
+              </a>
           </div>
         </div>
       </div>

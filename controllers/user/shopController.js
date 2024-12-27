@@ -2,6 +2,10 @@ const Product = require("../../models/productSchema");
 const Category = require("../../models/categorySchema");
 const Brand = require("../../models/brandSchema");
 const User = require("../../models/userSchema");
+
+
+//for loading the shopping page........................
+
 const loadshoppingPage = async (req, res) => {
   try {
     const user = req.session.user;
@@ -13,21 +17,18 @@ const loadshoppingPage = async (req, res) => {
     const limit = 9;
     const skip = (page - 1) * limit;
 
-    // Base query
     let query = {
       isBlocked: false,
       category: { $in: categoryIds },
     };
 
-    // Default sort
     let sort = { createdOn: -1 };
 
-    // Advanced sorting
     const sortOption = req.query.sort;
     if (sortOption) {
       switch (sortOption) {
         case 'popularity':
-          sort = { salesCount: -1 }; // Assuming you have a salesCount field
+          sort = { salesCount: -1 }; 
           break;
         case 'price_asc':
           sort = { regularPrice: 1 };
@@ -52,7 +53,8 @@ const loadshoppingPage = async (req, res) => {
       }
     }
 
-    // Advanced filtering
+
+
     if (req.query.category) {
       query.category = req.query.category;
     }
@@ -71,7 +73,7 @@ const loadshoppingPage = async (req, res) => {
       query.quantity = { $gt: 0 };
     }
 
-    // Search functionality
+
     if (req.query.query) {
       query.$or = [
         { productName: { $regex: req.query.query, $options: "i" } },
@@ -79,7 +81,7 @@ const loadshoppingPage = async (req, res) => {
       ];
     }
 
-    // Fetch products with aggregation for proper price sorting
+
     const products = await Product.find(query)
       .collation({ locale: "en", strength: 2 })
       .sort(sort)
@@ -91,7 +93,6 @@ const loadshoppingPage = async (req, res) => {
     const totalProducts = await Product.countDocuments(query);
     const totalPages = Math.ceil(totalProducts / limit);
 
-    // Fetch brands
     const brands = await Brand.find({ isBlocked: false });
 
     res.render("shop", {
@@ -110,6 +111,9 @@ const loadshoppingPage = async (req, res) => {
   }
 };
 
+
+//for serching the products ...........................................
+
 const searchProducts = async (req, res) => {
   try {
     const searchTerm = req.query.query || "";
@@ -127,7 +131,7 @@ const searchProducts = async (req, res) => {
     };
 
     const products = await Product.find(query)
-      .collation({ locale: "en", strength: 2 }) // Ensures case-insensitive sorting
+      .collation({ locale: "en", strength: 2 }) 
       .sort({ createdOn: -1 })
       .skip(skip)
       .limit(limit);
@@ -153,6 +157,8 @@ const searchProducts = async (req, res) => {
     res.status(500).render("error", { message: "An error occurred while searching for products." });
   }
 };
+
+
 
 module.exports = {
   loadshoppingPage,

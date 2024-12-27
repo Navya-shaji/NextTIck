@@ -1,22 +1,193 @@
 <%- include("../../views/partials/admin/header") %>
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6 mt-60">
-            <form method="post" action="/admin/editCategory/<%=category._id%>">
-                <div class="d-grid text-end mt-30 col-md-5">
-                    <button class="btn btn-primary" type="submit">Update category</button>
-                </div>
-                <div class="mb-4 mt-30">
-                    <label for="product_name" class="form-label">Name</label>
-                    <input type="text" name="categoryName" value="<%=category.name%>" class="form-control border" />
-                </div>
-                
-                <div class="mb-4">
-                    <label class="form-label">Description</label>
-                    <textarea name="description" class="form-control border"><%=category.description%></textarea>
-                </div>
-            </form>
+<style>
+    /* General Styling */
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #fff; /* White background */
+        color: #000; /* Black text */
+    }
+
+    /* Form Container */
+    form {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        border: 1px solid #fff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        display: table;
+        width: 100%;
+        margin-left: 271px;
+    }
+
+    /* Table-like Layout */
+    .form-row {
+        display: table-row;
+    }
+
+    .form-cell {
+        display: table-cell;
+        padding: 10px;
+        vertical-align: middle;
+    }
+
+    .form-label {
+        font-weight: bold;
+        color: #000;
+        padding-right: 10px;
+        white-space: nowrap;
+    }
+
+    .form-control {
+        background-color: #fff;
+        color: #000;
+        border: 1px solid #fff;
+        border-radius: 5px;
+        padding: 8px;
+        width: 100%;
+    }
+
+    .form-control:focus {
+        background-color: #fff;
+        border-color: #fff;
+        color: #000;
+        outline: none;
+        box-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+    }
+
+    textarea.form-control {
+        height: 80px;
+    }
+
+    .btn {
+        background-color: #fff;
+        color: #000;
+        border: 1px solid #fff;
+        border-radius: 5px;
+        padding: 10px 20px;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+
+    .btn:hover {
+        background-color: #fff;
+        border-color: #fff;
+        color: #000;
+    }
+
+    .btn-info {
+        background-color: #555;
+        color: #fff;
+        border: 1px solid #777;
+        border-radius: 5px;
+        padding: 10px 20px;
+        font-weight: bold;
+        text-transform: uppercase;
+        transition: all 0.3s ease;
+    }
+
+    .btn-info:hover {
+        background-color: #777;
+        border-color: #999;
+        color: #000;
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-info:active {
+        background-color: #444;
+        border-color: #666;
+        color: #fff;
+        transform: scale(0.98);
+    }
+
+    .d-grid.text-end {
+        text-align: right;
+    }
+
+    .mt-60 {
+        margin-top: 60px;
+    }
+
+    .mt-30 {
+        margin-top: 30px;
+    }
+
+    .mb-4 {
+        margin-bottom: 16px;
+    }
+</style>
+
+<div class="col-md-6 mt-60">
+    <form method="post" action="editCategory/<%=category._id%>">
+        <div class="form-row">
+            <div class="form-cell">
+                <label for="product_name" class="form-label">Name</label>
+            </div>
+            <div class="form-cell">
+                <input type="text" name="categoryName" value="<%=category.name%>" class="form-control border" />
+            </div>
         </div>
-    </div>
+
+        <div class="form-row">
+            <div class="form-cell">
+                <label class="form-label">Description</label>
+            </div>
+            <div class="form-cell">
+                <textarea name="description" class="form-control border"><%=category.description%></textarea>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-cell"></div>
+            <div class="form-cell">
+                <div class="d-grid text-end mt-30 col-md-5">
+                    <button class="btn btn-info" type="submit" id="updateCategoryForm">Update category</button>
+                </div>
+            </div>
+        </div>
+    </form>
 </div>
+
 <%- include("../../views/partials/admin/footer") %>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    document.getElementById('updateCategoryForm').addEventListener('submit', function (e) {
+        e.preventDefault(); // Prevent the form from submitting immediately
+
+        const form = this;
+
+        // Simulate form submission with SweetAlert
+        Swal.fire({
+            title: 'Updating Category...',
+            text: 'Please wait while the category is being updated.',
+            icon: 'info',
+            showConfirmButton: false,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                Swal.showLoading();
+                // Simulate a slight delay for the update
+                setTimeout(() => {
+                    form.submit(); // Submit the form after the SweetAlert is shown
+                }, 1000);
+            },
+        });
+    });
+
+    // Display success message after redirect (server must set successMessage variable)
+    <% if (typeof successMessage !== 'undefined') { %>
+        Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: '<%= successMessage %>',
+            confirmButtonColor: '#555', // Match your theme
+        });
+    <% } else if (typeof errorMessage !== 'undefined') { %>
+        Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: '<%= errorMessage %>',
+            confirmButtonColor: '#555', // Match your theme
+        });
+    <% } %>
+</script>

@@ -1,6 +1,8 @@
 const Category = require("../../models/categorySchema");
 const Product = require("../../models/productSchema");
 
+
+
 const categoryInfo = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
@@ -45,10 +47,6 @@ const addCategory = async (req, res) => {
             name,
             description,
         });
-
-
-
-
 
         await newCategory.save();
         return res.json({ message: "Category added successfully" });
@@ -133,19 +131,16 @@ const removeCategory = async (req, res) => {
     try {
         const { categoryId } = req.body;
 
-        // Check if the category exists
         const category = await Category.findById(categoryId);
         if (!category) {
             return res.status(404).json({ status: false, message: "Category not found" });
         }
 
-        // Ensure no products are tied to this category before removing
         const associatedProducts = await Product.find({ category: category._id });
         if (associatedProducts.length > 0) {
             return res.status(400).json({ status: false, message: "Category cannot be deleted; associated products exist." });
         }
 
-        // Remove the category
         await Category.findByIdAndDelete(categoryId);
 
         res.json({ status: true, message: "Category removed successfully" });
@@ -161,7 +156,6 @@ const removeCategory = async (req, res) => {
 const getListedCategory = async (req,res)=>{
     try{
         let id=req.query.id;
-        console.log(id)
        
         await Category.updateOne({_id:id},{$set:{isListed:false}})
         res.redirect("/admin/category")
@@ -177,7 +171,6 @@ const getListedCategory = async (req,res)=>{
 const getUnlistedCategory=async(req,res)=>{
     try {
         let id = req.query.id;
-        console.log(id)
        
         await Category.updateOne({_id:id},{$set:{isListed:true}})
         res.redirect("/admin/category")
@@ -191,6 +184,7 @@ const getEditCategory = async(req,res)=>{
         const id = req.query.id;
         const category = await Category.findOne({_id:id});
         res.render("editCategory",{category:category});
+      
     }catch{
         res.redirect("/pageerror")
     }
@@ -212,7 +206,10 @@ const editCategory = async (req, res) => {
        const updatedCategory = await Category.findByIdAndUpdate(
         id,
         { name: categoryName, description },
-        { new: true, runValidators: true } 
+        { new: true, runValidators: true } ,
+     
+         
+        
     );
 
     if (!updatedCategory) {

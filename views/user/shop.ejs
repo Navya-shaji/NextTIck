@@ -16,6 +16,7 @@
     </div>
     <div class="product-list-container">
       <aside class="sidebar">
+        
         <!-- Categories Dropdown -->
         <div class="filter-section">
           <div class="filter-title" onclick="toggleDropdown('categoryDropdown')">
@@ -36,7 +37,7 @@
         </div>
     
         <!-- Brands Dropdown -->
-        <div class="filter-section">
+        <!-- <div class="filter-section">
           <div class="filter-title" onclick="toggleDropdown('brandDropdown')">
             Brands
             <span class="dropdown-arrow">▼</span>
@@ -54,24 +55,19 @@
           </div>
         </div>
       </aside>
-    </div>
-    
-        <div class="filter-section">
-          <div class="filter-title">Filter by Price</div>
-          <form action="/shop" method="GET" id="price-filter-form">
-            <input type="number" name="minPrice" placeholder="Min Price" value="<%= query.minPrice || '' %>">
-            <input type="number" name="maxPrice" placeholder="Max Price" value="<%= query.maxPrice || '' %>">
-            <button type="submit">Apply</button>
-          </form>
-        </div>
+    </div> -->
+
+
+
+      </aside>
 
         <div class="filter-section">
-          <div class="filter-title">Availability</div>
+          <div class="filter-title" style="color: black;">Availability</div>
           <label>
             <input type="checkbox" name="inStock" value="true" <%= query.inStock === 'true' ? 'checked' : '' %>> In Stock Only
           </label>
         </div>
-      </aside>
+   
 
       <main class="product-content">
         <div class="sort-options">
@@ -83,16 +79,16 @@
             <% } %>
             
             <label for="sort">Sort by:</label>
-            <select name="sort" id="sort">
-              <option value="">Default</option>
-              <option value="popularity" <%= query.sort === 'popularity' ? 'selected' : '' %>>Most Popular</option>
+            <select name="sort" onchange="this.form.submit()" class="form-select">
+              <option value="newest" <%= query.sort === 'newest' ? 'selected' : '' %>>Newest</option>
               <option value="price_asc" <%= query.sort === 'price_asc' ? 'selected' : '' %>>Price: Low to High</option>
               <option value="price_desc" <%= query.sort === 'price_desc' ? 'selected' : '' %>>Price: High to Low</option>
-              <option value="rating" <%= query.sort === 'rating' ? 'selected' : '' %>>Highest Rated</option>
-              <option value="newest" <%= query.sort === 'newest' ? 'selected' : '' %>>New Arrivals</option>
-              <option value="name_asc" <%= query.sort === 'name_asc' ? 'selected' : '' %>>Name: A to Z</option>
-              <option value="name_desc" <%= query.sort === 'name_desc' ? 'selected' : '' %>>Name: Z to A</option>
-            </select>
+              <option value="name_asc" <%= query.sort === 'name_asc' ? 'selected' : '' %>>Name: A-Z</option>
+              <option value="name_desc" <%= query.sort === 'name_desc' ? 'selected' : '' %>>Name: Z-A</option>
+              <option value="popularity" <%= query.sort === 'popularity' ? 'selected' : '' %>>Popularity</option>
+              <option value="rating" <%= query.sort === 'rating' ? 'selected' : '' %>>Rating</option>
+          </select>
+
           </form>
         </div>
 
@@ -100,10 +96,14 @@
           <% products.forEach(function(product) { %>
             <div class="product-card">
               <span class="wishlist-btn" onclick="addToWishlist('<%= product._id %>')">❤️</span>
-              <a href="/product/<%= product._id %>">
+              <!-- <a href="/product/<%= product._id %>"> -->
+                <h6 ><a style="color: black;" href="/productDetails?id=<%= product._id %>">▶️</a></h6>
+
                 <img src="/uploads/re-image/<%= product.productImage[0] %>" alt="<%= product.productName %>" />
                 <h4><%= product.productName %></h4>
                 <p>Brand: <%= product.brand %></p>
+                <span><%= product.category.name %></span>
+
                 <p>Price: ₹
                   <% if (product.salePrice && product.salePrice < product.regularPrice) { %>
                     <%= product.salePrice.toLocaleString('en-IN') %>
@@ -117,7 +117,7 @@
                 <p>Rating: <%= product.averageRating ? product.averageRating.toFixed(1) : 'N/A' %> / 5</p>
                 <p>In Stock: <%= product.quantity %></p>
               </a>
-              <button class="add-to-cart-btn" onclick=" (event, '<%= product._id %>')" <%= product.quantity > 0 ? '' : 'disabled' %>>
+              <button class="add-to-cart-btn" onclick=" addToCartHandler (event, '<%= product._id %>')" <%= product.quantity > 0 ? '' : 'disabled' %>>
                 <%= product.quantity > 0 ? 'Add to Cart' : 'Out of Stock' %>
               </button>
             </div>
@@ -125,20 +125,6 @@
         </div>
         
 
-        <!-- Pagination -->
-        <div class="pagination">
-          <% if (currentPage > 1) { %>
-            <a class="btn" href="?page=<%= currentPage - 1 %>&<%= new URLSearchParams(query).toString() %>">Prev</a>
-          <% } %>
-
-          <% for (let i = 1; i <= totalPages; i++) { %>
-            <a class="btn <%= currentPage === i ? 'active' : '' %>" href="?page=<%= i %>&<%= new URLSearchParams(query).toString() %>"><%= i %></a>
-          <% } %>
-
-          <% if (currentPage < totalPages) { %>
-            <a class="btn" href="?page=<%= currentPage + 1 %>&<%= new URLSearchParams(query).toString() %>">Next</a>
-          <% } %>
-        </div>
       </main>
     </div>
   </section>
@@ -164,7 +150,7 @@ function addToCartHandler(event, productId) {
         })
     })
     .then(response => {
-      alert(response)
+      // alert(response)
       console.log(response)
         if (!response.ok) {
             return response.json().then(data => {
@@ -275,6 +261,29 @@ function addToCartHandler(event, productId) {
 
 
 <script>
+       const searchForm = document.getElementById('searchForm');
+            const searchInput = document.getElementById('searchInput');
+
+            searchForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const searchQuery = searchInput.value.trim();
+                
+                const urlParams = new URLSearchParams(window.location.search);
+                
+                if (searchQuery) {
+                    urlParams.set('query', searchQuery);
+                } else {
+                    urlParams.delete('query');
+                }
+                
+                urlParams.delete('page');
+                
+                const newUrl = `/shop?${urlParams.toString()}`;
+                window.location.href = newUrl;
+            });
+        
+
+
 function addToWishlist(productId) {
 
   $.ajax({

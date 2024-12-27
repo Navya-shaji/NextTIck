@@ -30,36 +30,28 @@
       <div class="card-body">
         <div class="row">
           <!-- Category Creation Form -->
-          <div class="col-md-3">
-            <form method="POST" action="/admin/addCategory" id="categoryCreateForm" onsubmit="return validateForm()">
-              <div class="mb-4">
-                <label for="product_name" class="form-label">Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="Type here"
-                  class="form-control"
-                  id="product_name"
-                  
-                />
-                <div class="invalid-feedback" id="nameError"></div>
-              </div>
-              <div class="mb-4">
-                <label class="form-label">Description</label>
-                <textarea
-                  placeholder="Type here"
-                  name="description"
-                  class="form-control"
-                  id="descriptionId"
-                  
-                ></textarea>
-                <div class="invalid-feedback" id="descriptionError"></div>
-              </div>
-              <div class="d-grid">
-                <button class="btn btn-primary" type="submit">Create category</button>
-              </div>
-            </form>
-          </div>
+          <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <form method="post" action="/admin/addCategory" onsubmit="return handleFormSubmit(event)">
+                            <div class="mb-4">
+                                <label for="product_name" class="form-label">Name</label>
+                                <input type="text" placeholder="Type here" class="form-control" name="name" id="product_name" />
+                                <div id="name-error" class="error-message" style="display: none; color: red;"></div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label">Description</label>
+                                <textarea id="descriptionId" placeholder="Type here" class="form-control" name="description"></textarea>
+                                <div id="description-error" class="error-message" style="display: none; color: red;"></div>
+                            </div>
+                            
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">Create category</button>
+                            </div>
+                        </form>
+                    </div>
 
           <!-- Category Table -->
           <div class="col-md-9">
@@ -144,198 +136,235 @@
   </section>
 
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
  
   <script>
-    function handleFormSubmit(event) {
-        event.preventDefault(); 
-        if (!validateForm()) {
-            return; 
+   function handleFormSubmit(event) {
+    event.preventDefault();
+    
+    if (!validateForm()) {
+        return;
+    }
+
+    const name = document.getElementsByName('name')[0].value;
+    const description = document.getElementById('descriptionId').value;
+
+    console.log('About to send fetch request');
+
+    return fetch('/admin/addCategory', {
+        method: 'post',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ name, description })
+    })
+    .then(response => {
+        console.log('Fetch response received');
+        
+        if (!response.ok) {
+            console.log('!response.ok worked');
+            return response.json().then(err => {
+                console.log('Parsing error response');
+                throw new Error(err.error);
+            });
         }
-    
-        const name = document.getElementsByName("name")[0].value.trim();
-        const description = document.getElementById("descriptionId").value.trim();
-    
-        fetch("/admin/addCategory", {
+        
+        return response.json();
+    })
+    .then(data => {
+        console.log('Category added successfully');
+
+        Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: 'Category added successfully!',
+            showConfirmButton: false,
+            timer: 2000 
+        }).then(() => {
+            location.reload(); 
+        });
+    })
+    .catch(error => {
+        console.log('Error occurred:', error.message);
+
+        if (error.message === 'Category already exists') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops',
+                text: 'Category already exists'
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops',
+                text: 'An error occurred while adding the category'
+            });
+        }
+    });
+}
+
+
+
+async function addOffer(categoryId) {
+
+const { value: amount } = await Swal.fire({
+    title: "Offer in Percentage",
+    input: "number",
+    inputLabel: "Percentage",
+    inputPlaceholder: "%",
+    inputAttributes: {
+        min: 0,
+        max: 100,
+        step: 1
+    }
+});
+
+if (amount) {
+    if (amount < 0 || amount > 100 || isNaN(amount)) {
+        Swal.fire("Invalid Input", "Please enter a valid percentage between 0 and 100", "error");
+        return;
+    }
+
+    try {
+        Swal.fire({
+            title: "Adding Offer...",
+            text: "Please wait while the offer is being added",
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+        });
+
+        const response = await fetch("/admin/addCategoryOffer", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
             },
-            body: JSON.stringify({ name, description })
-        })
-        .then(response => {
-           
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-          console.log(data)
-            if (data) {
-                Swal.fire({
-                    icon: "success",
-                    title: "Category Added",
-                    text: "The category has been added successfully!",
-                    confirmButtonText: "OK"
-                }).then(() => {
-                    location.reload(); 
-                });
-            } else {
-                throw new Error(data.error || "An error occurred while adding the category");
-            }
-        })
-        .catch(error => {
-            Swal.fire({
-                icon: "error",
-                title: "Oops!",
-                text:'Category already'
-            });
+            body: JSON.stringify({
+                percentage: amount,
+                categoryId: categoryId,
+            }),
         });
+
+        const data = await response.json();
+
+        Swal.close(); 
+
+        if (response.ok && data.status === true) {
+            Swal.fire("Offer Added", "The offer has been added successfully", "success").then(() => {
+                location.reload();
+            });
+        } else {
+            Swal.fire("Failed", data.message || "Adding offer failed", "error");
+        }
+    } catch (error) {
+        Swal.fire(
+            "Error",
+            "An error occurred while adding the offer. Please try again.",
+            "error"
+        );
+        console.error("Error adding offer:", error);
     }
-    
+}
+}
+
+
+async function removeOffer(categoryId) {
+const confirm = await Swal.fire({
+    title: "Remove Offer",
+    text: "Are you sure you want to remove the offer from this category?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Yes, Remove",
+    cancelButtonText: "Cancel",
+});
+
+if (confirm.isConfirmed) {
+    try {
+        Swal.fire({
+            title: "Removing Offer...",
+            text: "Please wait while the offer is being removed",
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+        });
+
+        const response = await fetch("/admin/removeCategoryOffer", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                categoryId: categoryId,
+            }),
+        });
+
+        const data = await response.json();
+
+        Swal.close();
+
+        if (response.ok && data.status === true) {
+            Swal.fire("Offer Removed", "The offer has been successfully removed", "success").then(() => {
+                location.reload();
+            });
+        } else {
+            Swal.fire("Failed", data.message || "Removing offer failed", "error");
+        }
+    } catch (error) {
+        Swal.fire(
+            "Error",
+            "An error occurred while removing the offer. Please try again.",
+            "error"
+        );
+        console.error("Error removing offer:", error);
+    }
+}
+}
+
+
+//validation...............................................................................
+
     function validateForm() {
-        clearErrorMessage(); 
-        const name = document.getElementsByName("name")[0].value.trim();
-        const description = document.getElementById("descriptionId").value.trim();
+        console.log('1')
+        clearErrorMessages();
+        const name = document.getElementsByName('name')[0].value.trim();
+        const description = document.getElementById('descriptionId').value.trim();
         let isValid = true;
-    
-        if (name === "") {
-            displayErrorMessage("name-error", "Please enter a name");
+
+        if (name === '') {
+            displayErrorMessage('name-error', 'Please enter a name');
             isValid = false;
-        } else if (!/^[a-zA-Z0-9\s]+$/.test(name)) {
-            displayErrorMessage("name-error", "Category name should contain only alphanumeric characters");
-            isValid = false;
-        }
-    
-        if (description === "") {
-            displayErrorMessage("description-error", "Please enter a description");
+        } else if (!/^[a-zA-Z\s]+$/.test(name)) {
+            displayErrorMessage('name-error', 'Only alphabets are allowed');
             isValid = false;
         }
-    
+        if (description === '') {
+            displayErrorMessage('description-error', 'Please enter a description');
+            isValid = false;
+        }
         return isValid;
     }
-    
+
     function displayErrorMessage(elementId, message) {
-        const errorElement = document.getElementById(elementId);
-        if (errorElement) { 
-            errorElement.innerHTML = message;
-            errorElement.style.display = "block";
-        }
+        console.log('displayErrorMessag');
+        var errorElement = document.getElementById(elementId); 
+        errorElement.innerText = message;
+        errorElement.style.display = 'block';
     }
-    async function addOffer(categoryId) {
 
-    const { value: amount } = await Swal.fire({
-        title: "Offer in Percentage",
-        input: "number",
-        inputLabel: "Percentage",
-        inputPlaceholder: "%",
-        inputAttributes: {
-            min: 0,
-            max: 100,
-            step: 1
-        }
-    });
-
-    if (amount) {
-        if (amount < 0 || amount > 100 || isNaN(amount)) {
-            Swal.fire("Invalid Input", "Please enter a valid percentage between 0 and 100", "error");
-            return;
-        }
-
-        try {
-            Swal.fire({
-                title: "Adding Offer...",
-                text: "Please wait while the offer is being added",
-                allowOutsideClick: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                },
-            });
-
-            const response = await fetch("/admin/addCategoryOffer", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    percentage: amount,
-                    categoryId: categoryId,
-                }),
-            });
-
-            const data = await response.json();
-
-            Swal.close(); 
-
-            if (response.ok && data.status === true) {
-                Swal.fire("Offer Added", "The offer has been added successfully", "success").then(() => {
-                    location.reload();
-                });
-            } else {
-                Swal.fire("Failed", data.message || "Adding offer failed", "error");
-            }
-        } catch (error) {
-            Swal.fire(
-                "Error",
-                "An error occurred while adding the offer. Please try again.",
-                "error"
-            );
-            console.error("Error adding offer:", error);
-        }
+    function clearErrorMessages() {
+        console.log('clearErrorMessages');
+        const errorElements = document.querySelectorAll('.error-message'); 
+        errorElements.forEach((element) => {
+            element.innerText = '';
+            element.style.display = 'none';
+        });
     }
-}
-async function removeOffer(categoryId) {
-    const confirm = await Swal.fire({
-        title: "Remove Offer",
-        text: "Are you sure you want to remove the offer from this category?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Yes, Remove",
-        cancelButtonText: "Cancel",
-    });
 
-    if (confirm.isConfirmed) {
-        try {
-            Swal.fire({
-                title: "Removing Offer...",
-                text: "Please wait while the offer is being removed",
-                allowOutsideClick: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                },
-            });
 
-            const response = await fetch("/admin/removeCategoryOffer", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    categoryId: categoryId,
-                }),
-            });
 
-            const data = await response.json();
-
-            Swal.close();
-
-            if (response.ok && data.status === true) {
-                Swal.fire("Offer Removed", "The offer has been successfully removed", "success").then(() => {
-                    location.reload();
-                });
-            } else {
-                Swal.fire("Failed", data.message || "Removing offer failed", "error");
-            }
-        } catch (error) {
-            Swal.fire(
-                "Error",
-                "An error occurred while removing the offer. Please try again.",
-                "error"
-            );
-            console.error("Error removing offer:", error);
-        }
-    }
-}
     function clearErrorMessage() {
 
         const errorElements = document.getElementsByClassName("error-message");
@@ -349,6 +378,5 @@ async function removeOffer(categoryId) {
 
     </script>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <%- include("../../views/partials/admin/footer") %>

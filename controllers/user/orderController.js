@@ -3,6 +3,10 @@ const Product = require("../../models/productSchema");
 const Cart = require("../../models/cartSchema");
 const Address = require("../../models/addressSchema");
 const Order = require('../../models/orderSchema');
+const Wallet = require("../../models/walletSchema")
+const mongoose = require('mongoose');
+
+//for getting the order history page..........................................
 
 const getOrderHistory = async (req, res) => {
     try {
@@ -18,6 +22,9 @@ const getOrderHistory = async (req, res) => {
         res.status(500).render('error', { message: 'Internal Server Error' });
     }
 };
+
+
+// for geting the order details page...................................................
 
 const getOrderDetails = async (req, res) => {
     try {
@@ -39,14 +46,16 @@ const getOrderDetails = async (req, res) => {
     }
 };
 
-// Cancel an Order
+
+
+//for cancelling orders.......................................
+
 const cancelOrder = async (req, res) => {
     try {
         const { orderId } = req.body;
-
-        // Find the order and update its status
+        console.log("cancelling order")
         const order = await Order.findOneAndUpdate(
-            { _id: orderId, status: 'Pending' }, // Allow cancellation only for 'Pending' orders
+            { _id: orderId, status: 'Pending' }, 
             { status: 'Cancelled' },
             { new: true }
         );
@@ -55,14 +64,63 @@ const cancelOrder = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Order cannot be cancelled' });
         }
 
-        res.status(200).json({ success: true, message: 'Order cancelled successfully' });
+        if (order.paymentStatus === 'Completed') {
+            const userId = order.userId;
+            const amount = order.totalPrice;
+
+            try {
+                console.log("refunding")
+                await addRefundToWallet(userId, amount, orderId);
+            } catch (refundError) {
+                console.error('Error processing refund:', refundError);
+                return res.status(500).json({ success: false, message: 'Order cancelled but refund failed' });
+            }
+
+            return res.status(200).json({ success: true, message: 'Order cancelled successfully, amount refunded to wallet' });
+        }
+
+        res.status(200).json({ success: true, message: 'Order cancelled successfully (no payment was made, no refund issued)' });
     } catch (error) {
         console.error('Error cancelling order:', error);
         res.status(500).json({ success: false, message: 'Failed to cancel order' });
     }
 };
 
-// Fetch Order Status
+//Refund adding...................................
+
+const addRefundToWallet = async (userId, amount, orderId) => {
+    try {
+        let wallet = await Wallet.findOne({ userId });
+
+        if (!wallet) {
+         
+            wallet = new Wallet({ userId, balance: 0, transactions: [] });
+        }
+
+        if (!Array.isArray(wallet.transactions)) {
+            wallet.transactions = [];
+        }
+
+        wallet.balance += amount;
+        wallet.transactions.push({
+            type: 'Refund',
+            amount: amount,
+            orderId: orderId,
+            status: 'Completed',
+            description: `Refund for order ${orderId}`
+        });
+
+        await wallet.save();
+    } catch (error) {
+        console.error('Error processing refund:', error);
+        throw error; 
+    }
+};
+
+
+
+//order status...............................................
+
 const getOrderStatus = async (req, res) => {
     try {
         const { orderId } = req.params;
@@ -82,6 +140,8 @@ const getOrderStatus = async (req, res) => {
 
 
 
+//viewing the orderDetails..................................................
+
 const viewOrderDetails = async (req, res) => {
   try {
     const orderId = req.params.id;
@@ -100,23 +160,27 @@ const viewOrderDetails = async (req, res) => {
   }
 };
 
+
+//changing order status............................
+
 const changeOrderStatus = async (req, res) => {
     try {
       const { orderId } = req.params;
       const { newStatus } = req.body;
-  
+
       const order = await Order.findById(orderId);
   
       if (!order) {
         return res.status(404).json({ success: false, message: 'Order not found' });
       }
   
-      // Add any necessary validation for status changes here
+
       const allowedStatusChanges = {
         'Pending': ['Processing', 'Cancelled'],
         'Processing': ['Shipped', 'Cancelled'],
         'Shipped': ['Delivered', 'Returned'],
         'Delivered': ['Returned'],
+
       };
   
       if (!allowedStatusChanges[order.status] || !allowedStatusChanges[order.status].includes(newStatus)) {
@@ -132,45 +196,81 @@ const changeOrderStatus = async (req, res) => {
       res.status(500).json({ success: false, message: 'Server error' });
     }
   };
-  const showReturnReasonPage = async (req, res) => {
-    const { orderId } = req.params; // Extract the orderId from the route parameter
-    try {
-        const order = await Order.findOne({ orderId }); // Find the order by orderId
-        // if (!order) {
-        //     return res.status(404).send('Order not found');
-        // }
 
-        // Render the return reason page with the order details
-        res.render('return-reason', { order });
+
+  //showing the return reason page...............................................
+
+  const showReturnReasonPage = async (req, res) => {
+    const orderId = req.params.orderId
+    try {
+        const order = await Order.findOne({ orderId }); 
+        
+        res.render('return-reason', { orderId });
     } catch (error) {
         console.error('Error fetching order:', error);
         res.status(500).send('Internal Server Error');
     }
 };
 
-// Submit the return reason
+
+// Submit the return reason..............................
 const submitReturnReason = async (req, res) => {
-    const { orderId, reason } = req.body; // Extract orderId and reason from the request body
+    const { orderId, reason } = req.body;
+   
+    if (!orderId || !reason) {
+        return res.status(400).json({ 
+            success: false, 
+            message: 'Order ID and return reason are required' 
+        });
+    }
+
     try {
-        const order = await Order.findById(orderId); // Find the order
-        if (!order) {
-            return res.status(404).send('Order not found');
+       
+        if (!mongoose.Types.ObjectId.isValid(orderId)) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Invalid order ID format' 
+            });
         }
 
-        // Update the return reason and status
+        const order = await Order.findById(orderId);
+        
+        if (!order) {
+            return res.status(404).json({ 
+                success: false, 
+                message: 'Order not found' 
+            });
+        }
+
+        const allowedStatuses = ['Delivered'];
+        if (!allowedStatuses.includes(order.status)) {
+            return res.status(400).json({
+                success: false,
+                message: 'This order is not eligible for return'
+            });
+        }
+
         order.returnReason = reason;
-        order.status = 'Returned'; // Update status to 'Returned'
+        order.status = 'Return Request'; 
+        
+        await order.save();
 
-        await order.save(); // Save changes to the database
+        res.json({ 
+            success: true, 
+            message: 'Return request successfully submitted!' 
+        });
 
-        // Respond with success so client can trigger SweetAlert
-        res.json({ success: true, message: 'Return request successfully submitted!' });
     } catch (error) {
         console.error('Error submitting return reason:', error);
-        res.status(500).json({ success: false, message: 'Internal Server Error' });
+        res.status(500).json({ 
+            success: false, 
+            message: 'Failed to process return request' 
+        });
     }
 };
 
+
+//updating order status..................................................
 
 
 const updateOrderStatus = async (req, res) => {
@@ -184,7 +284,7 @@ const updateOrderStatus = async (req, res) => {
             });
         }
 
-        const order = await Order.findById(orderId); // Replace with your database query
+        const order = await Order.findById(orderId); 
         if (!order) {
             return res.status(404).json({
                 success: false,
@@ -209,6 +309,35 @@ const updateOrderStatus = async (req, res) => {
 };
 
 
+//returning...................................
+
+const processReturn = async (req, res) => {
+    const { orderId, userId } = req.body;
+  
+    try {
+      const order = await Order.findById(orderId);
+  
+      if (!order || order.status !== 'Delivered') {
+        return res.status(400).json({ success: false, message: 'Invalid return request' });
+      }
+  
+      order.status = 'Returned';
+      await order.save();
+  
+      const refundAmount = order.finalAmount;
+      const user = await User.findById(userId);
+      user.walletBalance += refundAmount;
+      await user.save();
+  
+      res.status(200).json({ success: true, message: 'Order returned successfully and wallet updated.' });
+    } catch (error) {
+      console.error('Error processing return:', error);
+      res.status(500).json({ success: false, message: 'Failed to process return' });
+    }
+  };
+  
+
+  
 module.exports = {
     getOrderHistory,
     cancelOrder,
@@ -218,6 +347,7 @@ module.exports = {
     changeOrderStatus,
     updateOrderStatus,
     showReturnReasonPage,
-    submitReturnReason
+    submitReturnReason,
+    processReturn
 
 };

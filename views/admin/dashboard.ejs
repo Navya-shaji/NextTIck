@@ -12,285 +12,93 @@
         <!-- Add other admin navigation items here -->
     </ul>
 
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <select id="reportType" class="form-select">
-                <option value="daily">Daily</option>
-                <option value="weekly">Weekly</option>
-                <option value="monthly">Monthly</option>
-                <option value="yearly">Yearly</option>
-                <option value="custom">Custom Date Range</option>
-            </select>
-        </div>
-        <div class="col-md-6" id="dateRangeContainer" style="display: none;">
-            <div class="input-group">
-                <input type="date" id="startDate" class="form-control">
-                <span class="input-group-text">to</span>
-                <input type="date" id="endDate" class="form-control">
-            </div>
-        </div>
-        <div class="col-md-3">
-            <button id="generateReport" class="btn btn-primary">Generate Report</button>
-        </div>
-    </div>
-
-    <div class="row mb-4">
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Overall Sales Count</h5>
-                    <h2 id="salesCount" class="card-text">0</h2>
+      <section class="content-main">
+            <div class="content-header">
+                <h2 class="content-title">Dashboard</h2>
+                <div>
+                    <a href="#" class="btn btn-primary">Create report</a>
+                </div>
+            </div> 
+          <div class="row">
+                <div class="col-lg-3">
+                    <div class="card card-body mb-4">
+                        <article class="icontext">
+                            <span class="icon icon-sm rounded-circle bg-primary-light"><i class="text-primary material-icons md-monetization_on"></i></span>
+                            <div class="text">
+                                <h6 class="mb-1">Total Sales</h6> <span>$19,626,058.20</span>
+                            </div>
+                        </article>
+                    </div>
+                </div> 
+               <div class="col-lg-3">
+                    <div class="card card-body mb-4">
+                        <article class="icontext">
+                            <span class="icon icon-sm rounded-circle bg-success-light"><i class="text-success material-icons md-local_shipping"></i></span>
+                            <div class="text">
+                                <h6 class="mb-1">Total Orders</h6> <span>87,456</span>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="card card-body mb-4">
+                        <article class="icontext">
+                            <span class="icon icon-sm rounded-circle bg-warning-light"><i class="text-warning material-icons md-person"></i></span>
+                            <div class="text">
+                                <h6 class="mb-1">Total Customers</h6> <span>5,300</span>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="card card-body mb-4">
+                        <article class="icontext">
+                            <span class="icon icon-sm rounded-circle bg-info-light"><i class="text-info material-icons md-shopping_basket"></i></span>
+                            <div class="text">
+                                <h6 class="mb-1">Total Products</h6> <span>1,250</span>
+                            </div>
+                        </article>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Overall Order Amount</h5>
-                    <h2 id="orderAmount" class="card-text">$0</h2>
+            <div class="row">
+                <div class="col-xl-8 col-lg-12">
+                    <div class="card mb-4">
+                        <article class="card-body">
+                            <h5 class="card-title">Sale statistics</h5>
+                            <canvas id="myChart" height="120px"></canvas>
+                        </article>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-12">
+                    <div class="card mb-4">
+                        <article class="card-body">
+                            <h5 class="card-title">Top selling products</h5>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Product A
+                                    <span class="badge bg-primary rounded-pill">352</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Product B
+                                    <span class="badge bg-primary rounded-pill">290</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Product C
+                                    <span class="badge bg-primary rounded-pill">145</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Product D
+                                    <span class="badge bg-primary rounded-pill">123</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Product E
+                                    <span class="badge bg-primary rounded-pill">98</span>
+                                </li>
+                            </ul>
+                        </article>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Overall Discount</h5>
-                    <h2 id="totalDiscount" class="card-text">$0</h2>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row mb-4">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Sales Overview</h5>
-                    <canvas id="salesChart"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row mb-4">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Discount Distribution</h5>
-                    <canvas id="discountChart"></canvas>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Coupon Usage</h5>
-                    <canvas id="couponChart"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row mb-4">
-        <div class="col-md-12">
-            <h3>Detailed Sales Report</h3>
-            <div class="table-responsive">
-                <table id="salesTable" class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Order ID</th>
-                            <th>Date</th>
-                            <th>Amount</th>
-                            <th>Discount</th>
-                            <th>Coupon</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Sales data will be populated here -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <div class="row mb-4">
-        <div class="col-md-12">
-            <button id="downloadPDF" class="btn btn-secondary me-2">Download PDF</button>
-            <button id="downloadExcel" class="btn btn-secondary">Download Excel</button>
-        </div>
-    </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const reportType = document.getElementById('reportType');
-        const dateRangeContainer = document.getElementById('dateRangeContainer');
-        const startDate = document.getElementById('startDate');
-        const endDate = document.getElementById('endDate');
-        const generateReport = document.getElementById('generateReport');
-        const downloadPDF = document.getElementById('downloadPDF');
-        const downloadExcel = document.getElementById('downloadExcel');
-
-        let salesChart, discountChart, couponChart;
-
-        reportType.addEventListener('change', function() {
-            dateRangeContainer.style.display = this.value === 'custom' ? 'block' : 'none';
-        });
-
-        generateReport.addEventListener('click', fetchSalesData);
-        downloadPDF.addEventListener('click', () => downloadReport('pdf'));
-        downloadExcel.addEventListener('click', () => downloadReport('excel'));
-
-        function fetchSalesData() {
-            const params = new URLSearchParams({
-                reportType: reportType.value,
-                startDate: startDate.value,
-                endDate: endDate.value
-            });
-
-            fetch(`/admin/sales-report?${params}`)
-                .then(response => response.json())
-                .then(data => {
-                    updateDashboard(data);
-                })
-                .catch(error => console.error('Error:', error));
-        }
-
-        function updateDashboard(data) {
-            document.getElementById('salesCount').textContent = data.totalSales;
-            document.getElementById('orderAmount').textContent = `$${data.totalAmount.toFixed(2)}`;
-            document.getElementById('totalDiscount').textContent = `$${data.totalDiscount.toFixed(2)}`;
-
-            updateSalesChart(data);
-            updateDiscountChart(data);
-            updateCouponChart(data);
-            updateSalesTable(data);
-        }
-
-        function updateSalesChart(data) {
-            const ctx = document.getElementById('salesChart').getContext('2d');
-            if (salesChart) {
-                salesChart.destroy();
-            }
-            salesChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: data.orders.map(order => new Date(order.date).toLocaleDateString()),
-                    datasets: [{
-                        label: 'Sales Amount',
-                        data: data.orders.map(order => order.amount),
-                        borderColor: 'rgb(75, 192, 192)',
-                        tension: 0.1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-        }
-
-        function updateDiscountChart(data) {
-            const ctx = document.getElementById('discountChart').getContext('2d');
-            if (discountChart) {
-                discountChart.destroy();
-            }
-            discountChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Discount', 'Non-Discount'],
-                    datasets: [{
-                        label: 'Amount',
-                        data: [data.totalDiscount, data.totalAmount - data.totalDiscount],
-                        backgroundColor: ['rgba(255, 99, 132, 0.2)', 'rgba(75, 192, 192, 0.2)'],
-                        borderColor: ['rgb(255, 99, 132)', 'rgb(75, 192, 192)'],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-        }
-
-        function updateCouponChart(data) {
-            const coupons = {};
-            data.orders.forEach(order => {
-                if (order.couponCode !== 'N/A') {
-                    coupons[order.couponCode] = (coupons[order.couponCode] || 0) + 1;
-                }
-            });
-
-            const ctx = document.getElementById('couponChart').getContext('2d');
-            if (couponChart) {
-                couponChart.destroy();
-            }
-            couponChart = new Chart(ctx, {
-                type: 'pie',
-                data: {
-                    labels: Object.keys(coupons),
-                    datasets: [{
-                        data: Object.values(coupons),
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.2)',
-                            'rgba(54, 162, 235, 0.2)',
-                            'rgba(255, 206, 86, 0.2)',
-                            'rgba(75, 192, 192, 0.2)',
-                            'rgba(153, 102, 255, 0.2)'
-                        ],
-                        borderColor: [
-                            'rgba(255, 99, 132, 1)',
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(153, 102, 255, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true
-                }
-            });
-        }
-
-        function updateSalesTable(data) {
-            const tableBody = document.querySelector('#salesTable tbody');
-            tableBody.innerHTML = '';
-            data.orders.forEach(order => {
-                const row = tableBody.insertRow();
-                row.insertCell(0).textContent = order.orderId;
-                row.insertCell(1).textContent = new Date(order.date).toLocaleDateString();
-                row.insertCell(2).textContent = `$${order.amount.toFixed(2)}`;
-                row.insertCell(3).textContent = `$${order.discount.toFixed(2)}`;
-                row.insertCell(4).textContent = order.couponCode;
-            });
-        }
-
-        function downloadReport(format) {
-            const params = new URLSearchParams({
-                reportType: reportType.value,
-                startDate: startDate.value,
-                endDate: endDate.value,
-                format: format
-            });
-
-            window.location.href = `/admin/sales-report/download?${params}`;
-        }
-
-        // Initial report generation
-        fetchSalesData();
-    });
-</script>
-
+        </section> 
 <%- include("../../views/partials/admin/footer") %>

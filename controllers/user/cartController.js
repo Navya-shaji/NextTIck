@@ -2,23 +2,20 @@ const User = require("../../models/userSchema");
 const Product = require("../../models/productSchema");
 const Cart = require("../../models/cartSchema");
 
-// Get Cart
+// Get Cart...........................
+
 const getCart = async (req, res) => {
   try {
     const userId = req.session.user;
-    // if (!userId) {
-    //   return res.redirect("/login");
-    // }
+   
 
     const user = await User.findById(userId);
 
-    // Fetch cart with populated product details
     const cartItems = await Cart.findOne({ userId }).populate({
       path: "items.productId",
-      select: "productName productImage price quantity", // Added quantity for stock checking
+      select: "productName productImage price quantity", 
       model: "Product",
     });
-    // console.log(cartItems)
     if (!cartItems) {
       return res.render("cart", {
         cart: null,
@@ -28,7 +25,6 @@ const getCart = async (req, res) => {
       });
     }
 
-    // Filter valid items and add stock information
     const validItems = cartItems.items
       .filter((item) => item.productId != null)
       .map((item) => ({
@@ -38,7 +34,6 @@ const getCart = async (req, res) => {
         maxAllowedQuantity: Math.min(5, item.productId.quantity),
       }));
 
-    // Calculate total amount
     const totalAmount = validItems.reduce(
       (sum, item) => (item.status === "placed" ? sum + item.totalPrice : sum),
       0
@@ -50,7 +45,6 @@ const getCart = async (req, res) => {
       totalAmount,
       user: user,
     });
-    // console.log(validItems)
   } catch (error) {
     console.error("Get cart error:", error);
     res.status(500).render("error", {
@@ -59,7 +53,9 @@ const getCart = async (req, res) => {
   }
 };
 
-// Add to Cart
+
+// Add to Cart.....................................................
+
 const addToCart = async (req, res) => {
   try {
     const userId = req.session.user;
@@ -72,7 +68,6 @@ const addToCart = async (req, res) => {
       });
     }
 
-    // Find product and check stock
     const product = await Product.findById(productId);
     if (!product) {
       return res.status(404).json({
@@ -81,7 +76,6 @@ const addToCart = async (req, res) => {
       });
     }
 
-    // Check stock availability
     if (product.quantity < 1) {
       return res.status(400).json({
         success: false,
@@ -89,19 +83,16 @@ const addToCart = async (req, res) => {
       });
     }
 
-    // Find or create cart
     let cart = await Cart.findOne({ userId });
     if (!cart) {
       cart = new Cart({ userId, items: [] });
     }
 
-    // Check if product already exists in cart
     const existingItem = cart.items.find(
       (item) => item.productId.toString() === productId
     );
 
     if (existingItem) {
-      // Check quantity limits
       const newQuantity = parseInt(existingItem.quantity) + parseInt(quantity);
 
       if (newQuantity > 5) {
@@ -118,11 +109,9 @@ const addToCart = async (req, res) => {
         });
       }
 
-      // Update existing item
       existingItem.quantity = newQuantity;
       existingItem.totalPrice = newQuantity * parseFloat(product.salesPrice);
     } else {
-      // Add new item if it doesn't exist
       if (quantity > product.quantity) {
         return res.status(400).json({
           success: false,
@@ -135,11 +124,10 @@ const addToCart = async (req, res) => {
         quantity,
         price: product.salesPrice.toString(),
         totalPrice: quantity * parseFloat(product.salesPrice),
-        status: "placed", // Default status for cart items
+        status: "placed", 
       });
     }
 
-    // Save the updated cart
     await cart.save();
 
     res.json({
@@ -156,14 +144,13 @@ const addToCart = async (req, res) => {
 };
 
 
-// Update Cart Quantity
+//quantity updation..........................................
+
 const updateQuantity = async (req, res) => {
   try {
     const userId = req.session.user;
     const { productId, quantity } = req.body;
-    console.log(req.body);
 
-    // Validate quantity
     if (quantity < 1 || quantity > 5) {
       return res.status(400).json({
         success: false,
@@ -171,7 +158,6 @@ const updateQuantity = async (req, res) => {
       });
     }
 
-    // Check product stock
     const product = await Product.findById(productId);
     if (!product) {
       return res.status(404).json({
@@ -187,7 +173,6 @@ const updateQuantity = async (req, res) => {
       });
     }
 
-    // Update cart
     const cart = await Cart.findOne({ userId });
     if (!cart) {
       return res.status(404).json({
@@ -212,7 +197,6 @@ const updateQuantity = async (req, res) => {
 
     await cart.save();
 
-    // Calculate new totals
     const cartTotal = cart.items.reduce(
       (total, item) =>
         item.status === "placed" ? total + item.totalPrice : total,
@@ -234,12 +218,14 @@ const updateQuantity = async (req, res) => {
   }
 };
 
-// Remove from Cart
+
+//products  removing from the cart........................................................
+
+
 const removeFromCart = async (req, res) => {
   try {
     const userId = req.session.user;
     const { productId } = req.body;
-    console.log(req.body);
 
     const cart = await Cart.findOne({ userId });
     if (!cart) {
@@ -249,7 +235,6 @@ const removeFromCart = async (req, res) => {
       });
     }
 
-    // Find item index
     const itemIndex = cart.items.findIndex(
       (item) =>
         item.productId.toString() === productId && item.status === "placed"
@@ -262,7 +247,6 @@ const removeFromCart = async (req, res) => {
       });
     }
 
-    // Remove item
     cart.items.splice(itemIndex, 1);
     await cart.save();
 
@@ -278,6 +262,8 @@ const removeFromCart = async (req, res) => {
     });
   }
 };
+
+
 
 module.exports = {
   getCart,

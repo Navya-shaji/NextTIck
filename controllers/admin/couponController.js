@@ -1,10 +1,13 @@
 const mongoose = require("mongoose");
 const Coupon = require("../../models/couponSchema");
 
+
+//loadcoupon.................................................
+
 const loadcoupon = async (req, res) => {
     try {
         const coupons = await Coupon.find(); 
-        res.render('coupon', { coupons }); // Pass coupons to the view
+        res.render('coupon', { coupons }); 
     } catch (error) {
         console.error(error);
         res.status(500).send('Server error');
@@ -34,14 +37,14 @@ const createCoupon = async (req, res) => {
             minimumPrice: parseInt(req.body.minimumPrice)
         };
 
-        const existingCoupon = await Coupon.findOne({
-            createdOn: { $lte: data.endDate },
-            expireOn: { $gte: data.startDate }
-        });
+        // const existingCoupon = await Coupon.findOne({
+        //     createdOn: { $lte: data.endDate },
+        //     expireOn: { $gte: data.startDate }
+        // });
 
-        if (existingCoupon) {
-            return res.status(400).send("A coupon with overlapping dates already exists.");
-        }
+        // if (existingCoupon) {
+        //     return res.status(400).send("A coupon with overlapping dates already exists.");
+        // }
 
         const newCoupon = new Coupon({
             name: data.couponName,
@@ -58,6 +61,8 @@ const createCoupon = async (req, res) => {
         res.redirect("pageerror");
     }
 };
+
+
 
 const editCoupon = async (req, res) => {
     try {
@@ -79,22 +84,21 @@ const editCoupon = async (req, res) => {
     }
 };
 
+
+
 const updateCoupon = async (req, res) => {
     try {
       const id = req.query.id;
   
-      // Validate coupon ID
       if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(400).send("Invalid coupon ID.");
       }
   
-      // Validate required fields
       const { couponName, startDate, endDate, offerPrice, minimumPrice } = req.body;
       if (!couponName || !startDate || !endDate || !offerPrice || !minimumPrice) {
         return res.status(400).send("All fields (couponName, startDate, endDate, offerPrice, minimumPrice) are required.");
       }
   
-      // Prepare data for update
       const updateData = {
         name: couponName,
         createdOn: new Date(startDate),
@@ -103,11 +107,10 @@ const updateCoupon = async (req, res) => {
         minimumPrice: parseInt(minimumPrice),
       };
   
-      // Perform update
       const updatedCoupon = await Coupon.findByIdAndUpdate(
         id,
         { $set: updateData },
-        { new: true, runValidators: true } // Ensure schema validation during update
+        { new: true, runValidators: true } 
       );
   
       if (!updatedCoupon) {
@@ -122,25 +125,22 @@ const updateCoupon = async (req, res) => {
   };
   
 
-// Delete Coupon
+// Delete Coupon...............................................
+
 const deleteCoupon = async (req, res) => {
   try {
       const id = req.params.id;
       
-      console.log("Attempting to delete coupon with ID:", id);
       
       if (!mongoose.Types.ObjectId.isValid(id)) {
-          console.log("Invalid coupon ID:", id);
           return res.status(400).json({ success: false, message: "Invalid coupon ID." });
       }
 
       const deletedCoupon = await Coupon.findByIdAndDelete(id);
       
       if (deletedCoupon) {
-          console.log("Coupon deleted successfully:", deletedCoupon);
           res.status(200).json({ success: true, message: "Coupon deleted successfully." });
       } else {
-          console.log("Coupon not found with ID:", id);
           res.status(404).json({ success: false, message: "Coupon not found." });
       }
   } catch (error) {

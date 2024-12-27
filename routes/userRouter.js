@@ -95,6 +95,7 @@ router.post('/cart/remove', userAuth, cartController.removeFromCart);
 router.get("/checkout",userAuth,checkoutController.getcheckoutPage);
 router.post("/checkout",userAuth,checkoutController.postCheckout);
 router.get("/ orderConfirm",checkoutController. orderConfirm);
+router.post("/verify-payment",userAuth,checkoutController.verifyPayment);
 
 
 router.get('/history', userAuth, orderController.getOrderHistory);
@@ -105,24 +106,35 @@ router.put('/:orderId/status',userAuth, orderController.changeOrderStatus);
 router.get('/orders/view/:id',userAuth, orderController.viewOrderDetails); 
 router.get("/orderConfirmation",userAuth,checkoutController.orderConfirm);
 router.post('/orders/update-status',userAuth, orderController.updateOrderStatus);
-// Route to show return reason page
 router.get('/return-reason', userAuth, orderController.showReturnReasonPage);
-
-// Route to submit the return reason
 router.post('/process-return',userAuth, orderController. submitReturnReason);
-
-// General route to update order status
 router.post('/update-status', userAuth, orderController.updateOrderStatus);
-
 router.get('/return-reason/:orderId',userAuth,orderController. showReturnReasonPage);
-// router.post('/submit-return-reason',userAuth, orderController.submitReturnReason);
+// router.post('/updateWalletAfterPayment', walletController.updateWalletAfterPayment);
+
+// router.post('/create-razorpay-order', createRazorpayOrder);
+
+// Route to update wallet balance after payment
+// router.post('/update-wallet',walletController. updateWalletBalance);
+
+// Route to handle Razorpay payment success (update wallet after payment)
+router.post('/update-wallet-after-payment',walletController. updateWalletAfterPayment);
+
+// Route to process product return and refund to wallet
+router.post('/process-return/:orderId',walletController. processReturn);
 
 
 // wallet...........................................
 
-router.get('/balance', profileController.getWalletBalance);
-router.post('/add-money', profileController.addMoney);
-router.get('/history', profileController.getWalletHistory);
-router.post('/refund', profileController.refundToWallet);
-router.post('/verify-payment', checkoutController.verifyPayment);
+// Wallet routes
+router.post('/add-money', walletController.createRazorpayOrder);
+router.post('/update-balance', walletController.updateWalletBalance);
+// router.post('/return', orderController.processReturn);
+router.post('/wallet/refund', walletController.refundToWallet);
+
+
+
+router.post("/apply-coupon",checkoutController.applyCoupon);
+
+
 module.exports = router

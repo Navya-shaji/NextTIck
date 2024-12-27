@@ -62,8 +62,8 @@ input[type="text"] {
 }
 
 .btn-primary {
-  background-color: #007bff;
-  border-color: #007bff;
+  background-color: #000;
+  border-color: #000;
 }
 
 .btn-primary:hover {
@@ -125,7 +125,7 @@ textarea.form-control {
   padding: 5px 10px;
   margin: 0 5px;
   text-decoration: none;
-  color: #007bff;
+  color: #000;
   border-radius: 5px;
   font-size: 14px;
 }
@@ -135,8 +135,8 @@ textarea.form-control {
 }
 
 .pagination .active .page-link {
-  background-color: #007bff;
-  border-color: #007bff;
+  background-color: #000;
+  border-color: #000;
   color: #fff;
 }
 
@@ -158,4 +158,13 @@ textarea.form-control {
   color: red;
   font-size: 14px;
   margin-top: 5px;
+}
+.text-center{
+  background-color: #000;
+}
+th{
+  font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif
+}
+tr{
+  font-family: 'Times New Roman', Times, serif;
 }
