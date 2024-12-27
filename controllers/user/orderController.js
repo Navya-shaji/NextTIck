@@ -49,42 +49,59 @@ const getOrderDetails = async (req, res) => {
 
 
 //for cancelling orders.......................................
-
-const cancelOrder = async (req, res) => {
+const getOrderCancel= async (req,res)=>{
     try {
-        const { orderId } = req.body;
-        console.log("cancelling order")
-        const order = await Order.findOneAndUpdate(
-            { _id: orderId, status: 'Pending' }, 
-            { status: 'Cancelled' },
-            { new: true }
-        );
+        const userId=req.session.user;
+        if(!userId){
+            console.log('user not found');
+            return res.redirect('/login')
+        }
 
+        const id=req.query.id;
+        const reason=req.query.reason;
+        const order = await Order.findById(id);
         if (!order) {
-            return res.status(400).json({ success: false, message: 'Order cannot be cancelled' });
+            console.log('Order not found');
+            return res.redirect('/profile');
+        }
+        if (order.paymentMethod === 'Online' && order.paymentStatus === 'Completed') {
+            const refundAmount = order.finalAmount;
+            console.log(refundAmount);
+
+            // Update the user's wallet
+            const wallet = await Wallet.findOneAndUpdate(
+                { userId },
+                {
+                    $inc: { balance: refundAmount }, // Increment wallet balance
+                    $push: {
+                        transactions: {
+                            type: 'Refund',
+                            amount: refundAmount,
+                            orderId: id,
+                            description: `Refund for cancelled order #${id}`,
+                            status: 'Completed', // Assuming the refund is instant
+                        },
+                    },
+                    lastUpdated: new Date(),
+                },
+                { new: true, upsert: true } // Create wallet if not present
+            );
+
+            console.log(`Refund of ₹${refundAmount} added to wallet for user ${userId}`);
+        }else if(order.paymentMethod=='COD'){
+            await Order.findByIdAndUpdate(id,{$set:{paymentStatus:'Failed'}})
         }
 
-        if (order.paymentStatus === 'Completed') {
-            const userId = order.userId;
-            const amount = order.totalPrice;
 
-            try {
-                console.log("refunding")
-                await addRefundToWallet(userId, amount, orderId);
-            } catch (refundError) {
-                console.error('Error processing refund:', refundError);
-                return res.status(500).json({ success: false, message: 'Order cancelled but refund failed' });
-            }
-
-            return res.status(200).json({ success: true, message: 'Order cancelled successfully, amount refunded to wallet' });
-        }
-
-        res.status(200).json({ success: true, message: 'Order cancelled successfully (no payment was made, no refund issued)' });
+        await Order.findByIdAndUpdate(id,{$set:{status:'Cancelled',cancelleationReson:reason}})
+        res.redirect('/profile')
     } catch (error) {
-        console.error('Error cancelling order:', error);
-        res.status(500).json({ success: false, message: 'Failed to cancel order' });
+        console.error(error);
+        res.redirect('/pageNotFound')
+
+        
     }
-};
+}
 
 //Refund adding...................................
 
@@ -148,6 +165,7 @@ const viewOrderDetails = async (req, res) => {
     const order = await Order.findById(orderId)
       .populate('orderItems.product')
       .populate('address');
+     
 
     if (!order) {
       return res.status(404).send('Order not found');
@@ -311,7 +329,7 @@ const updateOrderStatus = async (req, res) => {
 
 //returning...................................
 
-const processReturn = async (req, res) => {
+const returnRequest = async (req, res) => {
     const { orderId, userId } = req.body;
   
     try {
@@ -324,12 +342,13 @@ const processReturn = async (req, res) => {
       order.status = 'Returned';
       await order.save();
   
-      const refundAmount = order.finalAmount;
-      const user = await User.findById(userId);
-      user.walletBalance += refundAmount;
-      await user.save();
+    //   const refundAmount = order.finalAmount;
+    //   const user = await User.findById(userId);
+    //   user.walletBalance += refundAmount;
+    //   await user.save();
   
       res.status(200).json({ success: true, message: 'Order returned successfully and wallet updated.' });
+   
     } catch (error) {
       console.error('Error processing return:', error);
       res.status(500).json({ success: false, message: 'Failed to process return' });
@@ -337,10 +356,45 @@ const processReturn = async (req, res) => {
   };
   
 
+//   const returnRequest=async (req,res)=>{
+//     try {
+//         const userId= req.session.user;
+//         const {orderId,reason}= req.body;
+//         const order=await Order.findById(orderId);
+//         if(!order){
+//             return res.status(400).json({message:'order not found'})
+//         }
+//         const exists=await Order.findOne({orderId});
+//         if(exists){
+//             return res.status(400).json({message:'order is already apply for return request'})
+//         }
+//         const refundAmount=order.finalAmount;
+//         const newReturn=new Order({
+//             userId,
+//             orderId,
+//             reason,
+//             refundAmount,
+
+
+
+//         })
+//         await newReturn.save();
+//         return res.status(200).json({message:'return request is successfully applied'})
+
+
+
+//     } catch (error) {
+//         console.log('error on return ');
+//         console.error(error);
+//         return res.status(400).json({message:'not found'})
+
+        
+//     }
+// }
   
 module.exports = {
     getOrderHistory,
-    cancelOrder,
+    getOrderCancel,
     getOrderStatus,
     getOrderDetails,
     viewOrderDetails,
@@ -348,6 +402,8 @@ module.exports = {
     updateOrderStatus,
     showReturnReasonPage,
     submitReturnReason,
-    processReturn
+    // processReturn,
+    addRefundToWallet   ,
+    returnRequest
 
 };
