@@ -1,7 +1,7 @@
 const Razorpay = require('razorpay');
 const User = require('../../models/userSchema');
 const Wallet=require("../../models/walletSchema");
-
+const Order = require('../../models/orderSchema')
 
 const razorpayInstance = new Razorpay({
   key_id: 'rzp_test_JfMI70tLzmblvw',
@@ -170,83 +170,94 @@ const handleReturnRefund = async (orderId, userId, refundAmount) => {
 
 const processReturn = async (req, res) => {
   try {
-      const { orderId } = req.params;
+    const { orderId } = req.params;
+    const order = await Order.findById(orderId);
 
-      const order = await Order.findById(orderId);
-
-      if (!order) {
-          return res.status(404).json({
-              success: false,
-              message: 'Order not found'
-          });
-      }
-
-      if (order.status !== 'Delivered') {
-          return res.status(400).json({
-              success: false,
-              message: `Cannot return order with status: ${order.status}. Order must be Delivered.`
-          });
-      }
-
-      const userId = order.userId || req.user._id;
-
-      if (!userId) {
-          return res.status(400).json({
-              success: false,
-              message: 'User ID not found'
-          });
-      }
-
-      let wallet = await Wallet.findOne({ user: userId });
-
-      if (!wallet) {
-          wallet = new Wallet({
-              user: userId,
-              balance: 0,
-              history: []
-          });
-      }
-
-      const refundAmount = order.finalAmount;
-
-      const previousBalance = wallet.balance;
-      wallet.balance += refundAmount;
-      wallet.history.push({
-          status: 'refund',
-          payment: refundAmount,
-          date: new Date(),
-          description: `Refund for order ${order.orderId}`,
-          orderId: order._id
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: 'Order not found'
       });
+    }
 
-      order.status = 'Returned';
-      order.returnedByUser = true;
-
-      await Promise.all([
-          wallet.save(),
-          order.save()
-      ]);
-
-
-      return res.status(200).json({
-          success: true,
-          message: 'Return processed successfully',
-          refundAmount,
-          previousBalance,
-          newBalance: wallet.balance,
-          orderId: order.orderId
+    if (order.status !== 'Delivered') {
+      return res.status(400).json({
+        success: false,
+        message: `Cannot return order with status: ${order.status}. Order must be Delivered.`
       });
+    }
+
+    const userId = order.userId || req.user._id;
+
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: 'User ID not found'
+      });
+    }
+
+    // Update both Wallet and User documents
+    const [wallet, user] = await Promise.all([
+      Wallet.findOne({ user: userId }),
+      User.findById(userId)
+    ]);
+
+    if (!wallet) {
+      const newWallet = new Wallet({
+        user: userId,
+        balance: 0,
+        history: []
+      });
+      await newWallet.save();
+    }
+
+    const refundAmount = order.finalAmount;
+
+    // Update wallet
+    const previousBalance = wallet.balance;
+    wallet.balance += refundAmount;
+    wallet.history.push({
+      status: 'refund',
+      payment: refundAmount,
+      date: new Date(),
+      description: `Refund for order ${order.orderId}`,
+      orderId: order._id
+    });
+
+    // Update user's wallet balance
+    if (user) {
+      user.walletBalance = wallet.balance;
+    }
+
+    // Update order status
+    order.status = 'Returned';
+    order.returnedByUser = true;
+
+    // Save all changes atomically
+    await Promise.all([
+      wallet.save(),
+      user.save(),
+      order.save()
+    ]);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Return processed successfully',
+      refundAmount,
+      previousBalance,
+      newBalance: wallet.balance,
+      orderId: order.orderId
+    });
 
   } catch (error) {
-      console.error('Error in processReturn:', error);
-      return res.status(500).json({
-          success: false,
-          message: 'Failed to process return',
-          error: error.message
-      });
+    console.error('Error in processReturn:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to process return',
+      error: error.message
+    });
   }
 };
-
 
 
 const refundToWallet = async (req, res) => {

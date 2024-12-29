@@ -37,14 +37,7 @@ const createCoupon = async (req, res) => {
             minimumPrice: parseInt(req.body.minimumPrice)
         };
 
-        // const existingCoupon = await Coupon.findOne({
-        //     createdOn: { $lte: data.endDate },
-        //     expireOn: { $gte: data.startDate }
-        // });
-
-        // if (existingCoupon) {
-        //     return res.status(400).send("A coupon with overlapping dates already exists.");
-        // }
+       
 
         const newCoupon = new Coupon({
             name: data.couponName,
@@ -55,7 +48,7 @@ const createCoupon = async (req, res) => {
         });
 
         await newCoupon.save();
-        res.status(201).send("Coupon created successfully.");
+        res.status(201).json({ message: "Coupon created successfully." });
     } catch (error) {
         console.error("Error creating coupon:", error);
         res.redirect("pageerror");

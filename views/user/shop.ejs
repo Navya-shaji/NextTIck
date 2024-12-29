@@ -2,26 +2,27 @@
 <head>
   <link rel="stylesheet" href="/styles/shop-page.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ 
 </head>
 
 <div class="main-container">
   <section class="shop-page">
     <div class="shop-topbar">
       <div class="search-bar">
-        <form action="/search" method="GET" class="search-form">
-          <input type="text" name="query" placeholder="Search items..." class="search-input" value="<%= query.query || '' %>" />
+        <form action="/search" method="GET" class="search-form" id="searchForm">
+          <input type="text" name="query" placeholder="Search items..." class="search-input" id="searchInput" value="<%= query.query || '' %>" />
           <button type="submit" class="search-button">Search</button>
+          <button type="button" class="clear-button" onclick="clearSearch()">Clear</button>
         </form>
       </div>
     </div>
     <div class="product-list-container">
       <aside class="sidebar">
-        
         <!-- Categories Dropdown -->
         <div class="filter-section">
           <div class="filter-title" onclick="toggleDropdown('categoryDropdown')">
             Categories
-            <span class="dropdown-arrow">▼</span>
+            <span class="dropdown-arrow">⬇️</span>
           </div>
           <div id="categoryDropdown" class="category-brand-container dropdown-content">
             <ul>
@@ -35,39 +36,14 @@
             </ul>
           </div>
         </div>
-    
-        <!-- Brands Dropdown -->
-        <!-- <div class="filter-section">
-          <div class="filter-title" onclick="toggleDropdown('brandDropdown')">
-            Brands
-            <span class="dropdown-arrow">▼</span>
-          </div>
-          <div id="brandDropdown" class="category-brand-container dropdown-content">
-            <ul>
-              <% brands.forEach(function(brand) { %>
-                <li class="filter-item">
-                  <a href="/shop?brand=<%= brand._id %>" class="<%= query.brand === brand._id.toString() ? 'active' : '' %>">
-                    <%= brand.brandName %>
-                  </a>
-                </li>
-              <% }); %>
-            </ul>
-          </div>
-        </div>
-      </aside>
-    </div> -->
-
-
-
-      </aside>
 
         <div class="filter-section">
-          <div class="filter-title" style="color: black;">Availability</div>
+          <!-- <div class="filter-title" style="color: black;">Availability</div> -->
           <label>
-            <input type="checkbox" name="inStock" value="true" <%= query.inStock === 'true' ? 'checked' : '' %>> In Stock Only
+            <!-- <input type="checkbox" name="inStock" value="true" <%= query.inStock === 'true' ? 'checked' : '' %>> In Stock Only -->
           </label>
         </div>
-   
+      </aside>
 
       <main class="product-content">
         <div class="sort-options">
@@ -80,280 +56,268 @@
             
             <label for="sort">Sort by:</label>
             <select name="sort" onchange="this.form.submit()" class="form-select">
-              <option value="newest" <%= query.sort === 'newest' ? 'selected' : '' %>>Newest</option>
+              <!-- <option value="newest" <%= query.sort === 'newest' ? 'selected' : '' %>>Newest</option> -->
               <option value="price_asc" <%= query.sort === 'price_asc' ? 'selected' : '' %>>Price: Low to High</option>
               <option value="price_desc" <%= query.sort === 'price_desc' ? 'selected' : '' %>>Price: High to Low</option>
               <option value="name_asc" <%= query.sort === 'name_asc' ? 'selected' : '' %>>Name: A-Z</option>
               <option value="name_desc" <%= query.sort === 'name_desc' ? 'selected' : '' %>>Name: Z-A</option>
-              <option value="popularity" <%= query.sort === 'popularity' ? 'selected' : '' %>>Popularity</option>
-              <option value="rating" <%= query.sort === 'rating' ? 'selected' : '' %>>Rating</option>
-          </select>
-
+              <!-- <option value="popularity" <%= query.sort === 'popularity' ? 'selected' : '' %>>Popularity</option> -->
+              <!-- <option value="rating" <%= query.sort === 'rating' ? 'selected' : '' %>>Rating</option> -->
+            </select>
           </form>
         </div>
 
+        <!-- In your product grid section -->
         <div class="product-grid">
           <% products.forEach(function(product) { %>
             <div class="product-card">
               <span class="wishlist-btn" onclick="addToWishlist('<%= product._id %>')">❤️</span>
-              <!-- <a href="/product/<%= product._id %>"> -->
-                <h6 ><a style="color: black;" href="/productDetails?id=<%= product._id %>">▶️</a></h6>
-
-                <img src="/uploads/re-image/<%= product.productImage[0] %>" alt="<%= product.productName %>" />
-                <h4><%= product.productName %></h4>
-                <p>Brand: <%= product.brand %></p>
-                <span><%= product.category.name %></span>
-
-                <p>Price: ₹
-                  <% if (product.salePrice && product.salePrice < product.regularPrice) { %>
-                    <%= product.salePrice.toLocaleString('en-IN') %>
-                    <span class="text-muted">
-                      <strike>₹<%= product.regularPrice.toLocaleString('en-IN') %></strike>
-                    </span>
-                  <% } else { %>
-                    <%= product.regularPrice.toLocaleString('en-IN') %>
-                  <% } %>
-                </p>
-                <p>Rating: <%= product.averageRating ? product.averageRating.toFixed(1) : 'N/A' %> / 5</p>
-                <p>In Stock: <%= product.quantity %></p>
-              </a>
-              <button class="add-to-cart-btn" onclick=" addToCartHandler (event, '<%= product._id %>')" <%= product.quantity > 0 ? '' : 'disabled' %>>
+              <button class="btn btn-link p-0" style="border: none; background: none; color: white;" onclick="window.location.href='/productDetails?id=<%= product._id %>'">
+                👁‍🗨
+            </button>
+          
+             <img src="/uploads/re-image/<%= product.productImage[0] %>" alt="<%= product.productName %>" />
+              <h4><%= product.productName %></h4>
+              <p>Brand: <%= product.brand %></p>
+              <span><%= product.category.name %></span>
+              <p>Price: ₹
+                <% if (product.salePrice && product.salePrice < product.regularPrice) { %>
+                  <%= product.salePrice.toLocaleString('en-IN') %>
+                  <span class="text-muted">
+                    <strike>₹<%= product.regularPrice.toLocaleString('en-IN') %></strike>
+                  </span>
+                <% } else { %>
+                  <%= product.regularPrice.toLocaleString('en-IN') %>
+                <% } %>
+              </p>
+              <p>Rating: <%= product.averageRating ? product.averageRating.toFixed(1) : 'N/A' %> / 5</p>
+              <p>In Stock: <%= product.quantity %></p>
+              <button class="add-to-cart-btn" onclick="addToCartHandler(event, '<%= product._id %>')" 
+                <%= product.quantity > 0 ? '' : 'disabled' %>>
                 <%= product.quantity > 0 ? 'Add to Cart' : 'Out of Stock' %>
               </button>
             </div>
           <% }); %>
         </div>
+
+        <!-- Pagination section -->
+        <div class="pagination">
+          <% if (totalPages > 1) { %>
+            <% 
+              const pageRange = 2;
+              const startPage = Math.max(1, currentPage - pageRange);
+              const endPage = Math.min(totalPages, currentPage + pageRange);
+            %>
+            
+            <% if (currentPage > 1) { %>
+              <button onclick="changePage(`<%= currentPage - 1 %>`)">Previous</button>
+            <% } %>
+            
+            <% if (startPage > 1) { %>
+              <button onclick="changePage(1)">1</button>
+              <% if (startPage > 2) { %>
+                <span>...</span>
+              <% } %>
+            <% } %>
+            
+            <% for(let i = startPage; i <= endPage; i++) { %>
+              <button 
+                onclick="changePage(`<%= i %>`)"
+                class="<%= currentPage === i ? 'active' : '' %>"
+              ><%= i %></button>
+            <% } %>
+            
+            <% if (endPage < totalPages) { %>
+              <% if (endPage < totalPages - 1) { %>
+                <span>...</span>
+              <% } %>
+              <button onclick="changePage(`<%= totalPages %>`)"><%= totalPages %></button>
+            <% } %>
+            
+            <% if (currentPage < totalPages) { %>
+              <button onclick="changePage(`<%= currentPage + 1 %>`)">Next</button>
+            <% } %>
+          <% } %>
+        </div>
         
 
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+        <script>
+        function changePage(page) {
+          const currentUrl = new URL(window.location.href);
+          currentUrl.searchParams.set('page', page);
+          
+          // Preserve all existing filters and sort parameters
+          window.location.href = currentUrl.toString();
+        }
+
+        // Add this to your existing clear search function
+        function clearSearch() {
+          const searchInput = document.getElementById('searchInput');
+          searchInput.value = '';
+          
+          const currentUrl = new URL(window.location.href);
+          currentUrl.searchParams.delete('query');
+          currentUrl.searchParams.delete('page'); // Reset to first page
+          
+          window.location.href = currentUrl.toString();
+        }
+
+
+        function addToCartHandler(event, productId) {
+            event.preventDefault();
+
+            fetch('/addToCart', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    productId: productId,
+                    quantity: 1
+                })
+            })
+            .then(response => {
+                console.log(response)
+                if (!response.ok) {
+                    return response.json().then(data => {
+                        throw new Error(data.message || 'Failed to add product to cart');
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: data.message || 'Product added to cart successfully!',
+                        icon: 'success',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        if (data.cartCount !== undefined) {
+                            updateCartCount(data.cartCount);
+                        }
+                        
+                        if (data.redirect) {
+                            window.location.href = data.redirect;
+                        }
+                    });
+                } else {
+                    throw new Error(data.message || 'Failed to add product to cart');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                
+                if (error.message.includes('Please login')) {
+                    Swal.fire({
+                        title: 'Login Required',
+                        text: 'Please login to add items to your cart',
+                        icon: 'info',
+                        showCancelButton: true,
+                        confirmButtonText: 'Login',
+                        cancelButtonText: 'Cancel'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = '/login';
+                        }
+                    });
+                } 
+                else if (error.message.includes('Maximum quantity')) {
+                    Swal.fire({
+                        title: 'Quantity Limit Reached',
+                        text: error.message,
+                        icon: 'warning',
+                        confirmButtonText: 'OK'
+                    });
+                }
+                else if (error.message.includes('out of stock') || error.message.includes('available in stock')) {
+                    Swal.fire({
+                        title: 'Stock Limited',
+                        text: error.message,
+                        icon: 'warning',
+                        confirmButtonText: 'OK'
+                    });
+                }
+                else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: error.message || 'Something went wrong. Please try again.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        }
+
+        function addToWishlist(productId) {
+          $.ajax({
+            url: "/addToWishlist", 
+            method: "POST",
+            data: { productId: productId },
+            success: (response) => {
+              if (response.status) {
+                Swal.fire({
+                  title: "Added to wishlist",
+                  text: "The product has been added to your wishlist.",
+                  icon: "success",
+                  timer: 2000,
+                });
+              } else {
+                Swal.fire({
+                  title: "Already in wishlist",
+                  text: response.message || "This product is already in your wishlist.",
+                  icon: "info",
+                  timer: 2000,
+                });
+              }
+            },
+            error: (xhr, status, error) => {
+              console.error("AJAX Error: ", error, xhr.responseText);
+              Swal.fire({
+                title: "Error",
+                text: "There was an error adding the product to your wishlist. Please try again.",
+                icon: "error",
+                timer: 2000,
+              });
+            },
+          });
+        }
+
+        document.getElementById('sort').addEventListener('change', function() {
+          const currentUrl = new URL(window.location.href);
+          currentUrl.searchParams.set('sort', this.value);
+          window.location.href = currentUrl.toString();
+        });
+
+        document.querySelector('input[name="inStock"]').addEventListener('change', function() {
+          const currentUrl = new URL(window.location.href);
+          if (this.checked) {
+            currentUrl.searchParams.set('inStock', 'true');
+          } else {
+            currentUrl.searchParams.delete('inStock');
+          }
+          window.location.href = currentUrl.toString();
+        });
+
+        function toggleDropdown(id) {
+          const dropdown = document.getElementById(id);
+          dropdown.classList.toggle('show');
+
+          const arrow = dropdown.previousElementSibling.querySelector('.dropdown-arrow');
+          if (dropdown.classList.contains('show')) {
+            arrow.style.transform = 'rotate(180deg)';
+          } else {
+            arrow.style.transform = 'rotate(0deg)';
+          }
+        }
+        </script>
       </main>
     </div>
   </section>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-<script>
-
-
-function addToCartHandler(event, productId) {
-    event.preventDefault();
-
-    fetch('/addToCart', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            productId: productId,
-            quantity: 1
-        })
-    })
-    .then(response => {
-      // alert(response)
-      console.log(response)
-        if (!response.ok) {
-            return response.json().then(data => {
-                throw new Error(data.message || 'Failed to add product to cart');
-            });
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.success) {
-            Swal.fire({
-                title: 'Success!',
-                text: data.message || 'Product added to cart successfully!',
-                icon: 'success',
-                showConfirmButton: false,
-                timer: 1500
-            }).then(() => {
-                if (data.cartCount !== undefined) {
-                    updateCartCount(data.cartCount);
-                }
-                
-                if (data.redirect) {
-                    window.location.href = data.redirect;
-                }
-            });
-        } else {
-            throw new Error(data.message || 'Failed to add product to cart');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        
-        if (error.message.includes('Please login')) {
-            Swal.fire({
-                title: 'Login Required',
-                text: 'Please login to add items to your cart',
-                icon: 'info',
-                showCancelButton: true,
-                confirmButtonText: 'Login',
-                cancelButtonText: 'Cancel'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = '/login';
-                }
-            });
-        } 
-        else if (error.message.includes('Maximum quantity')) {
-            Swal.fire({
-                title: 'Quantity Limit Reached',
-                text: error.message,
-                icon: 'warning',
-                confirmButtonText: 'OK'
-            });
-        }
-        else if (error.message.includes('out of stock') || error.message.includes('available in stock')) {
-            Swal.fire({
-                title: 'Stock Limited',
-                text: error.message,
-                icon: 'warning',
-                confirmButtonText: 'OK'
-            });
-        }
-        else {
-            Swal.fire({
-                title: 'Error!',
-                text: error.message || 'Something went wrong. Please try again.',
-                icon: 'error',
-                confirmButtonText: 'OK'
-            });
-        }
-    });
-}
-  document.getElementById('sort').addEventListener('change', function() {
-    const form = document.getElementById('sortForm');
-    
-    const pageInput = form.querySelector('input[name="page"]');
-    if (pageInput) {
-      pageInput.value = '1';
-    }
-    
-    form.submit();
-  });
-  
-  document.getElementById('price-filter-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const currentUrl = new URL(window.location.href);
-    const minPrice = this.querySelector('input[name="minPrice"]').value;
-    const maxPrice = this.querySelector('input[name="maxPrice"]').value;
-    
-    if (minPrice) currentUrl.searchParams.set('minPrice', minPrice);
-    if (maxPrice) currentUrl.searchParams.set('maxPrice', maxPrice);
-    currentUrl.searchParams.set('page', '1');
-    window.location.href = currentUrl.toString();
-  });
-  
-  document.querySelector('input[name="inStock"]').addEventListener('change', function() {
-    const currentUrl = new URL(window.location.href);
-    if (this.checked) {
-      currentUrl.searchParams.set('inStock', 'true');
-    } else {
-      currentUrl.searchParams.delete('inStock');
-    }
-    currentUrl.searchParams.set('page', '1'); 
-    window.location.href = currentUrl.toString();
-  });
-  </script>
-
-
-<script>
-       const searchForm = document.getElementById('searchForm');
-            const searchInput = document.getElementById('searchInput');
-
-            searchForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                const searchQuery = searchInput.value.trim();
-                
-                const urlParams = new URLSearchParams(window.location.search);
-                
-                if (searchQuery) {
-                    urlParams.set('query', searchQuery);
-                } else {
-                    urlParams.delete('query');
-                }
-                
-                urlParams.delete('page');
-                
-                const newUrl = `/shop?${urlParams.toString()}`;
-                window.location.href = newUrl;
-            });
-        
-
-
-function addToWishlist(productId) {
-
-  $.ajax({
-    url: "/addToWishlist", 
-    method: "POST",
-    data: { productId: productId },
-    success: (response) => {
-      if (response.status) {
-        Swal.fire({
-          title: "Added to wishlist",
-          text: "The product has been added to your wishlist.",
-          icon: "success",
-          timer: 2000,
-        });
-      } else {
-        Swal.fire({
-          title: "Already in wishlist",
-          text: response.message || "This product is already in your wishlist.",
-          icon: "info",
-          timer: 2000,
-        });
-      }
-    },
-    error: (xhr, status, error) => {
-
-      console.error("AJAX Error: ", error, xhr.responseText);
-      Swal.fire({
-        title: "Error",
-        text: "There was an error adding the product to your wishlist. Please try again.",
-        icon: "error",
-        timer: 2000,
-      });
-    },
-  });
-}
-
-function addToCart(productId) {
-  console.log('Add to cart:', productId);
-}
-
-document.getElementById('sort').addEventListener('change', function() {
-  const currentUrl = new URL(window.location.href);
-  currentUrl.searchParams.set('sort', this.value);
-  window.location.href = currentUrl.toString();
-});
-
-document.querySelector('input[name="inStock"]').addEventListener('change', function() {
-  const currentUrl = new URL(window.location.href);
-  if (this.checked) {
-    currentUrl.searchParams.set('inStock', 'true');
-  } else {
-    currentUrl.searchParams.delete('inStock');
-  }
-  window.location.href = currentUrl.toString();
-});
-
-
-  function toggleDropdown(id) {
-    const dropdown = document.getElementById(id);
-    dropdown.classList.toggle('show');
-
-    const arrow = dropdown.previousElementSibling.querySelector('.dropdown-arrow');
-    if (dropdown.classList.contains('show')) {
-      arrow.style.transform = 'rotate(180deg)';
-    } else {
-      arrow.style.transform = 'rotate(0deg)';
-    }
-  }
-
-
-</script>
 <%- include("../../views/partials/user/footer.ejs") %>
-

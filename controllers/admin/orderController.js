@@ -115,15 +115,16 @@ const getAdminOrderDetails = async (req, res) => {
     }
 };
 
+
 const processReturn = async (req, res) => {
-    const { orderId } = req.body;
-    const userId = req.user._id; // Get logged in user's ID
-    
+    const { orderId, returnReason } = req.body;  // Accept returnReason in the request body
+    const userId = req.user._id;  // Get logged-in user's ID
+
     try {
         // Find the order and user
         const order = await Order.findById(orderId);
         const user = await User.findById(userId);
-        
+
         if (!order) {
             return res.status(404).json({ 
                 success: false, 
@@ -152,7 +153,7 @@ const processReturn = async (req, res) => {
         try {
             // Find or create wallet
             let wallet = await Wallet.findOne({ user: userId }).session(session);
-            
+
             if (!wallet) {
                 wallet = new Wallet({
                     user: userId,
@@ -165,7 +166,7 @@ const processReturn = async (req, res) => {
             }
 
             const refundAmount = order.finalAmount;
-            
+
             // Update wallet
             wallet.balance += refundAmount;
             wallet.history.push({
@@ -176,10 +177,11 @@ const processReturn = async (req, res) => {
                 orderId: order._id
             });
 
-            // Update order
+            // Update order with return reason and status
             order.status = 'Returned';
             order.returnedByUser = true;
             order.userId = userId;
+            order.returnReason = returnReason;  // Store the return reason in the order
 
             // Save all changes
             await Promise.all([
@@ -190,12 +192,12 @@ const processReturn = async (req, res) => {
 
             await session.commitTransaction();
 
-        
             res.status(200).json({ 
                 success: true, 
                 message: 'Order returned successfully and refund added to wallet.',
                 refundAmount: refundAmount,
-                newBalance: wallet.balance
+                newBalance: wallet.balance,
+                returnReason: order.returnReason  // Send the return reason in the response
             });
 
         } catch (error) {

@@ -175,126 +175,13 @@
             height: 60px;
         }
     }
-    /* Related Product Section */
-.rp {
-    padding: 40px 0;
-    background-color: #f9f9f9;
-}
-
-.rp h1 {
-    font-size: 24px;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-/* Flexbox container for products */
-.rp .row {
-    display: flex;
-    justify-content: flex-start;
-    gap: 20px;
-    flex-wrap: wrap; /* Allow products to wrap onto the next line */
-    margin: 0 -10px; /* Adjust for spacing between items */
-}
-
-/* Individual Product Item */
-.single-product-item {
-    background-color: #fff;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-    width: 100%;
-    text-align: center;
-    padding: 20px;
-    margin: 10px;
-}
-
-.single-product-item:hover {
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-}
-
-/* Product Image Styling */
-.single-product-item figure {
-    position: relative;
-    overflow: hidden;
-}
-
-.single-product-item img {
-    width: 100%;
-    height: 250px;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-}
-
-.single-product-item img:hover {
-    transform: scale(1.1); /* Zoom effect on hover */
-}
-
-/* New Status Badge */
-.p-status {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background-color: #ff3366;
-    color: #fff;
-    padding: 5px 10px;
-    font-size: 14px;
-    font-weight: 600;
-    border-radius: 5px;
-}
-
-/* Product Text */
-.product-text h6 {
-    font-size: 16px;
-    font-weight: 600;
-    color: #333;
-    margin: 10px 0;
-}
-
-.product-text p {
-    font-size: 14px;
-    color: #ff3366;
-    font-weight: 600;
-    margin-bottom: 15px;
-}
-
-/* Responsive Design for Small Screens */
-@media (max-width: 1200px) {
-    .single-product-item {
-        width: calc(25% - 20px); /* Four items per row */
-    }
-}
-
-@media (max-width: 992px) {
-    .single-product-item {
-        width: calc(33.33% - 20px); /* Three items per row */
-    }
-}
-
-@media (max-width: 768px) {
-    .single-product-item {
-        width: calc(50% - 20px); /* Two items per row */
-    }
-}
-
-@media (max-width: 480px) {
-    .single-product-item {
-        width: 100%; /* One item per row */
-    }
-}
-.related{
-display: flex;
-}
-
 </style>
 
 <main class="main">
-    <!-- <div class="page-header breadcrumb-wrap"> -->
-        <!-- <div class="container"> -->
-            <!-- <div class="breadcrumb"> -->
-                <!-- <a href="#" rel="nofollow">Home</a> -->
+    <div class="page-header breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="#" rel="nofollow">Home</a>
                 <!-- <span></span> Fashion
                 <span></span>product detail page -->
             </div>
@@ -406,7 +293,6 @@ display: flex;
     
     <div class="rp" >
         <h1>Related Product</h1>
-        <div class="related">
         <%for(let i=0; i <recommendedProduct.length ; i++){%>
             
             <div class="col-lg-3 col-sm-6 mix all dresses bags">
@@ -422,7 +308,6 @@ display: flex;
                 </div>
             </div>
             <%}%>
-        </div>
     </div>
 </div>
     <script>

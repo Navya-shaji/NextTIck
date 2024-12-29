@@ -1,227 +1,237 @@
-.card-green {
-  background-color: #ffffff; /* White */
-}
-
+/* General Styles */
 .main {
-  padding: 30px 0;
+  padding-top: 20px; /* Adjust as needed */
+  padding-bottom: 40px;
 }
 
-.dashboard-menu {
-  background-color: #f2f2f2; /* Light gray */
-  border-radius: 10px;
-  padding: 15px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.dashboard-menu .nav-link {
-  font-weight: bold;
-  color: #666666; /* Medium gray */
-  box-shadow: none;
-  transition: color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.dashboard-menu .nav-link:hover {
-  color: #333333; /* Dark gray */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.card {
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
-  background-color: #ffffff; /* White */
-}
-
-.card-header {
-  background-color: #f2f2f2; /* Light gray */
-  color: #333333; /* Dark gray */
-  border-radius: 10px 10px 0 0;
-}
-
-.btn-success {
-  background-color: #cccccc; /* Light gray */
-  border-color: #cccccc;
-  color: #333333; /* Dark gray */
-}
-
-.btn-success:hover {
-  background-color: #b3b3b3; /* Slightly darker gray */
-}
-
-.form-group {
-  margin-bottom: 15px;
-}
-
-.required {
-  color: #ff0000; /* Red */
-}
-
-.page-header.breadcrumb-wrap {
-  background-color: #f2f2f2; /* Light gray */
-  padding: 15px 0;
+.breadcrumb-wrap {
+  background-color: #f8f9fa; /* Light background for breadcrumbs */
+  padding: 10px 0;
+  border-bottom: 1px solid #dee2e6;
 }
 
 .breadcrumb {
   display: flex;
   align-items: center;
-  font-family: 'Arial', sans-serif;
-  font-size: 16px;
-  color: #999999; /* Gray */
+  font-size: 14px;
+  color: #6c757d;
 }
 
 .breadcrumb a {
-  color: #666666; /* Medium gray */
+  color: #007bff;
   text-decoration: none;
-  position: relative;
-  margin: 0 5px;
-}
-
-.breadcrumb a:hover {
-  color: #333333; /* Dark gray */
 }
 
 .breadcrumb span {
   margin: 0 5px;
-  color: #cccccc; /* Light gray */
 }
 
-.breadcrumb a::after {
-  content: '';
-  position: absolute;
-  width: 100%;
-  height: 2px;
-  background: #666666; /* Medium gray */
-  left: 0;
-  bottom: -2px;
-  transform: scaleX(0);
-  transition: transform 0.3s ease;
+.container {
+  margin: 0 auto;
+  padding: 0 15px;
 }
 
-.breadcrumb a:hover::after {
-  transform: scaleX(1);
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -15px; /* Adjust negative margins to match padding */
 }
 
-body {
-  font-family: 'Arial', sans-serif;
-  background-color: #ffffff; /* White */
-  color: #666666; /* Medium gray */
-  margin: 0;
-  padding: 0;
+.col-md-4 {
+  flex: 0 0 33.3333%;
+  max-width: 18.3333%;
+  padding: 0 15px;
 }
 
+.col-md-8 {
+  flex:  250.6666%;
+  max-width: 300.6666%;
+  padding: 0 15px;
+}
+.col-lg-6{
+  flex: 0 0 50%;
+  max-width: 50%;
+  padding: 0 15px;
+}
+
+/* Dashboard Menu */
+.dashboard-menu .nav-link {
+  padding: 10px 15px;
+  color: #343a40;
+  border: 1px solid transparent;
+  border-bottom: 1px solid #dee2e6;
+  transition: all 0.3s ease;
+}
+
+.dashboard-menu .nav-link.active,
+.dashboard-menu .nav-link:hover {
+  background-color: #e9ecef;
+  border-color: #dee2e6;
+}
+
+.dashboard-menu .nav-link i {
+  margin-right: 5px;
+}
+
+/* Card Styles */
 .card {
-  border: 1px solid #dddddd; /* Light border */
-  border-radius: 10px;
-  background-color: #ffffff; /* White */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid #dee2e6;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+.card-header {
+  background-color: #fff;
+  padding: 15px;
+  border-bottom: 1px solid #dee2e6;
+}
+.card-green .card-header{
+  background-color: #28a745;
+  color: white;
 }
 
 .card-body {
-  padding: 15px;
+  padding: 20px;
 }
 
-.card-body p {
-  margin: 0 0 10px;
-  font-size: 14px;
-  line-height: 1.5;
-  color: #666666; /* Medium gray */
-}
-
-.card-footer {
-  padding: 10px 15px;
-  background-color: #f2f2f2; /* Light gray */
-  text-align: right;
-  border-top: 1px solid #dddddd; /* Light border */
-}
-
-.card-footer a {
-  text-decoration: none;
-  font-size: 14px;
-  color: #666666; /* Medium gray */
-  font-weight: bold;
-  transition: color 0.3s ease;
-}
-
-.card-footer a:hover {
-  color: #333333; /* Dark gray */
-}
-
-.navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
+/* Table Styles */
+.table {
   width: 100%;
-  background-color: #f2f2f2; /* Light gray */
-  z-index: 1000;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  table-layout: fixed; /* Ensure the table takes up available space without scrolling */
+  border-collapse: collapse;
+  margin-bottom: 0;
 }
 
-.navbar .nav-link {
-  color: #666666; /* Medium gray */
-  padding: 10px 15px;
-  text-decoration: none;
-  transition: color 0.3s ease;
+.table th,
+.table td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #dee2e6;
+  word-wrap: break-word; /* Ensure long text wraps within the cells */
 }
 
-.navbar .nav-link:hover {
-  color: #333333; /* Dark gray */
-}
-
-.navbar-brand {
-  font-size: 20px;
+.table th {
   font-weight: bold;
-  color: #666666; /* Medium gray */
-  text-decoration: none;
-  padding: 10px 15px;
+  box-sizing: content-box;
 }
 
-.navbar-brand:hover {
-  color: #333333; /* Dark gray */
+.table tbody tr:last-child td {
+  border-bottom: none;
 }
 
-.wallet-balance {
-  padding: 2rem;
-  background: #f2f2f2; /* Light gray */
-  border-radius: 10px;
-  margin-bottom: 2rem;
+/* Remove the horizontal scrollbar and make table layout fixed */
+.table-responsive {
+  width: 100%;
+  overflow: hidden; /* Hide overflow */
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling for touch devices */
 }
 
-.wallet-balance h2 {
-  color: #333333; /* Dark gray */
-  font-size: 2.5rem;
-  margin: 1rem 0;
+/* Order actions buttons */
+.btn-small{
+  padding: 5px 10px;
+  font-size: 14px;
+}
+.btn-info{
+  background-color: #17a2b8;
+  border-color: #17a2b8;
+  color: white;
+}
+.btn-info:hover{
+  background-color: #138496;
+  border-color: #117a8b;
+  color: white;
+}
+.btn-danger{
+  background-color: #dc3545;
+  border-color: #dc3545;
+  color: white;
+}
+.btn-danger:hover{
+  background-color: #bd2130;
+  border-color: #b21f2d;
+  color: white;
+}
+.btn-warning{
+  background-color: #ffc107;
+  border-color: #ffc107;
+  color: black;
+}
+.btn-warning:hover{
+  background-color: #e0a800;
+  border-color: #d39e00;
+  color: black;
 }
 
-.badge {
-  padding: 0.5em 1em;
-  border-radius: 20px;
-  background-color: #f2f2f2; /* Light gray */
-  color: #666666; /* Medium gray */
+/* Wallet Styles */
+.contact-from-area {
+  padding: 30px;
+  border: 1px solid #dee2e6;
+  border-radius: 5px;
+  margin-top: 20px;
 }
 
-.table td, .table th {
-  vertical-align: middle;
+.contact-from-area .form-group {
+  margin-bottom: 20px;
+}
+.mt-90{
+  margin-top: 90px;
 }
 
-.text-success {
-  color: #666666 !important; /* Medium gray */
+/* Responsive adjustments (example) */
+@media (max-width: 768px) {
+  .col-md-4 {
+      flex: 0 0 100%;
+      max-width: 100%;
+  }
+  .col-md-8 {
+      flex: 0 0 100%;
+      max-width: 100%;
+  }
+  .col-lg-6{
+      flex: 0 0 100%;
+      max-width: 100%;
+  }
+}
+.badge{
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: white;
+}
+.bg-success{
+  background-color: #28a745;
+}
+.bg-danger{
+  background-color: #dc3545;
+}
+.bg-info{
+  background-color: #17a2b8;
+}
+.text-danger{
+  color: #dc3545;
+}
+.text-success{
+  color: #28a745;
 }
 
-.text-danger {
-  color: #666666 !important; /* Medium gray */
+/* Style for the actions column */
+.actions-column {
+  width: 200px; /* Set a fixed width for the actions column */
+  text-align: center;
 }
 
-.bg-success {
-  background-color: #f2f2f2 !important; /* Light gray */
+/* Style for the buttons in the actions column */
+.actions-column .btn {
+  margin-bottom: 5px; /* Space between buttons */
+  width: 100%; /* Make buttons take full width of the column */
+  padding: 10px; /* Adjust padding for uniform button size */
 }
 
-.bg-danger {
-  background-color: #f2f2f2 !important; /* Light gray */
+/* Optional: If you want to make the table responsive */
+.table-responsive {
+  overflow-x: auto;
+}
+section{
+  padding-right: 67px;
+
 }

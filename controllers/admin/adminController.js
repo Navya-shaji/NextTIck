@@ -45,6 +45,27 @@ const login=async(req,res)=>{
     }
 }
 
+// const login= async (req,res)=>{
+//     try {
+//         const {email,password} =req.body;
+//         const admin = await User.findOne({email,isAdmin:true});
+//         if(admin){
+//             const passwordMatch = await bcrypt.compare(password,admin.password);
+//             if(passwordMatch){
+//                 req.session.admin=true;
+//                 return res.redirect("/admin");
+//             }else{
+//                 return res.redirect("adminlogin?msg=Password not Match");
+//             }
+//         }else{
+//             return res.redirect("/adminlogin?msg=Admin not found");
+//         }
+//     }catch (error) {
+//         console.log("login error",error); 
+//         return res.redirect("/pageerror");
+//     }
+// };
+
 
 //loading dashboard................................................................................................
 

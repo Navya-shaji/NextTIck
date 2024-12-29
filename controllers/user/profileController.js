@@ -1,57 +1,57 @@
-const User=require("../../models/userSchema");
-const Address=require("../../models/addressSchema")
-const Order=require("../../models/orderSchema")
-const Wallet=require("../../models/walletSchema")
+const User = require("../../models/userSchema");
+const Address = require("../../models/addressSchema")
+const Order = require("../../models/orderSchema")
+const Wallet = require("../../models/walletSchema")
 const nodemailer = require("nodemailer");
-const bcrypt =require("bcrypt");
+const bcrypt = require("bcrypt");
 const env = require("dotenv").config();
 const session = require("express-session");
 const { securePassword } = require("./userController");
 
 
-function generateOtp(){
+function generateOtp() {
     const digits = "1234567890";
-    let otp ="";
-    for(let i=0;i<6;i++){
-        otp+=digits[Math.floor(Math.random()*10)]
+    let otp = "";
+    for (let i = 0; i < 6; i++) {
+        otp += digits[Math.floor(Math.random() * 10)]
     }
     return otp;
 }
 
 
-const sendVerificationEmail =  async(email,otp)=>{
-    try{
+const sendVerificationEmail = async (email, otp) => {
+    try {
         const transporter = nodemailer.createTransport({
-            service:"gmail",
-            port:587,
-            secure:false,
-            requireTLS:true,
-            auth:{
-                user:process.env.NODEMAILER_EMAIL,
-                pass:process.env.NODEMAILER_PASSWORD,
+            service: "gmail",
+            port: 587,
+            secure: false,
+            requireTLS: true,
+            auth: {
+                user: process.env.NODEMAILER_EMAIL,
+                pass: process.env.NODEMAILER_PASSWORD,
             }
         })
-        const mailOptions ={
-            from:process.env.NODEMAILER_EMAIL,
-            to:email,
-            subject:"Uour OTP for password reset",
-            text:"Your OTP is ${otp}",
-            html:`<b><h4>Your OTP :${otp}</h4><br></b>`
+        const mailOptions = {
+            from: process.env.NODEMAILER_EMAIL,
+            to: email,
+            subject: "Uour OTP for password reset",
+            text: "Your OTP is ${otp}",
+            html: `<b><h4>Your OTP :${otp}</h4><br></b>`
         }
 
         const info = await transporter.sendMail(mailOptions);
-        console.log("Email sent:",info.messageId);
+        console.log("Email sent:", info.messageId);
         return true;
-        
-    }catch(error){
-        console.error("Error sending email",error);
+
+    } catch (error) {
+        console.error("Error sending email", error);
         return false;
     }
 }
 
 
 
-const getForgotPassPage = async (req,res)=>{
+const getForgotPassPage = async (req, res) => {
     try {
         res.render("forgot-password")
     } catch (error) {
@@ -60,27 +60,27 @@ const getForgotPassPage = async (req,res)=>{
 }
 
 
-const forgotEmailValid = async(req,res)=>{
+const forgotEmailValid = async (req, res) => {
     try {
-       const {email} = req.body;
-       const findUser=await User.findOne({email:email});
-       if(findUser){
-        const otp = generateOtp();
-        const emailSent = await sendVerificationEmail(email,otp)
-        if(emailSent){
-            req.session.userOtp=otp;
-            req.session.email = email;
-            res.render("forgotPass-otp");
-            console.log("OTP",otp);
-            
-        }else{
-            res.json({success:false,message:"Failed to send OTP .Please try again"})
+        const { email } = req.body;
+        const findUser = await User.findOne({ email: email });
+        if (findUser) {
+            const otp = generateOtp();
+            const emailSent = await sendVerificationEmail(email, otp)
+            if (emailSent) {
+                req.session.userOtp = otp;
+                req.session.email = email;
+                res.render("forgotPass-otp");
+                console.log("OTP", otp);
+
+            } else {
+                res.json({ success: false, message: "Failed to send OTP .Please try again" })
+            }
+        } else {
+            res.render("forgot-password", {
+                message: "User with this email does not exist"
+            })
         }
-       }else{
-        res.render("forgot-password",{
-            message:"User with this email does not exist"
-        })
-       }
     } catch (error) {
         res.redirect("/pageNotFound")
     }
@@ -88,16 +88,16 @@ const forgotEmailValid = async(req,res)=>{
 
 
 
-const verifyForgotPassOtp = async (req,res)=>{
+const verifyForgotPassOtp = async (req, res) => {
     try {
         const enteredOtp = req.body.otp;
-        if(enteredOtp===req.session.userOtp){
-            res.json({success:true,redirectUrl:"/reset-password"});
-        }else{
-            res.json({success:false,message:"OTP not matching"})
+        if (enteredOtp === req.session.userOtp) {
+            res.json({ success: true, redirectUrl: "/reset-password" });
+        } else {
+            res.json({ success: false, message: "OTP not matching" })
         }
     } catch (error) {
-        res.status(500).json({success:false,message:"An error occured .Please try again"})
+        res.status(500).json({ success: false, message: "An error occured .Please try again" })
     }
 }
 
@@ -164,15 +164,20 @@ const userProfile = async (req, res) => {
             return res.redirect("/login");
         }
 
+        // const orders = await Order.find({ userId: user._id }).populate('address').sort({ createdOn: -1 });
         const orders = await Order.find({ userId: user._id }).sort({ createdOn: -1 });
-        const address = await Address.findOne({ userId: user._id });
-        const userWallet = await Wallet.findOne({ userId: user._id }); 
 
+   
+
+
+
+        const address = await Address.findOne({ userId: user._id });
+        const userWallet = await Wallet.findOne({ userId: user._id });
         res.render("profile", {
             user: user,
             orders: orders,
-            userAddress: address || {}, 
-            wallet: userWallet || { balance: 0 }, 
+            userAddress: address || {},
+            wallet: userWallet || { totalBalance: 0 },
         });
     } catch (error) {
         console.error("Error fetching user profile:", error.message);
@@ -183,36 +188,36 @@ const userProfile = async (req, res) => {
 
 //change email....................................................................
 
-const changeEmail=async (req,res)=>{
+const changeEmail = async (req, res) => {
     try {
-       res.render("change-email") 
+        res.render("change-email")
     } catch (error) {
         res.redirect("/pageNotFound")
     }
 }
 
 
-const changeEmailValid=async(req,res)=>{
+const changeEmailValid = async (req, res) => {
     try {
-        const {email}=req.body;
-        const userExists=await User.findOne({email});
-        if(userExists){
+        const { email } = req.body;
+        const userExists = await User.findOne({ email });
+        if (userExists) {
             const otp = generateOtp()
-            const emailSent=await sendVerificationEmail(email,otp) 
-            if(emailSent){
-                req.session.userOtp=otp;
-                req.session.userData=req.body;
-                req.session.email=email;
+            const emailSent = await sendVerificationEmail(email, otp)
+            if (emailSent) {
+                req.session.userOtp = otp;
+                req.session.userData = req.body;
+                req.session.email = email;
                 res.render("change-email-otp");
-                console.log("EmailSent",email);
-                console.log("OTP",otp);
-                
-            }else{
+                console.log("EmailSent", email);
+                console.log("OTP", otp);
+
+            } else {
                 res.json("email-error")
             }
-        }else{
-            res.render("change-email",{
-                message:"User with this emailnot exist"
+        } else {
+            res.render("change-email", {
+                message: "User with this emailnot exist"
             })
         }
     } catch (error) {
@@ -221,18 +226,18 @@ const changeEmailValid=async(req,res)=>{
 }
 
 
-const verifyEmailOtp= async(req,res)=>{
+const verifyEmailOtp = async (req, res) => {
     try {
-        const enteredOtp=req.body.otp;
-        if(enteredOtp===req.session.userOtp){
-            req.session.userData=req.body.userData;
-            res.render("new-email",{
-                userData:req.session.userData,
+        const enteredOtp = req.body.otp;
+        if (enteredOtp === req.session.userOtp) {
+            req.session.userData = req.body.userData;
+            res.render("new-email", {
+                userData: req.session.userData,
             })
-        }else{
-            res.render("change-email-otp",{
-                messager:"OTP not matching",
-                userData:req.session.userData
+        } else {
+            res.render("change-email-otp", {
+                messager: "OTP not matching",
+                userData: req.session.userData
             })
         }
     } catch (error) {
@@ -240,11 +245,11 @@ const verifyEmailOtp= async(req,res)=>{
     }
 }
 
-const updateEmail=async(req,res)=>{
+const updateEmail = async (req, res) => {
     try {
-        const newEmail=req.body.newEmail;
-        const userId=req.session.user;
-        await User.findByIdAndUpdate(userId,{email:newEmail});
+        const newEmail = req.body.newEmail;
+        const userId = req.session.user;
+        await User.findByIdAndUpdate(userId, { email: newEmail });
         res.redirect("/userProfile")
     } catch (error) {
         res.redirect("/pageNotFound")
@@ -338,7 +343,7 @@ const resetPassword = async (req, res) => {
 const updateProfile = async (req, res) => {
     try {
         const { name, phone, email, userId } = req.body;
-        
+
         const findUser = await User.findByIdAndUpdate(
             { _id: userId },
             { $set: { username: name, phone: phone, email: email } },
@@ -398,7 +403,7 @@ const postAddAddress = async (req, res) => {
             await userAddress.save();
         }
         return res.status(200).json({ success: true, message: "Address added successfully" });
-       
+
     } catch (error) {
         console.log("post add address error", error);
         res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -526,7 +531,7 @@ const cancelOrder = async (req, res) => {
 
 const deleteOrder = async (req, res) => {
     try {
-        const { orderId } = req.params; 
+        const { orderId } = req.params;
         const user = req.session.user;
 
         if (!user) {
@@ -636,22 +641,22 @@ const refundToWallet = async (req, res) => {
 
 const getWalletForUser = async (userId) => {
     try {
-      const wallet = await WalletModel.findOne({ userId });
-      return wallet || { balance: 0 };
+        const wallet = await WalletModel.findOne({ userId });
+        return wallet || { balance: 0 };
     } catch (error) {
-      console.error('Error fetching wallet:', error);
-      throw new Error('Could not fetch wallet data');
+        console.error('Error fetching wallet:', error);
+        throw new Error('Could not fetch wallet data');
     }
-  };
-  
+};
+
 
 module.exports = {
     getForgotPassPage,
     forgotEmailValid,
     sendVerificationEmail,
-    verifyForgotPassOtp ,
+    verifyForgotPassOtp,
     getResetPassPage,
-    resendOtp ,
+    resendOtp,
     postNewPassword,
     userProfile,
     changeEmail,
@@ -670,12 +675,12 @@ module.exports = {
     deleteAddress,
     getOrders,
     cancelOrder,
-    renderChangePasswordPage ,
+    renderChangePasswordPage,
     deleteOrder,
     getWalletBalance,
-    addMoney ,
+    addMoney,
     getWalletHistory,
     refundToWallet,
     getWalletForUser
-    
+
 }

@@ -1,5 +1,7 @@
 <%- include("../../views/partials/admin/header") %>
-
+<style>
+    
+</style>
 <div class="content-main">
     <div class="content-header d-flex justify-content-between align-items-center">
         <h2 class="content-title">Sales Report</h2>
@@ -37,7 +39,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-12 col-md-6 col-lg-3 mb-4">
+        <!-- <div class="col-12 col-md-6 col-lg-3 mb-4">
             <div class="card h-100 border-info">
                 <div class="card-body">
                     <h6 class="card-subtitle mb-2 text-muted">Regular Discounts</h6>
@@ -45,8 +47,8 @@
                     <p class="card-text small">Non-coupon discounts</p>
                 </div>
             </div>
-        </div>
-        <div class="col-12 col-md-6 col-lg-3 mb-4">
+        </div> -->
+        <!-- <div class="col-12 col-md-6 col-lg-3 mb-4">
             <div class="card h-100 border-warning">
                 <div class="card-body">
                     <h6 class="card-subtitle mb-2 text-muted">Coupon Discounts</h6>
@@ -54,7 +56,7 @@
                     <p class="card-text small">Discounts from coupons</p>
                 </div>
             </div>
-        </div>
+        </div> -->
     </div>
 
     <!-- Filters -->
@@ -103,9 +105,9 @@
                             <th>Order ID</th>
                             <th>Date</th>
                             <th>Customer</th>
-                            <th>Items</th>
+                            <!-- <th>Items</th> -->
                             <th class="text-end">Amount</th>
-                            <th class="text-end">Discount</th>
+                            <!-- <th class="text-end">Discount</th> -->
                             <th class="text-end">Final Amount</th>
                             <th>Status</th>
                         </tr>
@@ -116,20 +118,20 @@
                             <td><%= order.orderId %></td>
                             <td><%= new Date(order.createdOn).toLocaleDateString() %></td>
                             <td><%= order.userId?.name || 'N/A' %></td>
-                            <td>
+                            <!-- <td>
                                 <% const itemCount = order.orderItems.length %>
                                 <%= order.orderItems[0]?.product?.name || 'N/A' %>
                                 <% if (itemCount > 1) { %>
                                     <span class="badge bg-secondary">+<%= itemCount - 1 %> more</span>
                                 <% } %>
-                            </td>
+                            </td> -->
                             <td class="text-end">₹<%= order.totalPrice.toFixed(2) %></td>
-                            <td class="text-end">
+                            <!-- <td class="text-end">
                                 ₹<%= (order.discount || 0).toFixed(2) %>
                                 <% if (order.couponApplied) { %>
                                     <span class="badge bg-warning text-dark">Coupon</span>
                                 <% } %>
-                            </td>
+                            </td> -->
                             <td class="text-end">₹<%= order.finalAmount.toFixed(2) %></td>
                             <td>
                                 <% const statusClass = {
@@ -144,7 +146,9 @@
                         </tr>
                         <% }); %>
                     </tbody>
+
                 </table>
+                
             </div>
         </div>
     </div>
@@ -178,5 +182,6 @@ function downloadReport(format) {
     
     window.location.href = url;
 }
+
 </script>
 <%- include("../../views/partials/admin/footer") %>

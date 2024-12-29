@@ -287,9 +287,9 @@
 
                     <img class="img-fluid" src="/uploads/re-image/<%= product.productImage[0] %>" alt="<%= product.productName %>">
 
-                    <span class="product-offer-box"><%=product.productOffer%> %Offer</span>
+                    <!-- <span class="product-offer-box"><%=product.productOffer%> %Offer</span> -->
                     <!-- Add category offer here -->
-                      <span class="category-offer-box"><%=product.category.offer%>% Category Offer</span>
+                      <!-- <span class="category-offer-box"><%=product.category.offer%>% Category Offer</span> -->
 
                     
                     <div class="overlay"></div>
@@ -333,7 +333,7 @@
                         <span class="price-sale">₹<%= finalPrice.toFixed(2) %></span>
                       </p>
                     <% } else { %>
-                      <p class="price"><span>₹<%= product.regularPrice.toFixed(2) %></span></p>
+                      <p class="price"><span>₹<%= product.salesPrice.toFixed(2) %></span></p>
                     <% } %>
                   </div>
 

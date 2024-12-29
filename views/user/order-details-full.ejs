@@ -1,264 +1,323 @@
-<style>
-    /* Container Styling */
-    .main {
-        background-color: #fff;
-        padding-top: 20px;
-        padding-bottom: 40px;
-    }
-
-    .card {
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        margin-bottom: 30px;
-        background-color: #fff;
-    }
-
-    .card-header {
-        background-color: #333;
-        color: #fff;
-        padding: 15px;
-        font-size: 16px; /* Medium font size */
-        border-top-left-radius: 10px;
-        border-top-right-radius: 10px;
-    }
-
-    /* Table Styling */
-    .table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-        border: 1px solid #ddd;
-    }
-
-    .table-bordered {
-        border: 1px solid #ddd;
-    }
-
-    .table th, .table td {
-        padding: 12px;
-        text-align: left;
-        vertical-align: middle;
-        font-size: 16px; /* Medium font size */
-    }
-
-    .table th {
-        background-color: #f0f0f0; /* Light gray */
-        color: #333;
-        border-bottom: 2px solid #ddd;
-    }
-
-    .table td {
-        background-color: #ffffff; /* White */
-        color: #333;
-        border-bottom: 1px solid #ddd;
-    }
-
-    .table td img {
-        width: 80px;
-        height: 80px;
-        object-fit: cover;
-        border-radius: 5px;
-    }
-
-    /* Table Footer Styling */
-    tfoot td {
-        font-weight: bold;
-        background-color: #f9f9f9; /* Light gray */
-        color: #333;
-    }
-
-    tfoot td.text-end {
-        text-align: right;
-    }
-
-    /* Buttons */
-    .btn {
-        padding: 10px 20px;
-        font-size: 16px; /* Medium font size */
-        border-radius: 5px;
-        cursor: pointer;
-    }
-
-    .btn-small {
-        font-size: 14px;
-    }
-
-    .btn-info {
-        background-color: #17a2b8;
-        border-color: #17a2b8;
-        color: white;
-    }
-
-    .btn-danger {
-        background-color: #dc3545;
-        border-color: #dc3545;
-        color: white;
-    }
-
-    .btn:hover {
-        opacity: 0.8;
-    }
-
-    .mt-4 {
-        margin-top: 20px;
-    }
-
-    /* Responsive Design */
-    @media (max-width: 768px) {
-        .table th, .table td {
-            padding: 10px;
-            font-size: 14px;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .card {
+            margin-bottom: 20px;
         }
-
-        .table td img {
-            width: 70px;
-            height: 70px;
-        }
-    }
-
-    /* Square Container for Order Details */
+       
+    /* Main container styling */
     .container {
         max-width: 1200px;
         margin: 0 auto;
-        padding: 20px;
+        padding: 2rem;
+    }
+
+    /* Page title styling */
+    h1 {
+        color: #333;
+        font-size: 2.5rem;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #eee;
+    }
+
+    /* Card styling */
+    .card {
+        border: none;
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+        margin-bottom: 30px;
+        background: #fff;
+    }
+
+    .card-body {
+        padding: 2rem;
+    }
+
+    .card-title {
+        color: #2c3e50;
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Text styling */
+    .card-text {
+        color: #555;
+        margin-bottom: 0.8rem;
+        line-height: 1.6;
+    }
+
+    .card-text strong {
+        color: #2c3e50;
+        font-weight: 600;
+    }
+
+    /* Address section styling */
+    h6 {
+        color: #2c3e50;
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    address {
+        color: #666;
+        line-height: 1.8;
+        font-style: normal;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Table styling */
+    .table {
+        margin-top: 1.5rem;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .table thead th {
+        background-color: #f8f9fa;
+        color: #2c3e50;
+        font-weight: 600;
+        padding: 1rem;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    .table tbody td {
+        padding: 1rem;
+        vertical-align: middle;
+        border-bottom: 1px solid #dee2e6;
+        color: #555;
+    }
+
+    .table tfoot td {
+        padding: 1rem;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .table tfoot tr:last-child td {
+        border-top: 2px solid #dee2e6;
+        font-size: 1.1rem;
+        color: #2c3e50;
+    }
+
+    /* Status indicators */
+    .text-danger {
+        color: #dc3545 !important;
+        font-weight: 600;
+    }
+
+    /* Payment status styling */
+    .payment-status {
+        display: inline-block;
+        padding: 0.4rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .payment-status.paid {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .payment-status.pending {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .container {
+            padding: 1rem;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+        }
+
+        .table thead {
+            display: none;
+        }
+
+        .table, .table tbody, .table tr, .table td {
+            display: block;
+            width: 100%;
+        }
+
+        .table tr {
+            margin-bottom: 1rem;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 0.5rem;
+        }
+
+        .table td {
+            text-align: right;
+            padding: 0.5rem;
+            position: relative;
+            border: none;
+        }
+
+        .table td::before {
+            content: attr(data-label);
+            float: left;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+    }
+
+    /* Animation for status changes */
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    .status-change {
+        animation: fadeIn 0.3s ease-in;
+    }
+
+    /* Print styles */
+    @media print {
+        .container {
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .card {
+            box-shadow: none;
+            border: 1px solid #dee2e6;
+        }
     }
 </style>
+</head>
+<body>
 
-<main class="main">
-    <div class="page-header breadcrumb-wrap">
-        <div class="container">
-            <div class="breadcrumb">
-                <span></span> Order Details
-            </div>
-        </div>
-    </div>
-    <section class="mt-50 mb-50">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="mb-0">Detailed Order Information</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row mb-5">
-                                <div class="col-md-6">
-                                    <h6>Order Information</h6>
-                                    <p><strong>Order ID:</strong> <%= order.orderId %></p>
-                                    <p><strong>Date:</strong> <%= new Date(order.createdOn).toLocaleString() %></p>
-                                    <p><strong>Status:</strong> <%= order.status %></p>
-                                    <p><strong>Total Amount:</strong> ₹<%= order.finalAmount.toFixed(2) %></p>
-                                    <% if(order.discount > 0) { %>
-                                        <p><strong>Discount Applied:</strong> ₹<%= order.discount.toFixed(2) %></p>
-                                    <% } %>
-                                    <% if(order.paymentMethod) { %>
-                                        <p><strong>Payment Method:</strong> <%= order.paymentMethod %></p>
-                                    <% } %>
-                                </div>
-                                <div class="col-md-6">
-                                    <h6>Shipping Address</h6>
-                                    <% if(order.address) { %>
-                                        <p><%= order.address.name %></p>
-                                        <p><%= order.address.address %></p>
-                                        <p><%= order.address.city %>, <%= order.address.state %> <%= order.address.pincode %></p>
-                                        <p><strong>Phone:</strong> <%= order.address.phone %></p>
-                                    <% } %>
-                                </div>
-                            </div>
-                            <h6 class="mb-3">Ordered Products</h6>
-                            <div class="table-responsive">
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>Product</th>
-                                            <th>Image</th>
-                                            <th>Quantity</th>
-                                            <th>Price</th>
-                                            <th>Total</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <% order.orderItems.forEach(item => { %>
-                                            <tr>
-                                                <td>
-                                                    <h6 class="mb-0"><%= item.product.productName %></h6>
-                                                    <p class="mb-0 text-muted"><small>Brand: <%= item.product.brand %></small></p>
-                                                </td>
-                                                <td>
-                                                    <img src="<%= item.product.productImage[0] %>" alt="<%= item.product.productName %>" style="max-width: 100px; max-height: 100px;">
-                                                </td>
-                                                <td><%= item.quantity %></td>
-                                                <td>₹<%= item.price.toFixed(2) %></td>
-                                                <td>₹<%= (item.price * item.quantity).toFixed(2) %></td>
-                                            </tr>
-                                        <% }); %>
-                                    </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <td colspan="4" class="text-end"><strong>Subtotal:</strong></td>
-                                            <td>₹<%= order.totalPrice.toFixed(2) %></td>
-                                        </tr>
-                                        <% if(order.discount > 0) { %>
-                                        <tr>
-                                            <td colspan="4" class="text-end"><strong>Discount:</strong></td>
-                                            <td>₹<%= order.discount.toFixed(2) %></td>
-                                        </tr>
-                                        <% } %>
-                                        <% if(order.shippingCost) { %>
-                                        <tr>
-                                            <td colspan="4" class="text-end"><strong>Shipping Cost:</strong></td>
-                                            <td>₹<%= order.shippingCost.toFixed(2) %></td>
-                                        </tr>
-                                        <% } %>
-                                        <tr>
-                                            <td colspan="4" class="text-end"><strong>Final Amount:</strong></td>
-                                            <td>₹<%= order.finalAmount.toFixed(2) %></td>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
-                            <% if(order.status === 'Pending') { %>
-                                <div class="mt-4">
-                                    <form action="/orders/cancel" method="POST" class="d-inline-block">
-                                        <input type="hidden" name="orderId" value="<%= order._id %>">
-                                        <button type="submit" class="btn btn-danger" 
-                                            onclick="return confirm('Are you sure you want to cancel this order?');">
-                                            Cancel Order
-                                        </button>
-                                    </form>
-                                </div>
-                            <% } %>
-                        </div>
-                    </div>
+    <div class="container mt-5">
+        <h1 class="mb-4">Order Details</h1>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Order <%= order.orderId %></h5>
+                <p class="card-text"><strong>Status:</strong> <%= order.status %></p>
+                <p class="card-text"><strong>Date:</strong> <%= new Date(order.createdOn).toLocaleString() %></p>
+                <p class="card-text"><strong>Payment Status:</strong> <%= order.paymentStatus %></p>
+                <p class="card-text"><strong>Payment ID:</strong> <%= order.paymentId || 'N/A' %></p>
+
+                <h6 class="mt-4">Shipping Address</h6>
+                <address>
+                    <% if (address) { %>
+                        <%= address.name || 'N/A' %><br>
+                        <%= address.addressType || 'N/A' %><br>
+                        <%= address.street || 'N/A' %><br>
+                        <%= address.city || 'N/A' %>, <%= order.address.state || 'N/A' %> <%= order.address.pincode || 'N/A' %><br>
+                        Landmark: <%= address.landMark || 'N/A' %><br>
+                        Phone: .address.phone || 'N/A' %><br>
+                        <% if (address.altPhone) { %>
+                            Alt. Phone: <%= address.altPhone %>
+                        <% } %>
+                    <% } else { %>
+                        Address information not available
+                    <% } %>
+                </address>
+
+                <h6 class="mt-4">Order Items</h6>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% order.orderItems.forEach(item => { %>
+                            <tr>
+                                <td><%= item.product.productName %></td>
+                                <td><%= item.quantity %></td>
+                                <td>₹<%= item.price.toFixed(2) %></td>
+                                <td>₹<%= (item.quantity * item.price).toFixed(2) %></td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" class="text-end"><strong>Subtotal:</strong></td>
+                            <td>₹<%= order.totalPrice.toFixed(2) %></td>
+                        </tr>
+                        <% if (order.discount > 0) { %>
+                            <tr>
+                                <td colspan="3" class="text-end"><strong>Discount:</strong></td>
+                                <td>-₹<%= order.discount.toFixed(2) %></td>
+                            </tr>
+                        <% } %>
+                        <tr>
+                            <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                            <td>₹<%= order.finalAmount.toFixed(2) %></td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+                <% if (order.couponApplied) { %>
+                    <p class="card-text"><strong>Coupon Applied:</strong> Yes</p>
+                <% } %>
+
+                <% if (order.returnedByUser) { %>
+                    <p class="card-text text-danger"><strong>Returned by User</strong></p>
+                <% } %>
+
+                <div class="mt-4">
+                   
                 </div>
             </div>
         </div>
-    </section>
-    <div class="return-form-container">
-        <h2 class="mb-4">Return Form</h2>
-        <form id="returnForm">
-            <input type="hidden" name="orderId" value=""> 
-            <label for="reason">Reason for Return:</label>
-            <textarea name="reason" id="reason" rows="4" required></textarea>
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
     </div>
 
-    <!-- Modal -->
-    <div class="modal fade" id="returnModal" tabindex="-1" aria-labelledby="returnModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="returnModalLabel">Return Request Submitted</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    Your return request has been successfully submitted. We will process it shortly.
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</main>
+    <script>
+
+    function changeOrderStatus(orderId, newStatus) {
+        if (confirm(`Are you sure you want to change the order status to ${newStatus}?`)) {
+            fetch(`/orders/${orderId}/status`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ newStatus }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Order status updated successfully');
+                    location.reload();
+                } else {
+                    alert(data.message || 'Failed to update order status');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while updating the order status');
+            });
+        }
+    }
+    </script>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

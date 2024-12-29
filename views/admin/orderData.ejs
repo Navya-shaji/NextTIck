@@ -1,4 +1,9 @@
 <%- include("../../views/partials/admin/header") %>
+<style>
+    thead {
+        background-color: black;
+    }
+</style>
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
@@ -20,13 +25,29 @@
                             <% } %>
                             <% if (order.couponApplied) { %>
                                 <p><strong>Coupon Applied:</strong> Yes</p>
+                                <% if (order.couponDetails) { %> <!-- Optional, only show if coupon details are available -->
+                                    <p><strong>Coupon Code:</strong> <%= order.couponDetails.code %></p>
+                                    <p><strong>Coupon Discount:</strong> ₹<%= order.couponDetails.discount.toFixed(2) %></p>
+                                <% } %>
+                            <% } %>
+                            <% if (order.offerApplied) { %> <!-- Optional, only show if offer applied -->
+                                <p><strong>Offer Applied:</strong> Yes</p>
+                                <% if (order.offerDetails) { %> <!-- Optional, only show if offer details are available -->
+                                    <p><strong>Offer Details:</strong> <%= order.offerDetails.description %></p>
+                                    <p><strong>Offer Discount:</strong> ₹<%= order.offerDetails.discount.toFixed(2) %></p>
+                                <% } %>
                             <% } %>
                         </div>
                         <div class="col-md-6">
                             <h4>Customer Information</h4>
                             <p><strong>Name:</strong> <%= order.userId.name %></p>
                             <p><strong>Email:</strong> <%= order.userId.email %></p>
-
+                            <% if (order.paymentId) { %>
+                                <p><strong>Payment ID:</strong> <%= order.paymentId %></p>
+                            <% } %>
+                            <% if (order.paymentMethod) { %>
+                                <p><strong>Payment Method:</strong> <%= order.paymentMethod %></p>
+                            <% } %>
                         </div>
                     </div>
                     <div class="row mt-4">
@@ -54,7 +75,7 @@
                                 <tfoot>
                                     <tr>
                                         <td colspan="3" class="text-right"><strong>Total:</strong></td>
-                                        <td>$<%= order.totalPrice.toFixed(2) %></td>
+                                        <td>₹<%= order.totalPrice.toFixed(2) %></td>
                                     </tr>
                                     <% if (order.discount > 0) { %>
                                         <tr>
@@ -70,6 +91,18 @@
                             </table>
                         </div>
                     </div>
+
+                    <!-- Display User's Return Reason -->
+                    <% if (order.status === 'Return Request' || order.status === 'Returned') { %>
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <h4>Return Reason (User's Reason)</h4>
+                                <p><strong>Reason: </strong><%= order.returnReason || 'No reason provided' %></p>
+                            </div>
+                        </div>
+                    <% } %>
+
+                    <!-- Update Order Status Form -->
                     <div class="row mt-4">
                         <div class="col-12">
                             <h4>Update Order Status</h4>
@@ -85,7 +118,7 @@
                                         <option value="Returned" <%= order.status === 'Returned' ? 'selected' : '' %>>Returned</option>
                                     </select>
                                 </div>
-                                <button type="submit" class="btn btn-primary">Update Status</button>
+                                <button type="submit" class="btn btn-primary" style="background-color: black;">Update Status</button>
                             </form>
                         </div>
                     </div>
@@ -95,9 +128,8 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-
-    
 document.addEventListener('DOMContentLoaded', function() {
     const updateStatusForm = document.getElementById('updateStatusForm');
     updateStatusForm.addEventListener('submit', async function(e) {
@@ -113,14 +145,30 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             const data = await response.json();
             if (data.success) {
-                alert('Order status updated successfully');
-                location.reload(); // Reload the page to reflect the changes
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Status Updated',
+                    text: 'Order status updated successfully!',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    location.reload(); // Reload the page after the user acknowledges
+                });
             } else {
-                alert('Failed to update order status: ' + data.message);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Update Failed',
+                    text: 'Failed to update order status: ' + data.message,
+                    confirmButtonText: 'Try Again'
+                });
             }
         } catch (error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'An error occurred while updating the order status.',
+                confirmButtonText: 'Close'
+            });
             console.error('Error updating order status:', error);
-            alert('Failed to update order status');
         }
     });
 });

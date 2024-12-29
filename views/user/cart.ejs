@@ -1,20 +1,23 @@
 <%- include("../../views/partials/user/header.ejs") %>
-
-
 <style>
 .detail-qty {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    width: auto; 
-    height: 40px; }
+    display: table;
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.detail-qty td {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
 
 .detail-qty button {
     background-color: #f5f5f5;
     border: 1px solid #ddd;
     border-radius: 4px;
-    width: 35px; 
+    width: 35px;
     height: 35px;
     font-size: 18px;
     font-weight: bold;
@@ -28,7 +31,7 @@
 }
 
 .qty-val {
-    width: 50px; 
+    width: 50px;
     text-align: center;
     font-size: 16px;
     border: none;
@@ -37,24 +40,22 @@
     pointer-events: none;
 }
 
-
 .table.shopping-summery {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 30px;
-    top:30px; 
 }
 
 .table.shopping-summery th,
 .table.shopping-summery td {
-    padding: 15px; 
+    padding: 15px;
     border: 1px solid #ddd;
     vertical-align: middle;
     font-size: 16px;
 }
 
 .table.shopping-summery .image.product-thumbnail img {
-    width: 80px; 
+    width: 80px;
     height: 80px;
     object-fit: cover;
     border-radius: 5px;
@@ -62,7 +63,7 @@
 
 .table.shopping-summery .product-des {
     text-align: left;
-    padding-left: 10px; 
+    padding-left: 10px;
 }
 
 .cart-action a.btn {
@@ -78,11 +79,10 @@
     background-color: #36395E;
 }
 
-
 .item-status {
     padding: 8px 15px;
     border-radius: 4px;
-    font-size: 14px; 
+    font-size: 14px;
     font-weight: 500;
     text-align: center;
 }
@@ -92,13 +92,12 @@
     color: #1976d2;
 }
 
-
 .cart-totals {
     background: #fafafa;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    margin-top: 30px; 
+    margin-top: 30px;
 }
 
 .cart_total_amount span {
@@ -109,7 +108,7 @@
 .btn-success {
     background-color: #28a745;
     color: white;
-    padding: 12px 20px; 
+    padding: 12px 20px;
     border-radius: 5px;
     font-size: 16px;
     font-weight: bold;
@@ -127,13 +126,13 @@
 }
 
 .divider.center_icon i {
-    font-size: 24px; 
+    font-size: 24px;
 }
 
 @media (max-width: 768px) {
     .table.shopping-summery th,
     .table.shopping-summery td {
-        padding: 10px; 
+        padding: 10px;
         font-size: 14px;
     }
 
@@ -142,16 +141,97 @@
     }
 
     .qty-val {
-        width: 40px; 
+        width: 40px;
     }
 
     .cart-totals {
         padding: 15px;
     }
 }
+/* Cart Totals Section */
+.cart-totals {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-top: 30px;
+    font-family: Arial, sans-serif;
+    border: 1px solid #ddd;
+}
+
+.cart-totals .heading_s1 h4 {
+    font-size: 24px;
+    color: #424874;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.cart-totals table {
+    width: 100%;
+    margin: 0;
+    border-collapse: collapse;
+    font-size: 16px;
+}
+
+.cart-totals table tbody tr {
+    border-bottom: 1px solid #ddd;
+}
+
+.cart-totals .cart_total_label {
+    font-size: 18px;
+    font-weight: 500;
+    color: #333;
+    padding-right: 15px;
+}
+
+.cart-totals .cart_total_amount {
+    text-align: right;
+    font-size: 22px;
+    font-weight: 700;
+    color: #28a745;
+    padding-left: 15px;
+}
+
+.cart-totals .cart_total_amount .font-xl {
+    font-size: 26px;
+    color: #424874;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .cart-totals {
+        padding: 20px;
+    }
+
+    .cart-totals .heading_s1 h4 {
+        font-size: 20px;
+    }
+
+    .cart-totals .cart_total_label {
+        font-size: 16px;
+    }
+
+    .cart-totals .cart_total_amount {
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 576px) {
+    .cart-totals {
+        padding: 15px;
+    }
+
+    .cart-totals .cart_total_label {
+        font-size: 14px;
+    }
+
+    .cart-totals .cart_total_amount {
+        font-size: 18px;
+    }
+}
 
 </style>
-
 
 <main class="main">
     <div class="page-header breadcrumb-wrap">
@@ -261,8 +341,7 @@
                                 <div class="heading_s1 mb-3">
                                     <h4>Cart Totals</h4>
                                 </div>
-                                <div class="table-responsive">
-                                    <table class="table">
+                                    <table >
                                         <tbody>
                                             <tr>
                                                 <td class="cart_total_label">Total</td>

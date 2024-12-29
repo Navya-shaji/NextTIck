@@ -1,4 +1,183 @@
+
+<style>
+    /* General Reset */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Arial', sans-serif;
+  line-height: 1.6;
+  color: #333;
+  background-color: #f8f9fa;
+}
+
+/* Footer Styling */
+.ftco-footer {
+  background: #343a40;
+  color: #fff;
+  padding: 4rem 0;
+  font-size: 14px;
+}
+
+.ftco-footer .ftco-heading-2 {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  color: #f96d00;
+}
+
+.ftco-footer p {
+  margin-bottom: 1.5rem;
+  font-size: 14px;
+  color: #ddd;
+}
+
+.ftco-footer a {
+  color: #f96d00;
+  text-decoration: none;
+  transition: all 0.3s ease-in-out;
+}
+
+.ftco-footer a:hover {
+  color: #fff;
+}
+
+.ftco-footer-widget ul {
+  list-style: none;
+  padding: 0;
+}
+
+.ftco-footer-widget ul li {
+  margin-bottom: 10px;
+}
+
+.ftco-footer-widget ul li a {
+  color: #ddd;
+  text-decoration: none;
+}
+
+.ftco-footer-widget ul li a:hover {
+  color: #f96d00;
+}
+
+/* Social Icons */
+.ftco-footer-social {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 15px;
+}
+
+.ftco-footer-social li a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  background: #f96d00;
+  color: #fff;
+  border-radius: 50%;
+  transition: all 0.3s ease-in-out;
+}
+
+.ftco-footer-social li a:hover {
+  background: #fff;
+  color: #f96d00;
+}
+
+/* Address and Contact */
+.block-23 ul {
+  list-style: none;
+  padding: 0;
+}
+
+.block-23 ul li {
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.block-23 ul li span {
+  margin-right: 10px;
+  color: #f96d00;
+}
+
+.block-23 ul li a {
+  color: #ddd;
+  text-decoration: none;
+}
+
+.block-23 ul li a:hover {
+  color: #fff;
+}
+
+/* Loader */
+#ftco-loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.9);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#ftco-loader .circular {
+  animation: rotate 2s linear infinite;
+}
+
+#ftco-loader .path {
+  stroke-dasharray: 1, 200;
+  stroke-dashoffset: 0;
+  animation: dash 1.5s ease-in-out infinite;
+  stroke: #f96d00;
+  stroke-linecap: round;
+}
+
+/* Animations */
+@keyframes rotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes dash {
+  0% {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 89, 200;
+    stroke-dashoffset: -35px;
+  }
+  100% {
+    stroke-dasharray: 89, 200;
+    stroke-dashoffset: -124px;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .ftco-footer {
+    text-align: center;
+  }
+
+  .ftco-footer-widget {
+    margin-bottom: 2rem;
+  }
+
+  .ftco-footer-social {
+    justify-content: center;
+  }
+}
+
+</style>
 <footer class="ftco-footer ftco-section">
+
+
   <div class="container">
       <div class="row mb-5">
           <div class="col-md">

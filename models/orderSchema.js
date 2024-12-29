@@ -72,6 +72,10 @@ const orderSchema =new Schema({
     paymentStatus: {
         type: String,
         enum: ['Pending', 'Completed', 'Failed']
+    },
+    returnReason: { 
+        type: String,
+        required: false
     }
 })
 const Order =mongoose.model("Order",orderSchema);

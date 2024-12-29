@@ -1,4 +1,51 @@
 <%- include("../../views/partials/admin/header") %>
+<style>
+    /* Status select styles */
+.status-select {
+    font-weight: 500;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.status-pending {
+    background-color: #fef3c7;
+    border-color: #fcd34d;
+}
+
+.status-processing {
+    background-color: #dbeafe;
+    border-color: #93c5fd;
+}
+
+.status-shipped {
+    background-color: #e0e7ff;
+    border-color: #818cf8;
+}
+
+.status-delivered {
+    background-color: #d1fae5;
+    border-color: #34d399;
+}
+
+.status-cancelled {
+    background-color: #fee2e2;
+    border-color: #fca5a5;
+}
+
+.status-return-request,
+.status-returned {
+    background-color: #f3e8ff;
+    border-color: #c084fc;
+}  
+thead{
+    background-color: black;
+} 
+.btn.btn-info.btn-sm {
+        background-color: gray; 
+        color: white; 
+        border: none; 
+    }
+</style>
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
@@ -51,50 +98,70 @@
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.status-select').forEach(select => {
+        const currentStatus = select.value;
+        
+        // Disable select if order is delivered or canceled
+        if (currentStatus === 'Delivered' || currentStatus === 'Cancelled') {
+            select.disabled = true;
+        }
+
         select.addEventListener('change', async function() {
             const orderId = this.dataset.orderId;
-            const status = this.value;
+            const newStatus = this.value;
             
+            // Additional check to prevent status change for delivered or canceled orders
+            if (currentStatus === 'Delivered' || currentStatus === 'Cancelled') {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Cannot change status of delivered or canceled orders',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+                this.value = currentStatus;
+                return;
+            }
+
             try {
                 const response = await fetch('/admin/orders/update-status', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ orderId, status })
+                    body: JSON.stringify({ orderId, status: newStatus })
                 });
                 
                 const data = await response.json();
                 
                 if (data.success) {
-                    // alert('Status updated successfully');
-                    // SweetAlert Example for Status Update
-Swal.fire({
-    title: 'Success!',
-    text: 'Status updated successfully',
-    icon: 'success', // Can be 'success', 'error', 'warning', 'info', or 'question'
-    confirmButtonText: 'OK'
-});
-
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Status updated successfully',
+                        icon: 'success', 
+                        confirmButtonText: 'OK'
+                    });
                 } else {
-                    alert('Failed to update status: ' + data.message);
-                    // Reset to previous value
-                    this.value = this.getAttribute('data-original-value');
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Failed to update status: ' + data.message,
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                    this.value = currentStatus;
                 }
             } catch (error) {
                 console.error('Error updating status:', error);
-                alert('Failed to update status');
-                // Reset to previous value
-                this.value = this.getAttribute('data-original-value');
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Failed to update status',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+                this.value = currentStatus;
             }
         });
-        
-        // Store original value
-        select.setAttribute('data-original-value', select.value);
     });
 });
 </script>

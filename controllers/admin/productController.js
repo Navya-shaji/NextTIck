@@ -90,7 +90,7 @@ const addProducts = async (req, res) => {
 
             const savedProduct = await newProduct.save();
 
-            return res.redirect("/addProducts");
+            return res.redirect("/admin/addProducts");
         } else {
             return res.status(400).json("Product already exists. Please try with another name.");
         }
@@ -142,6 +142,7 @@ const getAllProducts = async(req,res)=>{
     res.redirect("/pageerror")
   }
 }
+
 const addProductOffer = async (req, res) => {
     try {
         const { productId, percentage } = req.body;
@@ -187,21 +188,44 @@ const addProductOffer = async (req, res) => {
         });
     }
 };
-
-
-const removeProductOffer=async(req,res)=>{
-  try {
-    const {productId}=req.body
-    const findProduct=await Product.findOne({_id:productId})
-    const percentage=findProduct.productOffer;
-    findProduct.salesPrice=findProduct.salesPrice+Math.floor(findProduct.regularPrice*(percentage/100))
-    findProduct.productOffer=0,
-    await findProduct.save(),
-    res.json({status:true})
-  } catch (error) {
-    res.redirect("/pageerror")
-  }
-}
+const removeProductOffer = async (req, res) => {
+    try {
+      const { productId } = req.body;
+  
+      // Find the product by ID
+      const product = await Product.findById(productId);
+      if (!product) {
+        return res.status(404).json({
+          status: false,
+          message: "Product not found."
+        });
+      }
+  
+      // Restore the sales price by removing the discount
+      const discount = Math.floor(product.regularPrice * (product.productOffer / 100));
+      product.salesPrice = product.regularPrice; // Reset the sales price to the regular price
+  
+      // Clear the offer percentage
+      product.productOffer = 0;
+  
+      // Save the updated product
+      await product.save();
+  
+      res.json({
+        status: true,
+        message: "Offer removed successfully."
+      });
+  
+    } catch (error) {
+      console.error("Error removing product offer:", error);
+      res.status(500).json({
+        status: false,
+        message: "Internal server error.",
+        error: process.env.NODE_ENV === "development" ? error.message : undefined
+      });
+    }
+  };
+  
 
 
 const blockProduct = async(req,res)=>{
@@ -364,7 +388,7 @@ const updateproduct = async(req,res)=>{
        await Product.findByIdAndUpdate(id,updatefilds,{new:true});
        return res.redirect("/admin/product");
     } catch (error) {
-        console.log("edit product error",erro);
+        console.log("edit product error",error);
         return res.redirect("/admin/error");
     }
 }

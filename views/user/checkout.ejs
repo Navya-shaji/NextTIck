@@ -577,6 +577,8 @@ console.log(discount)
 }
     
 function verifyRazorpayPayment(response, orderDetails) {
+    const discountString = document.getElementById("discountAmount").textContent.replace(/₹/g, "").trim();
+    const discount = parseFloat(discountString,10);
     fetch('/verify-payment', {
         method: 'POST',
         headers: {

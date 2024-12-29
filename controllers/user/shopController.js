@@ -12,9 +12,8 @@ const loadshoppingPage = async (req, res) => {
     const userData = await User.findById(user);
     const categories = await Category.find({ isListed: true });
     const categoryIds = categories.map((category) => category._id);
-
     const page = parseInt(req.query.page) || 1;
-    const limit = 9;
+    const limit = 4; // Changed to 4 products per page
     const skip = (page - 1) * limit;
 
     let query = {
@@ -53,8 +52,6 @@ const loadshoppingPage = async (req, res) => {
       }
     }
 
-
-
     if (req.query.category) {
       query.category = req.query.category;
     }
@@ -73,14 +70,12 @@ const loadshoppingPage = async (req, res) => {
       query.quantity = { $gt: 0 };
     }
 
-
     if (req.query.query) {
       query.$or = [
         { productName: { $regex: req.query.query, $options: "i" } },
         { description: { $regex: req.query.query, $options: "i" } }
       ];
     }
-
 
     const products = await Product.find(query)
       .collation({ locale: "en", strength: 2 })
@@ -110,7 +105,6 @@ const loadshoppingPage = async (req, res) => {
     res.status(500).render("error", { message: "An error occurred while loading the shopping page." });
   }
 };
-
 
 //for serching the products ...........................................
 

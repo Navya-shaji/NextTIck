@@ -154,45 +154,24 @@
                                  <td><%= new Date(order.createdOn).toLocaleDateString() %></td>
                                  <td><%= order.status %></td>
                                  <td>₹<%= order.finalAmount ? order.finalAmount.toFixed(2) : '0.00' %></td>
-                                 <td>
-                                  <form action="/orders/view/<%= order._id %>" method="GET" class="d-inline">
-                                   <button type="submit" class="btn-small btn-info d-block w-100">
-                                     View
-                                   </button>
-                                 </form>
-                                 </td>
-                                 <td>
-                                 
- 
-                                  <!-- Example for cancel button  -->
-                              
-                                  
-                                  <td>
-                                    <% if(order.status === 'Pending') { %>
-                                      <button 
-                                        type="button" 
-                                        class="btn btn-danger cancel-order-btn" 
-                                        data-order-id="<%= order._id %>"
-                                        >
-                                        Cancel Order
-                                      </button>
-                                    <% } %>
-                                  </td>
-                                <td>
-                                  
-
-<!-- Example for return button -->
-<% if(order.status === 'Delivered') { %>
-  <button 
-    type="button" 
-    class="btn btn-warning return-order-btn" 
-    data-order-id="<%= order._id %>">
-    Return Order
-  </button>
-<% } %>
-
-              
-                       </tr>
+                                 <td class="actions-column">
+                                  <form action="/orders/view/<%= order._id %>" method="GET" class="d-inline mb-2">
+                                    <button type="submit" class="btn btn-info">
+                                      View
+                                    </button>
+                                  </form>
+                                  <% if (order.status === 'Pending') { %>
+                                    <button type="button" class="btn btn-danger cancel-order-btn" data-order-id="<%= order._id %>">
+                                      Cancel Order
+                                    </button>
+                                  <% } %>
+                                  <% if (order.status === 'Delivered') { %>
+                                    <button type="button" class="btn btn-warning return-order-btn" data-order-id="<%= order._id %>">
+                                      Return Order
+                                    </button>
+                                  <% } %>
+                                </td>
+                                
                              <% }); %>
                            <% } else { %>
                              <tr>
@@ -204,12 +183,16 @@
                      </div>
                    </div>
                  </div>
+                 
                </div>
+
+               
 
                <div class="tab-pane fade" id="wallet-history" role="tabpanel" aria-labelledby="wallet-history-tab">
                 <div class="card">
                     <div class="card-header">
                         <h5 class="mb-0">Wallet History</h5>
+                        <h5 class="mb-0">balance:<%= wallet.totalBalance %></h5>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -316,62 +299,7 @@
     });
 });
 
-// function cancelOrder(orderId) {
-//     Swal.fire({
-//         title: "Are you sure?",
-//         text: "Do you want to cancel this order?",
-//         icon: "warning",
-//         showCancelButton: true,
-//         confirmButtonColor: "#d33",
-//         cancelButtonColor: "#3085d6",
-//         confirmButtonText: "Yes, cancel it!"
-//     }).then((result) => {
-//         if (result.isConfirmed) {
-//             fetch('/orders/update-status', {
-//                 method: 'POST',
-//                 headers: {
-//                     'Content-Type': 'application/json'
-//                 },
-//                 body: JSON.stringify({
-//                     orderId: orderId,
-//                     status: "Cancelled"
-//                 })
-//             })
-//             .then(response => response.json())
-//             .then(data => {
-//                 if (data.success) {
-//                     Swal.fire({
-//                         title: "Cancelled!",
-//                         text: data.message || "Order has been cancelled successfully.",
-//                         icon: "success",
-//                         timer: 1500,
-//                         showConfirmButton: false
-//                     }).then(() => {
-//                         location.reload(); 
-//                     });
-//                 } else {
-                   
-//                     Swal.fire({
-//                         title: "Error",
-//                         text: data.message || "Failed to cancel the order.",
-//                         icon: "error"
-//                     });
-//                 }
-//             })
-//             .catch(error => {
-//                 console.error("Error:", error);
-//                 Swal.fire({
-//                     title: "Error",
-//                     text: "An error occurred while cancelling the order.",
-//                     icon: "error"
-//                 });
-//             });
-//         }
-//     });
-// }
 
-
-//.......................................................................................................
 function cancelOrder(orderId, orderAmount) {
     Swal.fire({
         title: "Are you sure?",
@@ -396,8 +324,7 @@ function cancelOrder(orderId, orderAmount) {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Call function to refund money to wallet
-                    // refundToWallet(orderAmount);
+                   
                     
                     Swal.fire({
                         title: "Cancelled!",
@@ -428,43 +355,6 @@ function cancelOrder(orderId, orderAmount) {
     });
 }
 
-// function refundToWallet(amount) {
-//     fetch('/wallet/refund', {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json'
-//         },
-//         body: JSON.stringify({
-//             amount: amount
-//         })
-//     })
-//     .then(response => response.json())
-//     .then(data => {
-//         if (data.success) {
-//             Swal.fire({
-//                 title: "Refunded!",
-//                 text: `₹${amount} has been added to your wallet.`,
-//                 icon: "success",
-//                 timer: 1500,
-//                 showConfirmButton: false
-//             });
-//         } else {
-//             Swal.fire({
-//                 title: "Error",
-//                 text: data.message || "Failed to refund money to wallet.",
-//                 icon: "error"
-//             });
-//         }
-//     })
-//     .catch(error => {
-//         console.error("Error:", error);
-//         Swal.fire({
-//             title: "Error",
-//             text: "An error occurred while refunding money to the wallet.",
-//             icon: "error"
-//         });
-//     });
-// }
 // //......................................................................................
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -571,7 +461,7 @@ function redirectToReturnReason(orderId) {
       rzp.open();
     } catch (error) {
       console.error('Error during payment:', error);
-      alert('Failed to initiate payment. Please try again.');
     }
   });
+
   </script>
