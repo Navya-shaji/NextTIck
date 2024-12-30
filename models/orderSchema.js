@@ -55,7 +55,7 @@ const orderSchema =new Schema({
         enum:["Pending","Processing","Shipped","Delivered","Cancelled","Return Request","Returned"]
 
     },
-    returnedByUser: { type: Boolean, default: false },  // Track cancellation/return by user
+    returnedByUser: { type: Boolean, default: false },  
 
     createdOn:{
         type:Date,
@@ -64,7 +64,7 @@ const orderSchema =new Schema({
     },
     couponApplied:{
        type:Boolean,
-       default:false,
+    //    default:false,
     },
     paymentId: {
         type: String

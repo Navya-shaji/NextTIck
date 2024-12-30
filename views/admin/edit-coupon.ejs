@@ -151,172 +151,6 @@
 <script>
 
 
-//  function setDefaultStartDate() {
-  
-//    const today = new Date();
-//    const year = today.getFullYear();
-//    let month = (today.getMonth() + 1).toString().padStart(2, "0");
-//    let day = today.getDate().toString().padStart(2, "0");
-//    document.getElementById("startingDate").value = `${year}-${month}-${day}`;
-//  }
-
-
-//  function setDefaultendDate() {
-//    const today = new Date();
-//    const tomorrow = new Date(today);
-//    tomorrow.setDate(today.getDate() + 1);
-
-
-//    const year = tomorrow.getFullYear();
-//    let month = (tomorrow.getMonth() + 1).toString().padStart(2, "0");
-//    let day = tomorrow.getDate().toString().padStart(2, "0");
-//    document.getElementById("expiringDate").value = `${year}-${month}-${day}`;
-//  }
-
-
-//  document.getElementById("coupon-form").addEventListener("submit", function (event) {
-//     event.preventDefault();
-
-//     // Validate form fields
-//     if (!validateForm()) {
-//       return;
-//     }
-
-//     // Send AJAX request
-//     updateCoupon();
-//   });
-
-
-//  function validateForm() {
-//    document.querySelectorAll(".error-message").forEach((element) => (element.innerHTML = ""));
-
-
-//    const sDate = document.getElementsByName("startDate")[0].value;
-//    const eDate = document.getElementsByName("endDate")[0].value;
-//    const sDateObj = new Date(sDate);
-//    const eDateObj = new Date(eDate);
-//    const todayDateObj = new Date();
-//    todayDateObj.setHours(0, 0, 0, 0);
-
-
-//    if (sDateObj > eDateObj) {
-//      document.getElementById("error-end-date").innerHTML ="End date should be after the start date";
-//      return false;
-//    }
-
-
-//    if (sDateObj <= todayDateObj) {
-//      document.getElementById("error-start-date").innerHTML ="Starting date should be greater than or equal to today's date";
-//      return false;
-//    }
-
-
-//    let name = document.getElementsByName("couponName")[0].value;
-//    const nameRegex = /^[A-Za-z0-9]{1,50}$/;
-
-
-//    if (!nameRegex.test(name)) {
-//      document.getElementById("error-coupon-name").innerHTML ="Coupon Name should only contain alphanumeric characters and be between 1 to 50 characters.";
-//      return false;
-//    }
-
-
-//    const offerPriceInput = document.getElementsByName("offerPrice")[0];
-//    const minimumPriceInput = document.getElementsByName("minimumPrice")[0];
-
-
-//    const offerPrice =offerPriceInput.value.trim() !== ""? parseInt(offerPriceInput.value): NaN;
-//    const minimumPrice =minimumPriceInput.value.trim() !== ""? parseInt(minimumPriceInput.value): NaN;
-
-
-//    if (isNaN(offerPrice)) {
-//      document.getElementById("error-offer-price").innerHTML =
-//        "Please enter a valid numeric value for Offer Price";
-//      return false;
-//    }
-
-
-//    if (isNaN(minimumPrice)) {
-//      document.getElementById("error-minimum-price").innerHTML ="Please enter a valid numeric value for Minimum Price";
-//      return false;
-//    }
-
-
-//    if (offerPrice < 0) {
-//      document.getElementById("error-offer-price").innerHTML ="Offer Price must be a positive number";
-//      return false;
-//    }
-
-
-//    if (minimumPrice < 0) {
-//      document.getElementById("error-minimum-price").innerHTML ="Minimum Price must be a positive number";
-//      return false;
-//    }
-
-
-//    if (offerPrice >= minimumPrice) {
-//      document.getElementById("error-offer-price").innerHTML ="Offer Price must be less than Minimum Price";
-//      return false;
-//    }
-
-
-//    return true;
-//  }
-
-//  function updateCoupon() {
-
-//     const couponId = document.getElementById("coupon-id").value;
-//     const couponName = document.getElementById("coupon-name").value;
-//     const startDate = document.getElementById("startingDate").value;
-//     const endDate = document.getElementById("expiringDate").value;
-//     const offerPrice = document.getElementById("offer-price").value;
-//     const minimumPrice = document.getElementById("minimum-price").value;
-
-//     if (!couponId || !couponName || !startDate || !endDate || !offerPrice || !minimumPrice) {
-//         Swal.fire({
-//             icon: "error",
-//             title: "Error",
-//             text: "All fields are required!",
-//             confirmButtonText: "OK",
-//         });
-//         return;
-//     }
-
-//     $.ajax({
-//         url: "/admin/updatecoupon",
-//         method: "POST",
-//         contentType: "application/json", // Ensure correct headers
-//         data: JSON.stringify({
-//             couponId,
-//             couponName,
-//             startDate,
-//             endDate,
-//             offerPrice,
-//             minimumPrice,
-//         }),
-//         success: function (response) {
-//             Swal.fire({
-//                 icon: "success",
-//                 title: "Success",
-//                 text: response.message || "Coupon updated successfully!",
-//                 confirmButtonText: "OK",
-//             }).then(() => {
-//                 window.location.href = "/admin/coupon";
-//             });
-//         },
-//         error: function (xhr) {
-//             const errorMessage = xhr.responseJSON?.message || "Failed to update the coupon. Please try again!";
-//             Swal.fire({
-//                 icon: "error",
-//                 title: "Error",
-//                 text: errorMessage,
-//                 confirmButtonText: "OK",
-//             });
-//             console.error("Error updating coupon:", xhr);
-//         },
-//     });
-// }
-
 // Add error message elements
 const form = document.getElementById("coupon-form");
 const formInputs = {
@@ -392,59 +226,55 @@ function validateForm() {
   return isValid;
 }
 function updateCoupon(event) {
-    event.preventDefault();
+            event.preventDefault();
 
-    // Get form data
-    const couponId = document.getElementById("coupon-id").value;
-    const couponName = document.getElementById("coupon-name").value;
-    const startDate = document.getElementById("start-date").value;
-    const endDate = document.getElementById("end-date").value;
-    const offerPrice = document.getElementById("offer-price").value;
-    const minimumPrice = document.getElementById("minimum-price").value;
+            if (!validateForm()) {
+                return;
+            }
 
-    // Simple validation
-    if (!couponName || !startDate || !endDate || !offerPrice || !minimumPrice) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Please fill all fields',
-        });
-        return;
-    }
+            const formData = new FormData(document.getElementById("coupon-form"));
 
-    // Make the AJAX request
-    $.ajax({
-        url: "/admin/updatecoupon",
-        type: "POST",
-        data: {
-            couponId: couponId,
-            couponName: couponName,
-            startDate: startDate,
-            endDate: endDate,
-            offerPrice: offerPrice,
-            minimumPrice: minimumPrice
-        },
-        success: function(response) {
             Swal.fire({
-                icon: 'success',
-                title: 'Success',
-                text: 'Coupon updated successfully!'
-            }).then(() => {
-                window.location.href = "/admin/coupon";
+                title: 'Updating coupon...',
+                didOpen: () => {
+                    Swal.showLoading();
+                },
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                allowEnterKey: false
             });
-        },
-        error: function() {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Failed to update coupon'
+
+            fetch('/admin/updateCoupon', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: 'Coupon updated successfully',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        window.location.href = "/admin/coupon";
+                    });
+                } else {
+                    throw new Error(data.message || 'Failed to update coupon');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: error.message || 'An unexpected error occurred',
+                    confirmButtonText: 'OK'
+                });
             });
         }
-    });
-}
 
-// Add event listener to form
-document.getElementById("coupon-form").addEventListener("submit", updateCoupon);
+        document.getElementById("coupon-form").addEventListener("submit", updateCoupon);
 </script>
 <%- include("../../views/partials/admin/footer") %>
 

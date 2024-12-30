@@ -9,8 +9,8 @@ const loadcoupon = async (req, res) => {
         const coupons = await Coupon.find(); 
         res.render('coupon', { coupons }); 
     } catch (error) {
-        console.error(error);
-        res.status(500).send('Server error');
+        return res.redirect("/pageNotFound")
+
     }
 };
 

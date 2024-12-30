@@ -58,6 +58,11 @@ router.get("/unblockProduct",adminAuth,productController.unblockProduct);
 router.get("/editProduct",adminAuth,productController.getEditProduct);
 router.post("/editProduct/:id",adminAuth,uploads.array("image",4),productController.editProduct);
 router.post("/deleteImage",adminAuth,productController.deleteSingleImage);
+router.post("/addProductImage", adminAuth, uploads.single("images"), productController.addProductImage);
+router.post('/product/edit/:id', 
+    uploads.array('productImage', 4),
+    productController.updateProduct
+);
 
 
 //  orders.................

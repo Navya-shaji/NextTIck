@@ -4,41 +4,105 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Return Order</title>
-    <!-- Include SweetAlert2 library -->
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
         .form-container {
             max-width: 600px;
             margin: 2rem auto;
-            padding: 1rem;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
         .form-group {
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
         }
+
         label {
             display: block;
             margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #4a5568;
         }
+
+        #displayOrderId {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
         textarea {
             width: 100%;
-            padding: 0.5rem;
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.2s ease;
+            resize: vertical;
+            min-height: 120px;
+            font-family: inherit;
         }
+
+        textarea:focus {
+            outline: none;
+            border-color: #4299e1;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+        }
+
         button {
-            padding: 0.5rem 1rem;
-            background-color: #007bff;
+            width: 100%;
+            padding: 0.75rem 1.5rem;
+            background-color: #4299e1;
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 500;
             cursor: pointer;
+            transition: background-color 0.2s ease;
         }
+
         button:hover {
-            background-color: #0056b3;
+            background-color: #3182ce;
         }
+
+        button:active {
+            background-color: #2b6cb0;
+        }
+
         .error-text {
-            color: red;
+            color: #e53e3e;
             display: none;
             margin-top: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        @media (max-width: 640px) {
+            .form-container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
         }
     </style>
 </head>
@@ -46,7 +110,6 @@
     <div class="form-container">
         <h1>Return Order</h1>
         <form id="returnForm">
-            <!-- Use data attribute to store order ID -->
             <div class="form-group">
                 <p>Order ID: <span id="displayOrderId"></span></p>
             </div>
@@ -55,9 +118,8 @@
                 <textarea 
                     name="reason" 
                     id="reason" 
-                    rows="4" 
                     required 
-                    placeholder="Please provide detailed reason for return"></textarea>
+                    placeholder="Please provide a detailed reason for your return request..."></textarea>
                 <div id="reasonError" class="error-text">Please provide a reason for return</div>
             </div>
             <button type="submit">Submit Return Request</button>

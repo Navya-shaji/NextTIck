@@ -370,3 +370,21 @@ background-color: #ddd;
 cursor: not-allowed;
 opacity: 0.6;
 }
+.clear-category {
+  margin-top: 10px;
+}
+
+.clear-category-link {
+  color: #007bff;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.clear-category-link:hover {
+  text-decoration: underline;
+}
+
+.clear-arrow {
+  font-size: 16px;
+  margin-left: 5px;
+}

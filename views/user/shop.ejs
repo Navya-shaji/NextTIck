@@ -34,9 +34,17 @@
                 </li>
               <% }); %>
             </ul>
+            <!-- Clear category filter link/button -->
+            <% if (query.category) { %>
+              <div class="clear-category">
+                <a href="/shop" class="clear-category-link">
+                  Clear <span class="clear-arrow">⬅️</span> <!-- You can replace the arrow with any icon you like -->
+                </a>
+              </div>
+            <% } %>
           </div>
         </div>
-
+        
         <div class="filter-section">
           <!-- <div class="filter-title" style="color: black;">Availability</div> -->
           <label>
@@ -314,6 +322,11 @@
             arrow.style.transform = 'rotate(0deg)';
           }
         }
+        function toggleDropdown(dropdownId) {
+  var dropdown = document.getElementById(dropdownId);
+  dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+}
+
         </script>
       </main>
     </div>

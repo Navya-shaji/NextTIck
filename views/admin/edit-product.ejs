@@ -23,6 +23,8 @@
 
    </style>
    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.css">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+
 </head>
    <section class="content-main">
        <div class="row">
@@ -138,14 +140,22 @@
                                                        <img class="rounded" style="width: 50px; height: 60px;"
                                                            src="/uploads/re-image/<%=product.productImage[i]%>"
                                                            alt="">
-                                                       <i onclick="deleteSingleImage('<%=product.productImage[i]%>','<%=product._id%>')" style="position: absolute; margin-left: .5rem; cursor: pointer;" class="fa-solid fa-xmark"></i>
-                                                   </td>
+                                                           <div class="icon-container" style="position: relative;">
+
+                                                           <i onclick="deleteSingleImage('<%=product.productImage[i]%>','<%=product._id %>')"
+                                                            style="position: absolute; margin-left: .5rem; cursor: pointer;" 
+                                                           class="fa-thin fa-x">
+                                                        </i>      
+                                                    </div>
+                                                </td>
                                                </div>
                                               
                                            </div>
                                        </div>
                                        <%}%>
-                              
+
+
+                                       
                                   
                                <div class="card-body">
                                    <div class="card-body align-items-center" style="margin-bottom: 20px;">
@@ -398,19 +408,19 @@
                }
            };
 
-
-           function deleteSingleImage(imageId,productId){
+           function deleteSingleImage(imageId, productId) {
             $.ajax({
-                url:"/admin/deleteImage",
-                method:'post',
-                data:{imageNameToserver:imageId,productIdToServer:productId},
-                success:((response)=>{
-                    if(response.status==true){
+                url: "/admin/deleteImage",
+                method: "post",
+                data: { imageNameToServer: imageId, productIdToServer: productId },
+                success: ((response) => {
+                    if (response.status === true) {
                         window.location.reload()
                     }
                 })
             })
-           }
+        }
+          
            
        </script>
     

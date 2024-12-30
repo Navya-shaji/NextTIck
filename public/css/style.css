@@ -10782,7 +10782,7 @@ body {
 .dropdown-content {
   display: none;
   position: absolute;
-  background-color: #343a40;
+  background-color: white;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   min-width: 150px;
   z-index: 1;

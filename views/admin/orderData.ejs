@@ -3,6 +3,11 @@
     thead {
         background-color: black;
     }
+    .product-img {
+    max-width: 50px;   /* Restricts the image width to 50px */
+    max-height: 50px;  /* Restricts the image height to 50px */
+    object-fit: cover; /* Ensures the image maintains its aspect ratio and doesn't get distorted */
+}
 </style>
 <div class="container-fluid">
     <div class="row">
@@ -26,7 +31,7 @@
                             <% if (order.couponApplied) { %>
                                 <p><strong>Coupon Applied:</strong> Yes</p>
                                 <% if (order.couponDetails) { %> <!-- Optional, only show if coupon details are available -->
-                                    <p><strong>Coupon Code:</strong> <%= order.couponDetails.code %></p>
+                                    <p><strong>Coupon Code:</strong> <%= coupons.couponName %></p>
                                     <p><strong>Coupon Discount:</strong> ₹<%= order.couponDetails.discount.toFixed(2) %></p>
                                 <% } %>
                             <% } %>
@@ -56,6 +61,8 @@
                             <table class="table table-bordered">
                                 <thead>
                                     <tr>
+                                        <th>image</th>
+
                                         <th>Product</th>
                                         <th>Quantity</th>
                                         <th>Price</th>
@@ -65,6 +72,9 @@
                                 <tbody>
                                     <% order.orderItems.forEach(item => { %>
                                         <tr>
+                                            <td>
+                                                <img src="/uploads/re-image/<%=item.product.productImage[0] %>" alt="Product" class="product-img me-3">
+                                            </td>
                                             <td><%= item.product.name %></td>
                                             <td><%= item.quantity %></td>
                                             <td>₹<%= item.price.toFixed(2) %></td>
@@ -77,12 +87,10 @@
                                         <td colspan="3" class="text-right"><strong>Total:</strong></td>
                                         <td>₹<%= order.totalPrice.toFixed(2) %></td>
                                     </tr>
-                                    <% if (order.discount > 0) { %>
-                                        <tr>
-                                            <td colspan="3" class="text-right"><strong>Discount:</strong></td>
-                                            <td>₹<%= order.discount.toFixed(2) %></td>
-                                        </tr>
-                                    <% } %>
+                                    <tr>
+                                        <td colspan="3" class="text-end"><strong>Discount:</strong></td>
+                                        <td>₹<%= (order.totalPrice - order.finalAmount).toFixed(2) %></td>
+                                    </tr>
                                     <tr>
                                         <td colspan="3" class="text-right"><strong>Final Amount:</strong></td>
                                         <td>₹<%= order.finalAmount.toFixed(2) %></td>
