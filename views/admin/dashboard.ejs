@@ -11,94 +11,259 @@
         </li>
         <!-- Add other admin navigation items here -->
     </ul>
-
-      <section class="content-main">
-            <div class="content-header">
-                <h2 class="content-title">Dashboard</h2>
-                <div>
-                    <a href="#" class="btn btn-primary">Create report</a>
-                </div>
-            </div> 
-          <div class="row">
-                <div class="col-lg-3">
-                    <div class="card card-body mb-4">
-                        <article class="icontext">
-                            <span class="icon icon-sm rounded-circle bg-primary-light"><i class="text-primary material-icons md-monetization_on"></i></span>
-                            <div class="text">
-                                <h6 class="mb-1">Total Sales</h6> <span>$19,626,058.20</span>
-                            </div>
-                        </article>
-                    </div>
-                </div> 
-               <div class="col-lg-3">
-                    <div class="card card-body mb-4">
-                        <article class="icontext">
-                            <span class="icon icon-sm rounded-circle bg-success-light"><i class="text-success material-icons md-local_shipping"></i></span>
-                            <div class="text">
-                                <h6 class="mb-1">Total Orders</h6> <span>87,456</span>
-                            </div>
-                        </article>
-                    </div>
-                </div>
-                <div class="col-lg-3">
-                    <div class="card card-body mb-4">
-                        <article class="icontext">
-                            <span class="icon icon-sm rounded-circle bg-warning-light"><i class="text-warning material-icons md-person"></i></span>
-                            <div class="text">
-                                <h6 class="mb-1">Total Customers</h6> <span>5,300</span>
-                            </div>
-                        </article>
-                    </div>
-                </div>
-                <div class="col-lg-3">
-                    <div class="card card-body mb-4">
-                        <article class="icontext">
-                            <span class="icon icon-sm rounded-circle bg-info-light"><i class="text-info material-icons md-shopping_basket"></i></span>
-                            <div class="text">
-                                <h6 class="mb-1">Total Products</h6> <span>1,250</span>
-                            </div>
-                        </article>
-                    </div>
-                </div>
-            </div>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <style>
+            .card {
+                margin-bottom: 20px;
+            }
+            .list-group-item {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container-fluid">
+            
             <div class="row">
-                <div class="col-xl-8 col-lg-12">
-                    <div class="card mb-4">
-                        <article class="card-body">
-                            <h5 class="card-title">Sale statistics</h5>
-                            <canvas id="myChart" height="120px"></canvas>
-                        </article>
+                <!-- Sales Chart -->
+                <div class="col-lg-8 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            Sales Chart
+                            <select id="chartFilter" class="form-select form-select-sm float-end" style="width: auto;">
+                                <option value="yearly">Yearly</option>
+                                <option value="monthly">Monthly</option>
+                                <option value="weekly">Weekly</option>
+                            </select>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="salesChart"></canvas>
+                        </div>
                     </div>
                 </div>
-                <div class="col-xl-4 col-lg-12">
-                    <div class="card mb-4">
-                        <article class="card-body">
-                            <h5 class="card-title">Top selling products</h5>
-                            <ul class="list-group list-group-flush">
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    Product A
-                                    <span class="badge bg-primary rounded-pill">352</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    Product B
-                                    <span class="badge bg-primary rounded-pill">290</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    Product C
-                                    <span class="badge bg-primary rounded-pill">145</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    Product D
-                                    <span class="badge bg-primary rounded-pill">123</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    Product E
-                                    <span class="badge bg-primary rounded-pill">98</span>
-                                </li>
+    
+                <!-- Best Selling Products -->
+                <div class="col-lg-4 mb-4">
+                    <div class="card">
+                        <div class="card-header">Best Selling Products (Top 10)</div>
+                        <div class="card-body">
+                            <ul class="list-group" id="bestProducts">
+                                <!-- Product list will be populated by JavaScript -->
                             </ul>
-                        </article>
+                        </div>
                     </div>
                 </div>
             </div>
-        </section> 
+    
+            <div class="row">
+                <!-- Best Selling Categories -->
+                <div class="col-lg-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">Best Selling Categories (Top 10)</div>
+                        <div class="card-body">
+                            <ul class="list-group" id="bestCategories">
+                                <!-- Category list will be populated by JavaScript -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+    
+                <!-- Best Selling Brands -->
+                <div class="col-lg-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">Best Selling Brands (Top 10)</div>
+                        <div class="card-body">
+                            <ul class="list-group" id="bestBrands">
+                                <!-- Brand list will be populated by JavaScript -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Generate Ledger Book (Optional) -->
+            <div class="row">
+                <div class="col-12 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            Generate Ledger Book
+                            <button id="generateLedger" class="btn btn-primary btn-sm float-end">Generate</button>
+                        </div>
+                        <div class="card-body">
+                            <div id="ledgerContent"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            // Sample data (replace with real data from your backend)
+            const sampleData = {
+                sales: {
+                    yearly: [100, 150, 200, 180, 220, 250, 300, 280, 320, 350, 400, 450],
+                    monthly: [10, 15, 20, 18, 22, 25, 30, 28, 32, 35, 40, 45],
+                    weekly: [2, 3, 4, 3, 5, 4, 6, 5, 7, 6, 8, 7]
+                },
+                products: [
+                    { name: "Product A", sales: 1000 },
+                    { name: "Product B", sales: 950 },
+                    { name: "Product C", sales: 900 },
+                    { name: "Product D", sales: 850 },
+                    { name: "Product E", sales: 800 },
+                    { name: "Product F", sales: 750 },
+                    { name: "Product G", sales: 700 },
+                    { name: "Product H", sales: 650 },
+                    { name: "Product I", sales: 600 },
+                    { name: "Product J", sales: 550 }
+                ],
+                categories: [
+                    { name: "Category A", sales: 5000 },
+                    { name: "Category B", sales: 4500 },
+                    { name: "Category C", sales: 4000 },
+                    { name: "Category D", sales: 3500 },
+                    { name: "Category E", sales: 3000 },
+                    { name: "Category F", sales: 2500 },
+                    { name: "Category G", sales: 2000 },
+                    { name: "Category H", sales: 1500 },
+                    { name: "Category I", sales: 1000 },
+                    { name: "Category J", sales: 500 }
+                ],
+                brands: [
+                    { name: "Brand A", sales: 10000 },
+                    { name: "Brand B", sales: 9000 },
+                    { name: "Brand C", sales: 8000 },
+                    { name: "Brand D", sales: 7000 },
+                    { name: "Brand E", sales: 6000 },
+                    { name: "Brand F", sales: 5000 },
+                    { name: "Brand G", sales: 4000 },
+                    { name: "Brand H", sales: 3000 },
+                    { name: "Brand I", sales: 2000 },
+                    { name: "Brand J", sales: 1000 }
+                ]
+            };
+    
+            // Sales Chart
+            const ctx = document.getElementById('salesChart').getContext('2d');
+            const salesChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    datasets: [{
+                        label: 'Sales',
+                        data: sampleData.sales.yearly,
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+    
+            // Chart Filter
+            document.getElementById('chartFilter').addEventListener('change', function() {
+                const selectedFilter = this.value;
+                salesChart.data.datasets[0].data = sampleData.sales[selectedFilter];
+                salesChart.update();
+            });
+    
+            // Populate Best Selling Products
+            const bestProductsList = document.getElementById('bestProducts');
+            sampleData.products.forEach(product => {
+                const li = document.createElement('li');
+                li.className = 'list-group-item';
+                li.innerHTML = `${product.name} <span class="badge bg-primary rounded-pill">${product.sales}</span>`;
+                bestProductsList.appendChild(li);
+            });
+    
+            // Populate Best Selling Categories
+            const bestCategoriesList = document.getElementById('bestCategories');
+            sampleData.categories.forEach(category => {
+                const li = document.createElement('li');
+                li.className = 'list-group-item';
+                li.innerHTML = `${category.name} <span class="badge bg-success rounded-pill">${category.sales}</span>`;
+                bestCategoriesList.appendChild(li);
+            });
+    
+            // Populate Best Selling Brands
+            const bestBrandsList = document.getElementById('bestBrands');
+            sampleData.brands.forEach(brand => {
+                const li = document.createElement('li');
+                li.className = 'list-group-item';
+                li.innerHTML = `${brand.name} <span class="badge bg-info rounded-pill">${brand.sales}</span>`;
+                bestBrandsList.appendChild(li);
+            });
+    
+            // Generate Ledger
+            document.getElementById('generateLedger').addEventListener('click', function() {
+                const ledgerContent = document.getElementById('ledgerContent');
+                ledgerContent.innerHTML = `
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Debit</th>
+                                <th>Credit</th>
+                                <th>Balance</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2023-05-01</td>
+                                <td>Opening Balance</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>$10,000</td>
+                            </tr>
+                            <tr>
+                                <td>2023-05-02</td>
+                                <td>Sales Revenue</td>
+                                <td>$5,000</td>
+                                <td>-</td>
+                                <td>$15,000</td>
+                            </tr>
+                            <tr>
+                                <td>2023-05-03</td>
+                                <td>Inventory Purchase</td>
+                                <td>-</td>
+                                <td>$3,000</td>
+                                <td>$12,000</td>
+                            </tr>
+                            <tr>
+                                <td>2023-05-04</td>
+                                <td>Utility Bill Payment</td>
+                                <td>-</td>
+                                <td>$500</td>
+                                <td>$11,500</td>
+                            </tr>
+                            <tr>
+                                <td>2023-05-05</td>
+                                <td>Sales Revenue</td>
+                                <td>$4,000</td>
+                                <td>-</td>
+                                <td>$15,500</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                `;
+            });
+        </script>
+    </body>
+    </html>
 <%- include("../../views/partials/admin/footer") %>

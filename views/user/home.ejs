@@ -127,40 +127,39 @@
     font-size: 8px;
     font-weight: bold;
     padding: 2px 6px; 
-    border-radius: 4px; /* Adds rounded corners */
+    border-radius: 4px;
     text-align: center;
-    margin-left: 10px; /* Optional: Adds spacing to the left */
+    margin-left: 10px; 
     position: absolute;
-    left: 0; /* Positions the box at the left side */
-    top: 8%; /* Optional: Centers the box vertically */
-    transform: translateY(-50%); /* Optional: Adjusts to perfectly center it */
+    left: 0; 
+    top: 8%; 
+    transform: translateY(-50%); 
 }
 
-/* Wishlist Button Styling */
 .wishlist-btn {
   position: absolute;
   top: 10px;
   right: 10px;
   font-size: 20px;
-  color: #ff5c8e; /* Pink color for the heart */
+  color: #ff5c8e; 
   cursor: pointer;
   transition: transform 0.2s ease-in-out;
 }
 
 .wishlist-btn:hover {
-  transform: scale(1.2); /* Slightly enlarge the heart on hover */
+  transform: scale(1.2);
 }
 
 .wishlist-btn.liked {
-  color: #d63031; /* Dark red for liked state */
+  color: #d63031; 
 }
 
 .wishlist-btn:active {
-  transform: scale(1.1); /* Small scale down effect when clicked */
+  transform: scale(1.1); 
 }
 .category-offer-box {
     display: inline-block;
-    background-color: #28a745; /* Different color to distinguish from product offer */
+    background-color: #28a745; 
     color: white;
     font-size: 8px;
     font-weight: bold;
@@ -172,6 +171,35 @@
     top: 15%; /* Position it below the product offer */
     transform: translateY(-50%);
 }
+.container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .horizontal-line {
+            border-top: 2px solid #333;
+            margin: 20px 0;
+        }
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .video-box {
+            aspect-ratio: 1 / 1;
+            position: relative;
+            overflow: hidden;
+            background-color: #000;
+        }
+        video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
 
 </style>
 
@@ -431,129 +459,36 @@
 
    
 
-    <section class="ftco-section testimony-section">
-      <div class="container">
-        <div class="row">
-        	<div class="col-lg-5">
-        		<div class="services-flow">
-        			<div class="services-2 p-4 d-flex ftco-animate">
-        				<div class="icon">
-        					<span class="flaticon-bag"></span>
-        				</div>
-        				<div class="text">
-	        				<h3>Free Shipping</h3>
-	        				<p class="mb-0">Separated they live in. A small river named Duden flows</p>
-        				</div>
-        			</div>
-        			<div class="services-2 p-4 d-flex ftco-animate">
-        				<div class="icon">
-        					<span class="flaticon-heart-box"></span>
-        				</div>
-        				<div class="text">
-	        				<h3>Valuable Gifts</h3>
-	        				<p class="mb-0">Separated they live in. A small river named Duden flows</p>
-	        			</div>
-        			</div>
-        			<div class="services-2 p-4 d-flex ftco-animate">
-        				<div class="icon">
-        					<span class="flaticon-payment-security"></span>
-        				</div>
-        				<div class="text">
-	        				<h3>All Day Support</h3>
-	        				<p class="mb-0">Separated they live in. A small river named Duden flows</p>
-	        			</div>
-        			</div>
-        			<div class="services-2 p-4 d-flex ftco-animate">
-        				<div class="icon">
-        					<span class="flaticon-customer-service"></span>
-        				</div>
-        				<div class="text">
-	        				<h3>All Day Support</h3>
-	        				<p class="mb-0">Separated they live in. A small river named Duden flows</p>
-	        			</div>
-        			</div>
-        		</div>
-        	</div>
-          <div class="col-lg-7">
-          	<div class="heading-section ftco-animate mb-5">
-	            <h2 class="mb-4">Our satisfied customer says</h2>
-	            <p>"Our satisfied customers share their stories: Far beyond the ordinary, where precision meets artistry, lies the perfect timepiece. Separated by miles but united by timeless style, our watches bring their moments to life."</p>
-	          </div>
-            <div class="carousel-testimony owl-carousel">
-              <div class="item">
-                <div class="testimony-wrap">
-                  <div class="user-img mb-4" style="background-image: url(images/person_1.jpg)">
-                    <span class="quote d-flex align-items-center justify-content-center">
-                      <i class="icon-quote-left"></i>
-                    </span>
-                  </div>
-                  <div class="text">
-                    <p class="mb-4 pl-4 line">"Our satisfied customers say: Beyond the boundaries of time and trends, our watches bring elegance and precision to life. Crafted to perfection, they create connections that transcend distance and celebrate every moment."</p>
-                    <p class="name">Garreth Smith</p>
-                    <span class="position">Marketing Manager</span>
-                  </div>
-                </div>
-              </div>
-              <div class="item">
-                <div class="testimony-wrap">
-                  <div class="user-img mb-4" style="background-image: url(images/person_2.jpg)">
-                    <span class="quote d-flex align-items-center justify-content-center">
-                      <i class="icon-quote-left"></i>
-                    </span>
-                  </div>
-                  <div class="text">
-                    <p class="mb-4 pl-4 line">"Our satisfied customers say: Each timepiece is more than a watch—it's a story of precision, style, and unforgettable moments that stand the test of time."</p>
-                    <p class="name">Garreth Smith</p>
-                    <span class="position">Interface Designer</span>
-                  </div>
-                </div>
-              </div>
-              <div class="item">
-                <div class="testimony-wrap">
-                  <div class="user-img mb-4" style="background-image: url(images/person_3.jpg)">
-                    <span class="quote d-flex align-items-center justify-content-center">
-                      <i class="icon-quote-left"></i>
-                    </span>
-                  </div>
-                  <div class="text">
-                    <p class="mb-4 pl-4 line">"Our happy customers share: From cityscapes to distant horizons, our watches seamlessly blend timeless design with modern craftsmanship, becoming a part of life's most cherished memories."</p>
-                    <p class="name">Garreth Smith</p>
-                    <span class="position">UI Designer</span>
-                  </div>
-                </div>
-              </div>
-              <div class="item">
-                <div class="testimony-wrap">
-                  <div class="user-img mb-4" style="background-image: url(images/person_1.jpg)">
-                    <span class="quote d-flex align-items-center justify-content-center">
-                      <i class="icon-quote-left"></i>
-                    </span>
-                  </div>
-                  <div class="text">
-                    <p class="mb-4 pl-4 line">"What our customers love: Crafted with precision and passion, our watches don’t just measure time—they celebrate it, connecting moments across generations and distances."</p>
-                    <p class="name">Garreth Smith</p>
-                    <span class="position">Web Developer</span>
-                  </div>
-                </div>
-              </div>
-              <div class="item">
-                <div class="testimony-wrap">
-                  <div class="user-img mb-4" style="background-image: url(images/person_1.jpg)">
-                    <span class="quote d-flex align-items-center justify-content-center">
-                      <i class="icon-quote-left"></i>
-                    </span>
-                  </div>
-                  <div class="text">
-                    <p class="mb-4 pl-4 line">"Hear from our satisfied customers: Behind every dial lies a legacy of excellence, turning every tick into a timeless testament of style and functionality."</p>
-                    <p class="name">Garreth Smith</p>
-                    <span class="position">System Analyst</span>
-                  </div>
-                </div>
-              </div>
+              
+      </div> <div class="container">
+        <div class="horizontal-line"></div>
+        <div class="video-grid">
+            <div class="video-box">
+                <video controls>
+                    <source src="/video/one.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
             </div>
-          </div>
+            <div class="video-box">
+                <video controls>
+                    <source src="/video/nine.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <div class="video-box">
+                <video controls>
+                    <source src="/video/four.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <div class="video-box">
+                <video controls>
+                    <source src="/video/six.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
         </div>
-      </div>
+    </div>
     </section>
      
 
@@ -565,7 +500,7 @@
 
 <script>
 
-  //addToCart function.............................
+  //addToCart function........................................................................
 
  function addToCartHandler(event, productId) {
     event.preventDefault();
@@ -702,7 +637,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-//function for adding to wishlist page.................
+//function for adding to wishlist page..................................................................
 
 function addToWishlist(productId) {
 
