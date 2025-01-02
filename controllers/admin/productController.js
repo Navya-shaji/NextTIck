@@ -1,16 +1,16 @@
 const Product=require("../../models/productSchema");
 const Category=require("../../models/categorySchema");
 const Brand=require("../../models/brandSchema");
-const User=require("../../models/userSchema")
-const fs=require("fs")
-const path = require("path")
+const User=require("../../models/userSchema");
+const fs=require("fs");
+const path = require("path");
 //image resizing.............
 const sharp=require("sharp");
 const { log } = require("console");
 
 
 
-const getProductAddPage = async(req,res)=>{
+const  getProductAddPage = async(req,res)=>{
     try {
         const category = await Category.find({isListed:true})
         const brand = await Brand.find({isBlocked:false})
@@ -143,6 +143,7 @@ const getAllProducts = async(req,res)=>{
   }
 }
 
+
 const addProductOffer = async (req, res) => {
     try {
         const { productId, percentage } = req.body;
@@ -201,14 +202,11 @@ const removeProductOffer = async (req, res) => {
         });
       }
   
-      // Restore the sales price by removing the discount
       const discount = Math.floor(product.regularPrice * (product.productOffer / 100));
       product.salesPrice = product.regularPrice; // Reset the sales price to the regular price
   
-      // Clear the offer percentage
       product.productOffer = 0;
   
-      // Save the updated product
       await product.save();
   
       res.json({
@@ -318,6 +316,7 @@ if(existingProduct && existingProduct._id != id){
        res.redirect("/pageerror") 
     }
 }
+
 const deleteSingleImage = async (req, res) => {
     try {
       const { imageNameToServer, productIdToServer } = req.body;
@@ -333,7 +332,6 @@ const deleteSingleImage = async (req, res) => {
         return res.status(404).send({ status: false, message: "Product not found" });
       }
   
-      // Build the image path
       const imagePath = path.join(
         __dirname,
         "..",

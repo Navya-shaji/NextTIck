@@ -26,7 +26,7 @@ router.get("/logout",adminController.logout);
 //Customer Management.......................
 router.get("/dashboard", adminAuth, adminController.loadDashboard)
 router.get("/users", adminAuth, customerController.customerInfo);
-router.get("/block/:id", adminAuth, customerController.customerBlocked); // Use path params
+router.get("/block/:id", adminAuth, customerController.customerBlocked);
 router.get("/unblock/:id", adminAuth, customerController.customerunBlocked);
 
 //Category Management.....................
@@ -34,8 +34,8 @@ router.get("/category", adminAuth, categoryController.categoryInfo);
 router.post("/addCategory", adminAuth, categoryController.addCategory);
 router.post("/addCategoryOffer",adminAuth,categoryController.addCategoryOffer)
 router.post("/removeCategoryOffer",adminAuth,categoryController.removeCategoryOffer)
-router.get("/listCategory", adminAuth, categoryController.getUnlistedCategory); // Correct route for 'List' action
-router.get("/unlistCategory", adminAuth, categoryController.getListedCategory); // Correct route for 'Unlist' action
+router.get("/listCategory", adminAuth, categoryController.getUnlistedCategory); 
+router.get("/unlistCategory", adminAuth, categoryController.getListedCategory); 
 router.get("/editCategory",adminAuth,categoryController.getEditCategory)
 router.post("/editCategory/:id", adminAuth, categoryController.editCategory);
 
