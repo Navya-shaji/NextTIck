@@ -46,12 +46,26 @@
   background-color: #333;
 }
 
+.clear-button {
+  padding: 12px 24px;
+  background-color: #f44336;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.clear-button:hover {
+  background-color: #d32f2f;
+}
+
 /* Sidebar Styles */
 .sidebar {
   width: 250px;
   background-color: #ffffff;
   padding: 20px;
-  border-right: 2px solid #fff;
+ 
 }
 
 .filter-section {
@@ -72,7 +86,7 @@
 
 .dropdown-arrow {
   transition: transform 0.3s;
-  color: #fff;
+  color: #050505;
 }
 
 .category-brand-container {
@@ -84,12 +98,8 @@
   display: block;
 }
 
-.filter-item {
-  padding: 8px 0;
-}
-
 .filter-item a {
-  color: #fff;
+  color: #000;
   text-decoration: none;
   transition: color 0.3s;
 }
@@ -101,7 +111,7 @@
 
 .filter-item a.active {
   font-weight: 600;
-  color: #fff;
+  color: #000;
   text-decoration: underline;
 }
 
@@ -186,7 +196,7 @@
 /* Sort Options */
 .sort-options {
   padding: 20px;
- color: #000;
+  color: #000;
   border-radius: 4px;
   background-color: #fff;
 }
@@ -205,40 +215,6 @@
   color: #fff;
 }
 
-/* Price Filter */
-#price-filter-form {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-#price-filter-form input {
-  padding: 8px;
-  border: 1px solid #fff;
-  border-radius: 4px;
-  width: 100px;
-  background-color: #fff;
-  color: #fff;
-}
-
-#price-filter-form input::placeholder {
-  color: #ccc;
-}
-
-#price-filter-form button {
-  padding: 8px 16px;
-  background-color: #fff;
-  color: #000;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-#price-filter-form button:hover {
-  background-color: #ccc;
-}
-
 /* Pagination */
 .pagination {
   display: flex;
@@ -248,83 +224,13 @@
   padding: 20px;
 }
 
-.pagination .btn {
-  padding: 8px 16px;
-  background-color: #fff;
-  border: 2px solid #000;
-  color: #000;
-  text-decoration: none;
-  border-radius: 4px;
-  transition: all 0.3s;
-}
-
-.pagination .btn:hover {
-  background-color: #000;
-  color: #fff;
-}
-
-.pagination .btn.active {
-  background-color: #000;
-  color: #fff;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .product-list-container {
-    flex-direction: column;
-  }
-  
-  .sidebar {
-    width: 100%;
-    border-right: none;
-    border-bottom: 2px solid #fff;
-  }
-  
-  .product-grid {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  }
-  
-  #price-filter-form {
-    flex-wrap: wrap;
-  }
-}
-.search-container {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.search-button, .clear-button {
-  padding: 8px 15px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.search-button {
-  background-color: #4CAF50;
-  color: white;
-}
-
-.clear-button {
-  background-color: #f44336;
-  color: white;
-}
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 20px;
-  padding: 20px;
-}
-
 .pagination button {
-  padding: 8px 15px;
+  padding: 8px 16px;
   border: 1px solid #ddd;
   background-color: white;
   cursor: pointer;
   border-radius: 4px;
+  transition: all 0.3s;
 }
 
 .pagination button.active {
@@ -333,58 +239,29 @@
   border: 1px solid #4CAF50;
 }
 
+.pagination button:hover:not(:disabled) {
+  background-color: #f5f5f5;
+}
+
 .pagination button:disabled {
   background-color: #ddd;
   cursor: not-allowed;
-}
-.pagination {
-display: flex;
-justify-content: center;
-align-items: center;
-gap: 10px;
-margin: 20px 0;
-padding: 20px;
+  opacity: 0.6;
 }
 
-.pagination button {
-padding: 8px 15px;
-border: 1px solid #ddd;
-background-color: white;
-cursor: pointer;
-border-radius: 4px;
-transition: all 0.3s ease;
-}
+/* Responsive Design */
+@media (max-width: 768px) {
+  .product-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
 
-.pagination button.active {
-background-color: #4CAF50;
-color: white;
-border: 1px solid #4CAF50;
-}
+  .sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 2px solid #ddd;
+  }
 
-.pagination button:hover:not(:disabled) {
-background-color: #f5f5f5;
-}
-
-.pagination button:disabled {
-background-color: #ddd;
-cursor: not-allowed;
-opacity: 0.6;
-}
-.clear-category {
-  margin-top: 10px;
-}
-
-.clear-category-link {
-  color: #007bff;
-  font-size: 14px;
-  text-decoration: none;
-}
-
-.clear-category-link:hover {
-  text-decoration: underline;
-}
-
-.clear-arrow {
-  font-size: 16px;
-  margin-left: 5px;
+  #price-filter-form {
+    flex-wrap: wrap;
+  }
 }

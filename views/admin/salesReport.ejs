@@ -105,9 +105,7 @@
                             <th>Order ID</th>
                             <th>Date</th>
                             <th>Customer</th>
-                            <!-- <th>Items</th> -->
                             <th class="text-end">Amount</th>
-                            <!-- <th class="text-end">Discount</th> -->
                             <th class="text-end">Final Amount</th>
                             <th>Status</th>
                         </tr>
@@ -132,6 +130,7 @@
                                     <span class="badge bg-warning text-dark">Coupon</span>
                                 <% } %>
                             </td> -->
+                            
                             <td class="text-end">₹<%= order.finalAmount.toFixed(2) %></td>
                             <td>
                                 <% const statusClass = {
@@ -152,6 +151,7 @@
             </div>
         </div>
     </div>
+    
 </div>
 
 <script>

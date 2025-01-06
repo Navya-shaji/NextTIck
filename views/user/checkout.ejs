@@ -1,3 +1,6 @@
+<%- include("../../views/partials/user/header.ejs") %>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -47,12 +50,12 @@
         }
 
         .btn-primary {
-            background-color: #007bff;
+            background-color: #030303;
             border-color: #007bff;
         }
 
         .btn-primary:hover {
-            background-color: #0056b3;
+            background-color: #030303;
             border-color: #0056b3;
         }
 
@@ -90,6 +93,155 @@
         #couponCode {
             max-width: 200px;
         }
+
+    .container {
+        padding: 30px;
+    }
+
+    .card {
+        border-radius: 8px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
+        background-color: #070707;
+        color: white;
+        font-size: 18px;
+        padding: 12px;
+        font-weight: bold;
+    }
+
+    .card-body {
+        padding: 20px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+    }
+
+    .address-item {
+        padding: 15px;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        margin-bottom: 15px;
+    }
+
+    .address-item .d-flex {
+        justify-content: space-between;
+    }
+
+    .address-item label {
+        cursor: pointer;
+    }
+
+    .address-item .me-3 input {
+        cursor: pointer;
+    }
+
+    .product-img {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 5px;
+    }
+
+    .coupon-item {
+        background-color: #f0f0f0;
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+    }
+
+    .coupon-item .btn-outline-primary {
+        font-size: 12px;
+    }
+
+    .payment-method-card {
+        background-color: #ffffff;
+        padding: 10px;
+        border-radius: 8px;
+        margin-bottom: 10px;
+    }
+
+    .payment-method-card input {
+        cursor: pointer;
+    }
+
+    .payment-method-card label {
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    .order-summary-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 12px;
+    }
+
+    .btn-primary {
+        background-color: #050505;
+        color: white;
+        font-weight: bold;
+    }
+
+    .btn-primary:hover {
+        background-color: #333;
+    }
+
+    .form-control {
+        border-radius: 5px;
+    }
+
+    .modal-dialog {
+        max-width: 600px;
+    }
+
+    .modal-body input {
+        border-radius: 5px;
+    }
+
+    .modal-header {
+        background-color: #070707;
+        color: white;
+        font-weight: bold;
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+        .row {
+            flex-direction: column;
+        }
+
+        .col-lg-8,
+        .col-lg-4 {
+            width: 100%;
+        }
+
+        .order-summary-item {
+            font-size: 14px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .coupon-item {
+            font-size: 14px;
+        }
+
+        .payment-method-card {
+            font-size: 14px;
+        }
+    }
+    .btn-primary {
+        background-color: #4c5058;  /* Light black button */
+        border-color: #4c5058;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background-color: #3e4349;  /* Darker button hover effect */
+        border-color: #3e4349;
+    }
+    
     </style>
 </head>
 <body>
@@ -126,8 +278,7 @@
                                             <div class="d-flex justify-content-between">
                                                 <a href="/edit-address/<%=addr.id %>" class="btn btn-sm btn-primary">Edit</a>
                                                 <a href="/delete-address/<%=addr.id %>" class="btn btn-sm btn-danger">Delete</a>
-      
-                                              </div>
+                                            </div>
                                         </div>
                                     </div>
                                 <% }); %>
@@ -135,7 +286,6 @@
                         <% } else { %>
                             <p>No saved addresses found.</p>
                         <% } %>
-                        <!-- <button class="btn btn-primary mt-3" onclick="showAddAddressForm()">Add New Address</button> -->
                         <a href="/add-address">
                             <button class="btn btn-primary">
                                 Add Address
@@ -199,6 +349,33 @@
                         <button class="btn btn-primary w-100 mt-4" onclick="placeOrder()">Place Order</button>
                     </div>
                 </div>
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h4 class="mb-0 d-flex justify-content-between align-items-center">
+                            Available Coupons
+                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#couponCollapse" aria-expanded="false" aria-controls="couponCollapse">
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                        </h4>
+                    </div>
+                    <div class="collapse" id="couponCollapse">
+                        <div class="card-body">
+                            <% availableCoupons.forEach(coupon => { %>
+                                <div class="coupon-item mb-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong><%= coupon.name %></strong>
+                                            <p class="mb-0"><%= coupon.type === 'percentage' ? `${coupon.offerPrice}% off` : `₹${coupon.offerPrice} off` %></p>
+                                            <small>Min. Purchase: ₹<%= coupon.minimumPrice %></small>
+                                            <small>Expires: <%= new Date(coupon.expireOn).toLocaleDateString() %></small>
+                                        </div>
+                                        <button class="btn btn-sm btn-outline-primary" onclick="copyCouponCode('<%= coupon.name %>')">Copy Code</button>
+                                    </div>
+                                </div>
+                            <% }) %>
+                        </div>
+                    </div>
+                </div>
                 
                 <div class="card mt-4">
                     <div class="card-header">
@@ -219,6 +396,8 @@
                         <% }) %>
                     </div>
                 </div>
+
+                
             </div>
         </div>
     </div>
@@ -285,12 +464,29 @@
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
     <script>
+
+
+function copyCouponCode(couponCode) {
+    // Create a temporary text area element to hold the coupon code
+    const tempInput = document.createElement('input');
+    document.body.appendChild(tempInput);
+    tempInput.value = couponCode;  // Set the coupon code to the temporary input field
+    tempInput.select();  // Select the text in the input field
+    document.execCommand('copy');  // Copy the selected text to the clipboard
+    document.body.removeChild(tempInput);  // Remove the temporary input field
+
+    // Show SweetAlert to notify the user that the coupon code has been copied
+    Swal.fire({
+        icon: 'success',
+        title: 'Coupon Code Copied!',
+        text: `"${couponCode}" has been copied to your clipboard.`,
+        confirmButtonText: 'OK'
+    });
+}
+
+
         let selectedAddressId = null;
         let subtotal = `<%= subtotal %>`;
-        // let discount = 0;
-
-        // let discountt = document.getElementById("discountAmount").textContent;
-        // console.log(discount)
         
         function handleAddressSelection(addressId) {
             selectedAddressId = addressId;
@@ -435,13 +631,24 @@
             totalAmount.textContent = `₹${total.toFixed(2)}`;
              discount = document.getElementById("discountAmount").textContent;
         }
-
         function placeOrder() {
             if (!selectedAddressId) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
                     text: 'Please select a delivery address'
+                });
+                return;
+            }
+
+            const totalAmount = parseFloat(document.getElementById('totalAmount').textContent.replace('₹', ''));
+            const paymentMethod = selectedPaymentMethod();
+
+            if (paymentMethod === 'COD' && totalAmount > 1000) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'COD is not available for orders above Rs 1000'
                 });
                 return;
             }
@@ -454,8 +661,6 @@
                 confirmButtonText: 'Confirm your order'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    const paymentMethod = selectedPaymentMethod();
-
                     if (paymentMethod === 'COD') {
                         placeOrderCOD();
                     } else if (paymentMethod === 'Razorpay') {
@@ -467,9 +672,9 @@
 
         function placeOrderCOD() {
             const discountString = document.getElementById("discountAmount").textContent.replace(/₹/g, "").trim();
-const discount = parseFloat(discountString,10);
+            const discount = parseFloat(discountString, 10);
+            const shippingCost = parseFloat(document.getElementById("shippingCost").textContent.replace(/₹/g, "").trim());
 
-console.log(discount)
             fetch('/checkout', {
                 method: 'POST',
                 headers: {
@@ -479,7 +684,7 @@ console.log(discount)
                     address: selectedAddressId,
                     products: `<%- JSON.stringify(product) %>`,
                     subtotal: subtotal,
-                    total: subtotal - discount,
+                    total: subtotal - discount + shippingCost,
                     paymentMethod: 'COD'
                 })
             })
@@ -616,6 +821,32 @@ function verifyRazorpayPayment(response, orderDetails) {
         });
     });
 }
+     
+        function handleAddressSelection(addressId) {
+            selectedAddressId = addressId;
+            document.querySelectorAll('.address-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            document.querySelector(`input[value="${addressId}"]`).closest('.address-item').classList.add('selected');
+            
+            // Calculate and update shipping cost
+            updateShippingCost(addressId);
+        }
+
+        function updateShippingCost(addressId) {
+           
+            const shippingCost = 50; 
+            document.getElementById('shippingCost').textContent = `₹${shippingCost.toFixed(2)}`;
+            updateTotalAmount();
+        }
+
+        function updateTotalAmount() {
+            const subtotal = parseFloat('<%= subtotal %>');
+            const discount = parseFloat(document.getElementById('discountAmount').textContent.replace('₹', '')) || 0;
+            const shippingCost = parseFloat(document.getElementById('shippingCost').textContent.replace('₹', '')) || 0;
+            const total = subtotal - discount + shippingCost;
+            document.getElementById('totalAmount').textContent = `₹${total.toFixed(2)}`;
+        }
         function selectedPaymentMethod() {
             const selectedMethod = document.querySelector('input[name="payment"]:checked');
             return selectedMethod ? selectedMethod.value : 'COD';
@@ -623,4 +854,3 @@ function verifyRazorpayPayment(response, orderDetails) {
     </script>
 </body>
 </html>
-

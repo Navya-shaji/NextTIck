@@ -23,7 +23,7 @@ const razorpay = new Razorpay({
 const createRazorpayOrder = async (amount) => {
     try {
         const options = {
-            amount: amount * 100, 
+            amount: amount * 100,
             currency: "INR",
             receipt: `order_${Date.now()}`
         };
@@ -51,6 +51,8 @@ const getcheckoutPage = async (req, res) => {
         const address = await Address.findOne({ userId: user._id });
         const addressData = address || { address: [] };
 
+        const availableCoupons = await Coupon.find({ expireOn: { $gte: new Date() } });
+
         if (!productId) {
             const cart = await Cart.findOne({ userId: user._id }).populate("items.productId");
 
@@ -74,7 +76,7 @@ const getcheckoutPage = async (req, res) => {
                 return sum + item.salesPrice * item.quantity;
             }, 0);
 
-            return res.render("checkout", { user, product: products, subtotal, quantity: null, addressData });
+            return res.render("checkout", { user, product: products, subtotal, quantity: null, addressData, availableCoupons });
         }
 
         if (productId) {
@@ -92,15 +94,18 @@ const getcheckoutPage = async (req, res) => {
             };
 
             const subtotal = productData.salePrice * quantity;
-            return res.render("checkout", { user, product: productData, subtotal, quantity, addressData });
+            return res.render("checkout", { user, product: productData, subtotal, quantity, addressData, availableCoupons });
         }
     } catch (error) {
         console.error("Error fetching checkout page:", error.message);
         return res.redirect("/pageNotFound");
     }
 };
-
-
+const calculateDeliveryCharge = (address) => {
+    const baseCharge = 0;
+    const distanceCharge = 0; 
+    return baseCharge + distanceCharge;
+};
 
 const postCheckout = async (req, res) => {
     try {
@@ -110,19 +115,42 @@ const postCheckout = async (req, res) => {
         }
 
         const { address, products, subtotal, total, paymentMethod } = req.body;
-        console.log("total",total)
+        const parsedProducts = JSON.parse(products);
+      console.log(parsedProducts)
+      for (const pro of parsedProducts) {
+        const product = await Product.findById(pro._id);
+      
+        const newQuantity = product.quantity - pro.quantity; 
+        const updatedQuantity = Math.max(newQuantity, 0); 
+        const updatedTotalSales = product.totalSalesCount + pro.quantity;
+     
 
-        if (!Array.isArray(JSON.parse(products)) || products.length === 0) {
+        await Product.findByIdAndUpdate(pro._id, {
+          quantity: updatedQuantity,
+          totalSalesCount: updatedTotalSales,
+        });
+      }
+      
+        if (!Array.isArray(parsedProducts) || parsedProducts.length === 0) {
             return res.status(400).json({ success: false, message: "No products provided" });
         }
 
+        // Check if COD is allowed for orders above Rs 1000
+        if (paymentMethod === 'COD' && total > 1000) {
+            return res.status(400).json({ success: false, message: "COD not available for orders above Rs 1000" });
+        }
+
+        const deliveryCharge = calculateDeliveryCharge(address);
+        const finalTotal = parseFloat(total) + deliveryCharge;
+        let orderId = null;
         if (paymentMethod === 'online') {
-            const order = await createRazorpayOrder(total);
-            return res.status(200).json({
+            const order = await createRazorpayOrder(finalTotal);
+            orderId = order.id;
+            res.status(200).json({
                 success: true,
                 order_id: order.id,
                 key_id: process.env.RAZORPAY_KEY_ID,
-                amount: total * 100,
+                amount: finalTotal * 100,
                 currency: "INR",
                 name: "Your Store Name",
                 description: "Purchase Description",
@@ -134,7 +162,7 @@ const postCheckout = async (req, res) => {
             });
         }
 
-        for (let product of JSON.parse(products)) {
+        for (let product of parsedProducts) {
             if (product.quantity > product.stock) {
                 return res.status(400).json({
                     success: false,
@@ -143,12 +171,14 @@ const postCheckout = async (req, res) => {
             }
 
             product.stock -= product.quantity;
+            await Product.updateOne()
         }
 
-        const orderedItems = JSON.parse(products).map(product => ({
+        const orderedItems = parsedProducts.map(product => ({
             product: product._id,
             price: product.salesPrice,
             quantity: product.quantity,
+        
         }));
 
         const newOrder = new Order({
@@ -157,15 +187,18 @@ const postCheckout = async (req, res) => {
             address: address,
             shippingAddress: address,
             totalPrice: subtotal,
-            finalAmount: total,
+            finalAmount: finalTotal,
+            deliveryCharge: deliveryCharge,
             status: "Pending",
             paymentMethod: paymentMethod,
+            paymentStatus: "Pending",
+            paymentId: orderId,
         });
 
         await Cart.findOneAndUpdate({ userId: userId }, { $set: { items: [] } });
 
         const savedOrder = await newOrder.save();
-
+        if(paymentMethod === 'online') return
         if (savedOrder) {
             const orderId = savedOrder._id;
             return res.status(200).json({ success: true, message: "Order placed", orderId: orderId });
@@ -189,7 +222,7 @@ const verifyPayment = async (req, res) => {
             });
         }
 
-        const { razorpay_order_id, razorpay_payment_id, razorpay_signature, orderDetails } = req.body;
+        const { razorpay_order_id, razorpay_payment_id, razorpay_signature, orderDetails, retryPayment } = req.body;
 
         if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !orderDetails) {
             return res.status(400).json({
@@ -211,12 +244,32 @@ const verifyPayment = async (req, res) => {
 
         const payment = await razorpay.payments.fetch(razorpay_payment_id);
         if (payment.status !== 'captured') {
+            const failedOrder = await Order.findOneAndUpdate(
+                { paymentId: razorpay_payment_id },
+                {
+                    paymentStatus: 'Pending',
+                    status: 'Payment Failed'
+                },
+                { new: true }
+            );
+
             return res.status(400).json({
                 success: false,
-                message: "Payment not captured"
+                message: "Payment failed",
+                orderId: failedOrder._id
             });
         }
+        if(retryPayment){
+            console.log("user ", req.body.userId)
+            const order =await Order.findOneAndUpdate({_id:req.body.orderId},{paymentStatus:"Completed",status:"Pending"})
+            console.log("Updateing order")
+            console.log("modified count", order)
+            console.log("IDS ", razorpay_order_id, razorpay_payment_id)
+            return res.status(200).json({
+                success: true,
+                message: "Payment verified and order placed successfully",
 
+        });}
         const { address, products, subtotal, total } = orderDetails;
         if (!address || !products || !subtotal || !total) {
             return res.status(400).json({
@@ -227,7 +280,9 @@ const verifyPayment = async (req, res) => {
 
         let parsedProducts;
         try {
+            console.log("this is products", products)
             parsedProducts = JSON.parse(products);
+            console.log(parsedProducts)
             if (!Array.isArray(parsedProducts) || parsedProducts.length === 0) {
                 throw new Error("Invalid products data");
             }
@@ -244,13 +299,17 @@ const verifyPayment = async (req, res) => {
             quantity: product.quantity,
         }));
 
+        const deliveryCharge = calculateDeliveryCharge(address);
+        const finalTotal = parseFloat(total) + deliveryCharge;
+
         const newOrder = new Order({
             userId: req.session.user._id,
             orderItems: orderedItems,
             address: address,
             shippingAddress: address,
             totalPrice: subtotal,
-            finalAmount: total,
+            finalAmount: finalTotal,
+            deliveryCharge: deliveryCharge,
             status: "Pending",
             paymentMethod: "online",
             paymentId: razorpay_payment_id,
@@ -281,6 +340,60 @@ const verifyPayment = async (req, res) => {
     }
 };
 
+//retrying the payment in razorpay.....................................................................................
+
+const retryPayment = async (req, res) => {
+    try {
+        const { orderId } = req.body;
+        if (!orderId) {
+            return res.status(400).json({
+                success: false,
+                message: "Order ID not provided"
+            });
+        }
+
+        const order = await Order.findById(orderId).populate('userId').populate('orderItems.product');
+        if (!order) {
+            return res.status(404).json({
+                success: false,
+                message: "Order not found"
+            });
+        }
+
+        const razorpayOrderId = order.paymentId;
+        const user = order.userId;
+
+        const orderDetails = {
+            order_id: razorpayOrderId,
+            key_id: process.env.RAZORPAY_KEY_ID,
+            amount: order.finalAmount * 100,
+            currency: "INR",
+            name: "Your Store Name",
+            description: "Purchase Description",
+            prefill: {
+                name: user.name,
+                email: user.email,
+                contact: user.phone
+            }
+        };
+
+        res.status(200).json({
+            success: true,
+            message: "Retry payment initiated",
+            data:orderDetails
+        });
+
+    } catch (error) {
+        console.error("Error retrying payment:", error.message);
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error"
+        });
+    }
+}
+
+
+//order confirming...............................................................
 
 
 const orderConfirm = async (req, res) => {
@@ -295,10 +408,10 @@ const orderConfirm = async (req, res) => {
     }
 };
 
-
+//applying couponCode........................................................
 const applyCoupon = async (req, res) => {
     try {
-        const { couponCode, totalAmount } = req.body; 
+        const { couponCode, totalAmount } = req.body;
         const userId = req.session?.user?._id;
 
         if (!userId) {
@@ -360,4 +473,5 @@ module.exports = {
     orderConfirm,
     verifyPayment,
     applyCoupon,
+    retryPayment
 };

@@ -1,12 +1,15 @@
 <%- include("../../views/partials/user/header.ejs") %>
 <head>
   <link rel="stylesheet" href="/styles/profile.css">
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
 </head>
 <main class="main">
  <div class="page-header breadcrumb-wrap mb-3">
    <div class="container">
      <div class="breadcrumb">
-       <a href="#" rel="nofollow">Home</a>
+       <a href="home" rel="nofollow">Home</a>
        <span></span> Profile <span></span> Account
      </div>
    </div>
@@ -34,21 +37,21 @@
                      <i class="fi-rs-shopping-bag mr-10"></i>Orders
                    </a>
                  </li>
-                 <li class="nav-item">
+                 <!-- <li class="nav-item">
                    <a class="nav-link" id="track-orders-tab" data-bs-toggle="tab" href="#track-orders" role="tab" aria-controls="track-orders" aria-selected="false">
                      <i class="fi-rs-shopping-cart-check mr-10"></i>Wallet Status
                    </a>
-                 </li>
+                 </li> -->
                  <li class="nav-item">
                    <a class="nav-link" id="track-orders-tab" data-bs-toggle="tab" href="#wallet-history" role="tab" aria-controls="track-orders" aria-selected="false">
                      <i class="fi-rs-shopping-cart-check mr-10"></i>Wallet History
                    </a>
                  </li>
-                 <li class="nav-item">
+                 <!-- <li class="nav-item">
                    <a class="nav-link" id="track-orders-tab" data-bs-toggle="tab" href="#referal" role="tab" aria-controls="track-orders" aria-selected="false">
                      <i class="fi-rs-shopping-cart-check mr-10"></i>Referals
                    </a>
-                 </li>
+                 </li> -->
                  <li class="nav-item">
                    <a class="nav-link" href="/logout">
                      <i class="fi-rs-sign-out mr-10"></i>Logout
@@ -63,21 +66,61 @@
                <div class="tab-pane fade show active" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
                  <div class="card card-green">
                    <div class="card-header">
-                     <h5 class="mb-0 text-center">User Profile</h5>
+                     <h5 style="background-color: black;" class="mb-0 text-center">User Profile</h5>
                    </div>
                    <div class="card-body text-center">
                      <h5 class="card-title"></h5>
+                     <p class="card-text">
+                      <strong>Name: <%=user.name %></strong>
+                    </p>
                      <p class="card-text">
                        <strong>Phone: <%=user.phone %></strong>
                      </p>
                      <p class="card-text">
                        <strong>Email: <%=user.email%></strong>
                      </p>
-                     <a href="change-email" class="btn btn-sm btn-success ml-2">Change Email</a>
-                     <a href="/change-password" class="btn btn-sm btn-success">Change Password</a>
+                     <a style="background-color: black; color: white;" href="change-email" class="btn btn-sm ">Change Email</a>
+
+                     <a style="background-color: black; color: white;" href="/change-password" class="btn btn-sm ">Change Password</a>
                    </div>
                  </div>
                </div>
+
+               
+    <!-- Modal profile update -->
+    <div class="modal fade" id="changeProfileModal" tabindex="-1" aria-labelledby="changeProfileModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="changeProfileModalLabel">Change Profile</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                  <!-- Change Profile Form -->
+                  <form id="profileForm">
+                      <div class="mb-3">
+                          <div id="error1" style="color:red;"></div>
+                          <label for="fullName" class="form-label">Full Name</label>
+                          <input type="text" class="form-control" id="newName" name="name" placeholder="Enter your full name">
+                      </div>
+                      <div class="mb-3">
+                          <div id="error2" style="color:red;"></div>
+                          <label for="phone" class="form-label">Phone Number</label>
+                          <input type="tel" class="form-control" id="newPhone" name="email" placeholder="Enter your phone number">
+                      </div>
+                      <div class="mb-3">
+                          <input type="hidden" id="userId" value="<%=user.id%>">
+                      </div>
+                  </form>
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-save" id="saveChangesBtn">Save Changes</button>
+              </div>
+          </div>
+      </div>
+  </div>
+
 
                <div class="tab-pane fade" id="address" role="tabpanel" aria-labelledby="address-tab">
                 <div class="row">
@@ -99,8 +142,8 @@
                                         <p><strong>Phone:</strong> <%=address.phone %></p>
                                         <p><strong>Alt Phone:</strong> <%=address.altPhone %></p>
                                         <div class="d-flex justify-content-between">
-                                          <a href="/edit-address/<%=address.id %>" class="btn btn-sm btn-primary">Edit</a>
-                                          <a href="/delete-address/<%=address.id %>" class="btn btn-sm btn-danger">Delete</a>
+                                          <a style="background-color: black; color: white;" href="/edit-address/<%=address.id %>" class="btn btn-sm ">Edit</a>
+                                          <a style="background-color: black; color: white;" href="/delete-address/<%=address.id %>" class="btn btn-sm ">Delete</a>
 
                                         </div>
                                     </div>
@@ -111,7 +154,7 @@
                         <div class="col-lg-6">
                             <div class="card mb-3 mb-lg-0">
                                 <div class="card-header">
-                                    <h5 class="mb-0">No Address</h5>
+                                    <h5  class="mb-0">No Address</h5>
                                 </div>
                                 <div class="card-body">
                                     <p>No address available. Please add one.</p>
@@ -121,7 +164,7 @@
                     <% } %>
                 </div>
                 <div class="mt-3 text-center">
-                    <a href="/add-address">
+                    <a  href="/add-address">
                         <button class="btn btn-primary">
                             Add Address
                         </button>
@@ -143,6 +186,7 @@
                              <th>Date</th>
                              <th>Status</th>
                              <th>Total</th>
+                             <th>PaymentStatus</th>
                              <th>Actions</th>
                            </tr>
                          </thead>
@@ -154,6 +198,7 @@
                                  <td><%= new Date(order.createdOn).toLocaleDateString() %></td>
                                  <td><%= order.status %></td>
                                  <td>₹<%= order.finalAmount ? order.finalAmount.toFixed(2) : '0.00' %></td>
+                                 <td><%=order.paymentStatus %></td>
                                  <td class="actions-column">
                                   <form action="/orders/view/<%= order._id %>" method="GET" class="d-inline mb-2">
                                     <button type="submit" class="btn btn-info">
@@ -170,6 +215,11 @@
                                       Return Order
                                     </button>
                                   <% } %>
+                                  <% if(order.paymentStatus === 'Pending') { %>
+                                      <button type="button" onclick="retryPayment('<%=order._id%>', '<%=order.address%>', '<%=order.finalAmount%>', '<%=order.totalPrice%>',  <%=JSON.stringify(order.orderItems)%>)" class="btn btn-success">
+                                        Retry Payment
+                                      </button>
+                                      <% } %>
                                 </td>
                                 
                              <% }); %>
@@ -191,9 +241,9 @@
                <div class="tab-pane fade" id="wallet-history" role="tabpanel" aria-labelledby="wallet-history-tab">
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="mb-0">Wallet History</h5>
-                        <h5 class="mb-0">balance:<%= wallet.totalBalance %></h5>
-                    </div>
+                        <h5 class="mb-0">Wallet Balance</h5>
+                        <span class="fw-bold text-success">₹<%= wallet.totalBalance.toFixed(2) %></span>
+                      </div>
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table">
@@ -282,14 +332,13 @@
  </section>
 </main>
 <%- include("../../views/partials/user/footer.ejs") %>
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 
 <!-- SweetAlert Script -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.14/dist/sweetalert2.all.min.js"></script>
 <script>
+
   document.addEventListener('DOMContentLoaded', () => {
-    // Add event listeners to all cancel buttons
     document.querySelectorAll('.cancel-order-btn').forEach(button => {
         button.addEventListener('click', function () {
             const orderId = this.getAttribute('data-order-id');
@@ -299,6 +348,101 @@
     });
 });
 
+async function retryPayment(orderId, address, subtotal, total, products) {
+  try {
+    console.log(orderId, address, subtotal, total, products)
+    fetch('/orders/retry-payment', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ orderId }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (!data.success) {
+            throw new Error(data.message || 'Failed to create order');
+        }
+        const options = {
+            key: data.data.key_id, 
+            amount: data.data.amount,
+            currency: data.data.currency,
+            name: data.data.name,
+            description: data.data.description,
+            order_id: data.data.order_id,
+            handler: function (response) {
+                verifyRazorpayPayment(response, {
+                  address: address,
+                    products: JSON.stringify(products),
+                    subtotal: subtotal,
+                    total:total,
+                    retryPayment:true,
+                    orderId
+                });
+            },
+            prefill: data.prefill,
+            theme: {
+                color: '#3399cc'
+            }
+        };
+        const rzp = new Razorpay(options);
+        rzp.on('payment.failed', function (response) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Payment Failed',
+                text: response.error.description
+            });
+        });
+
+        rzp.open();
+    })
+
+  } catch (error) {
+    console.error('Error during payment:', error);
+  }
+}
+
+function verifyRazorpayPayment(response, orderDetails) {
+    alert("sending payment success")
+    fetch('/verify-payment', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_signature: response.razorpay_signature,
+            orderDetails: orderDetails,
+            retryPayment:true,
+            orderId: orderDetails.orderId
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Payment Successful!',
+                text: 'Your order has been placed successfully',
+                showConfirmButton: false,
+                timer: 1500
+            }).then(() => {
+                window.location.href = `/orderConfirmation`;
+            });
+        } else {
+            throw new Error(data.message || 'Payment verification failed ');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Payment Verification Failed ',
+            text: error.message || 'Failed to verify payment'
+        });
+    });
+}
 
 function cancelOrder(orderId, orderAmount) {
     Swal.fire({
@@ -355,7 +499,6 @@ function cancelOrder(orderId, orderAmount) {
     });
 }
 
-// //......................................................................................
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -387,11 +530,8 @@ function redirectToReturnReason(orderId) {
 
   document.getElementById('addMoneyBtn').addEventListener('click', async () => {
     try {
-      // Define the amount and user ID (from your frontend logic)
-      const amount = 500; // Amount in INR
-      const userId = 'exampleUserId123'; // Replace with actual user ID
-
-      // Send a request to your server to create a Razorpay order
+      const amount = 500; 
+      const userId = 'exampleUserId123'; 
       const response = await fetch('/createRazorpayOrder', {
         method: 'POST',
         headers: {
@@ -408,9 +548,9 @@ function redirectToReturnReason(orderId) {
 
       const { order } = data;
 
-      // Open Razorpay Checkout with the order details
+  
       const options = {
-        key: 'YOUR_RAZORPAY_KEY', // Replace with your Razorpay API key
+        key: 'YOUR_RAZORPAY_KEY', 
         amount: order.amount, // Amount in paisa (e.g., 500 INR = 50000 paisa)
         currency: 'INR',
         name: 'Your App Name',
@@ -438,7 +578,7 @@ function redirectToReturnReason(orderId) {
             const data = await result.json();
             if (data.success) {
               alert('Wallet updated successfully!');
-              location.reload(); // Refresh to show updated wallet history
+              location.reload(); 
             } else {
               alert('Failed to update wallet: ' + data.message);
             }
@@ -448,9 +588,9 @@ function redirectToReturnReason(orderId) {
           }
         },
         prefill: {
-          name: 'Customer Name', // Replace with the customer's name
-          email: 'customer@example.com', // Replace with the customer's email
-          contact: '9876543210', // Replace with the customer's phone number
+          name: 'Customer Name', 
+          email: 'customer@example.com', 
+          contact: '9876543210',  
         },
         theme: {
           color: '#3399cc',

@@ -23,9 +23,7 @@
           <input type="password" id="password" name="password" placeholder="Enter your password" required>
           <div id="passwordError" class="error-message"></div>
         </div>
-        <div class="form-group d-flex justify-content-end">
-          <a href="/forgot-password" class="forgot-password-link ms-auto">Forgot Password</a>
-        </div>
+       
         
         <% if(locals.message && message.length > 0) { %>
           <div class="alert alert-danger text-center">
@@ -34,11 +32,15 @@
         <% } %>
 
         <button type="submit" class="btn">Login</button>
+        <div class="form-group d-flex justify-content-end">
+          <a href="/forgot-password" class="forgot-password-link ms-auto">Forgot Password</a>
+        </div>
         <div class="divider">or</div>
         <a href="/auth/google" class="google-btn">
           <img src="images/icon.jpg" alt="Google Icon">
           Sign up with Google
         </a>
+        
       </form>
       <p class="register-text">
         Not registered? <a href="/signup">Signup</a>

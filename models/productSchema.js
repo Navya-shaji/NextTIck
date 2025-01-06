@@ -36,7 +36,7 @@ const productSchema =new Schema({
     },
     color:{
         type:String,
-        required:true
+        required:false
     },
     productImage:{
         type:[String],
@@ -52,6 +52,11 @@ const productSchema =new Schema({
         required:true,
         default:"Available"
     },
+    totalSalesCount:{
+        type:Number,
+        required:true,
+        default:0
+    }
 } , {timestams:true});
 
 const Product= mongoose.model("Product",productSchema)

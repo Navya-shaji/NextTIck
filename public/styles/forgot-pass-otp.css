@@ -1,52 +1,160 @@
 .otp-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    background-color: #f9f9f9;
-    width: 100%;
-    max-width: 400px;
-    margin: 0 auto;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  }
- 
- 
-  .otp-timer-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 10px;
-    width: 100%;
-  }
- 
- 
-  .otp-timer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background-color: #f0f0f0;
-    font-size: 14px;
-    color: black;
-    text-align: center;
-  }
- 
- 
-  .form-group {
-    width: 100%;
-    text-align: center;
-  }
- 
- 
-  .btn-primary {
-    margin-top: 15px;
-  }
- 
- 
-  .resend-button {
-    margin-top: 10px;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center; /* Center-align text */
+  padding: 20px;
+  border: 1px solid #333;
+  border-radius: 10px;
+  background-color: #fff;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.heading_s1 h3 {
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  color: #000; /* Black heading text */
+  margin-bottom: 20px;
+}
+
+.otp-timer-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.otp-timer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  font-size: 14px;
+  color: #000; /* Black text */
+  text-align: center;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.otp-timer.green {
+  background-color: #28a745; /* Green */
+}
+
+.otp-timer.yellow {
+  background-color: #ffc107; /* Yellow */
+}
+
+.otp-timer.red {
+  background-color: #dc3545; /* Red */
+}
+
+.form-group {
+  width: 100%;
+  text-align: center; /* Center-align form inputs */
+}
+
+.btn-primary {
+  background-color: #000; /* Black button */
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  margin-top: 15px;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.btn-primary:hover {
+  background-color: #333; /* Darker shade */
+}
+
+.resend-button {
+  background-color: transparent;
+  color: #000; /* Black text for resend link */
+  text-decoration: underline;
+  cursor: pointer;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.resend-button:hover {
+  color: #333;
+}
+
+.text-muted {
+  text-align: center; /* Center-align footer text */
+  margin-top: 20px;
+}
+
+.text-muted a {
+  color: #000; /* Black link */
+  text-decoration: none;
+}
+
+.text-muted a:hover {
+  text-decoration: underline;
+}
+.main-content {
+  padding-top: 150px;
+}
+.form-group-one {
+  display: flex;
+  flex-direction: column; /* Stack label and input vertically */
+  align-items: center; /* Center align text and input */
+  width: 100%;
+  margin-bottom: 20px; /* Add spacing below the group */
+}
+
+.form-group-one label {
+  font-size: 16px; /* Adjust label size */
+  font-weight: bold; /* Emphasize label text */
+  color: #000; /* Black text */
+  margin-bottom: 10px; /* Space between label and input */
+  text-align: center; /* Center align label text */
+}
+
+.form-group-one input {
+  width: 80%; /* Adjust input width */
+  max-width: 300px; /* Limit maximum width for larger screens */
+  padding: 10px; /* Add padding inside input */
+  font-size: 16px; /* Input font size */
+  border: 1px solid #333; /* Black border */
+  border-radius: 5px; /* Slightly rounded corners */
+  color: #000; /* Black text color */
+  background-color: #fff; /* White background */
+  transition: border-color 0.3s, box-shadow 0.3s; /* Smooth focus effects */
+}
+
+.form-group-one input:focus {
+  border-color: #000; /* Darker border on focus */
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Subtle glow effect */
+  outline: none; /* Remove default outline */
+}
+.form-group {
+  display: flex;
+  justify-content: center; /* Center the button horizontally */
+  margin-top: 20px; /* Add spacing above the group */
+}
+
+.resend-button {
+  background-color: transparent; /* Transparent background */
+  color: #000; /* Black text color */
+  border: none; /* No border */
+  font-size: 16px; /* Adjust font size */
+  font-weight: bold; /* Bold text */
+  text-decoration: underline; /* Underlined text */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: color 0.3s ease; /* Smooth hover effect */
+}
+
+.resend-button:hover {
+  color: #333; /* Slightly darker text color on hover */
+  text-decoration: none; /* Remove underline on hover */
+}

@@ -1,243 +1,139 @@
 <%- include("../../views/partials/user/header.ejs") %>
 <style>
-.detail-qty {
-    display: table;
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-}
-
-.detail-qty td {
-    padding: 10px;
-    text-align: center;
-    border: 1px solid #ddd;
-}
-
-.detail-qty button {
-    background-color: #f5f5f5;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    width: 35px;
-    height: 35px;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
-    color: #333;
-    transition: background-color 0.3s ease;
-}
-
-.detail-qty button:hover {
-    background-color: #e0e0e0;
-}
-
-.qty-val {
-    width: 50px;
-    text-align: center;
-    font-size: 16px;
-    border: none;
-    outline: none;
-    background-color: transparent;
-    pointer-events: none;
-}
-
-.table.shopping-summery {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 30px;
-}
-
-.table.shopping-summery th,
-.table.shopping-summery td {
-    padding: 15px;
-    border: 1px solid #ddd;
-    vertical-align: middle;
-    font-size: 16px;
-}
-
-.table.shopping-summery .image.product-thumbnail img {
-    width: 80px;
-    height: 80px;
-    object-fit: cover;
-    border-radius: 5px;
-}
-
-.table.shopping-summery .product-des {
-    text-align: left;
-    padding-left: 10px;
-}
-
-.cart-action a.btn {
-    background-color: #424874;
-    color: #fff;
-    padding: 12px 20px;
-    border-radius: 5px;
-    text-decoration: none;
-    transition: background-color 0.3s ease;
-}
-
-.cart-action a.btn:hover {
-    background-color: #36395E;
-}
-
-.item-status {
-    padding: 8px 15px;
-    border-radius: 4px;
-    font-size: 14px;
-    font-weight: 500;
-    text-align: center;
-}
-
-.status-placed {
-    background-color: #e3f2fd;
-    color: #1976d2;
-}
-
-.cart-totals {
-    background: #fafafa;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    margin-top: 30px;
-}
-
-.cart_total_amount span {
-    font-size: 24px;
-    color: #424874;
-}
-
-.btn-success {
-    background-color: #28a745;
-    color: white;
-    padding: 12px 20px;
-    border-radius: 5px;
-    font-size: 16px;
-    font-weight: bold;
-}
-
-.btn-success:disabled {
-    background-color: #A6B1E1;
-    color: white;
-    border-color: darkgray;
-}
-
-.mt-50, .mb-50 {
-    margin-top: 50px;
-    margin-bottom: 50px;
-}
-
-.divider.center_icon i {
-    font-size: 24px;
-}
-
-@media (max-width: 768px) {
-    .table.shopping-summery th,
-    .table.shopping-summery td {
-        padding: 10px;
-        font-size: 14px;
+    /* General Styles */
+    .cart-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 30px;
+        border-radius: 8px;
+        background-color: #fff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
-    .detail-qty {
-        gap: 8px;
-    }
-
-    .qty-val {
-        width: 40px;
-    }
-
-    .cart-totals {
-        padding: 15px;
-    }
-}
-/* Cart Totals Section */
-.cart-totals {
-    background: #ffffff;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    margin-top: 30px;
-    font-family: Arial, sans-serif;
-    border: 1px solid #ddd;
-}
-
-.cart-totals .heading_s1 h4 {
-    font-size: 24px;
-    color: #424874;
-    font-weight: 600;
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-.cart-totals table {
-    width: 100%;
-    margin: 0;
-    border-collapse: collapse;
-    font-size: 16px;
-}
-
-.cart-totals table tbody tr {
-    border-bottom: 1px solid #ddd;
-}
-
-.cart-totals .cart_total_label {
-    font-size: 18px;
-    font-weight: 500;
-    color: #333;
-    padding-right: 15px;
-}
-
-.cart-totals .cart_total_amount {
-    text-align: right;
-    font-size: 22px;
-    font-weight: 700;
-    color: #28a745;
-    padding-left: 15px;
-}
-
-.cart-totals .cart_total_amount .font-xl {
-    font-size: 26px;
-    color: #424874;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .cart-totals {
-        padding: 20px;
-    }
-
-    .cart-totals .heading_s1 h4 {
-        font-size: 20px;
-    }
-
-    .cart-totals .cart_total_label {
+    .cart-table th,
+    .cart-table td {
+        padding: 12px;
+        border: 1px solid #ddd;
+        text-align: center;
         font-size: 16px;
+        vertical-align: middle;
     }
 
-    .cart-totals .cart_total_amount {
-        font-size: 20px;
-    }
-}
-
-@media (max-width: 576px) {
-    .cart-totals {
-        padding: 15px;
+    .cart-table .image.product-thumbnail img {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 5px;
     }
 
-    .cart-totals .cart_total_label {
-        font-size: 14px;
+    .cart-table .product-des {
+        text-align: left;
+        padding-left: 10px;
     }
 
-    .cart-totals .cart_total_amount {
+    .cart-table .qty-val {
+        width: 50px;
+        text-align: center;
+        font-size: 16px;
+        border: none;
+        outline: none;
+        background-color: transparent;
+        pointer-events: none;
+    }
+
+    .cart-table .qty-up,
+    .cart-table .qty-down {
+        background-color: #424874;
+        border: 1px solid #ddd;
+        border-radius: 50%;
+        width: 35px;
+        height: 35px;
         font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        color: white;
+        transition: background-color 0.3s ease;
     }
-}
 
+    .cart-table .qty-up:hover,
+    .cart-table .qty-down:hover {
+        background-color: #333;
+    }
+
+    .cart-table .btn-black {
+        background-color: black;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 5px;
+        font-size: 16px;
+        font-weight: bold;
+        border: none;
+    }
+
+    .cart-table .btn-black:disabled {
+        background-color: #A6B1E1;
+        color: white;
+        border-color: darkgray;
+    }
+
+    /* Cart Totals Section */
+    .cart-total-section {
+        background-color: #f5f5f5;
+        padding: 20px;
+        font-size: 18px;
+        font-weight: bold;
+        text-align: center;
+        border-radius: 8px;
+    }
+
+    .cart-total-section .total-label {
+        font-size: 22px;
+        color: #424874;
+    }
+
+    .cart-total-section .total-amount {
+        font-size: 26px;
+        font-weight: 700;
+        color: #28a745;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .cart-table th,
+        .cart-table td {
+            padding: 8px;
+            font-size: 14px;
+        }
+
+        .cart-table .qty-val {
+            width: 40px;
+        }
+
+        .cart-table .qty-up,
+        .cart-table .qty-down {
+            width: 30px;
+            height: 30px;
+        }
+
+        .cart-total-section {
+            font-size: 16px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .cart-total-section {
+            font-size: 14px;
+        }
+
+        .cart-total-section .total-amount {
+            font-size: 20px;
+        }
+    }
 </style>
 
 <main class="main">
     <div class="page-header breadcrumb-wrap">
-        <div class="container">
-           
-        </div>
+        <div class="container"></div>
     </div>
     <section class="mt-50 mb-50">
         <div class="container">
@@ -245,19 +141,19 @@
                 <div class="col-12">
                     <div class="table-responsive">
                         <% if (cart && products.length > 0) { %>
-                            <table class="table shopping-summery text-center clean">
+                            <table class="table cart-table">
                                 <thead>
-                                    <tr class="main-heading">
-                                        <th scope="col">Image</th>
-                                        <th scope="col">Name</th>
-                                        <th scope="col">Price</th>
-                                        <th scope="col">Quantity</th>
-                                        <th scope="col">Subtotal</th>
-                                        <!-- <th scope="col">Status</th> -->
-                                        <th scope="col">Remove</th>
+                                    <tr>
+                                        <th>Image</th>
+                                        <th>Name</th>
+                                        <th>Price</th>
+                                        <th>Quantity</th>
+                                        <th>Subtotal</th>
+                                        <th>Remove</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <% let totalAmount = 0; %>
                                     <% products.forEach(item => { %>
                                         <tr>
                                             <td class="image product-thumbnail">
@@ -272,18 +168,18 @@
                                                 <span>₹<%= item.price %></span>
                                             </td>
                                             <td class="text-center" data-title="Quantity">
-                                                <div class="detail-qty border radius m-auto">
+                                                <div class="detail-qty">
                                                     <button class="qty-down" 
                                                             onclick="updateQuantity('<%= item.productId?._id %>', -1)"
-                                                            <%= item.status !== 'placed' ? 'disabled' : '' %>>
-                                                        -
+                                                            <%= item.status !== 'placed' ? 'disabled' : '' %> >
+                                                        - 
                                                     </button>
                                                     <input readonly class="qty-val" 
                                                            id="qty-<%= item.productId?._id %>" 
                                                            value="<%= item.quantity %>">
                                                     <button class="qty-up" 
                                                             onclick="updateQuantity('<%= item.productId?._id %>', 1)"
-                                                            <%= item.status !== 'placed' ? 'disabled' : '' %>>
+                                                            <%= item.status !== 'placed' ? 'disabled' : '' %> >
                                                         +
                                                     </button>
                                                 </div>
@@ -293,16 +189,6 @@
                                                     ₹<%= item.totalPrice || 0 %>
                                                 </span>
                                             </td>
-                                            <!-- <td class="text-center" data-title="Status">
-                                                <span class="item-status status-<%= item.status?.toLowerCase() %>">
-                                                    <%= item.status || 'Unknown' %>
-                                                </span>
-                                                <% if (item.cancellationReason && item.cancellationReason !== 'none') { %>
-                                                    <div class="small text-danger mt-1">
-                                                        <%= item.cancellationReason %>
-                                                    </div>
-                                                <% } %>
-                                            </td> -->
                                             <td class="action" data-title="Remove">
                                                 <% if (item.status === 'placed') { %>
                                                     <button type="button" 
@@ -313,7 +199,27 @@
                                                 <% } %>
                                             </td>
                                         </tr>
+                                        <% totalAmount += item.totalPrice; %>
                                     <% }); %>
+                                    <tr class="cart-total-section">
+                                        <td colspan="4" class="total-label">Total</td>
+                                        <td colspan="2" class="total-amount">
+                                            ₹<%= totalAmount.toLocaleString() %>
+                                        </td>
+                                    </tr>
+                                    <tr class="cart-total-section">
+                                        <td colspan="6">
+                                            <% if (products.some(item => item.status === 'placed')) { %>
+                                                <a href="/checkout" class="btn btn-black">
+                                                    <i class="fi-rs-box-alt mr-10"></i> Proceed To CheckOut
+                                                </a>
+                                            <% } else { %>
+                                                <button class="btn btn-black" disabled>
+                                                    <i class="fi-rs-box-alt mr-10"></i> Proceed To CheckOut
+                                                </button>
+                                            <% } %>
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
                         <% } else { %>
@@ -324,58 +230,18 @@
                             </div>
                         <% } %>
                     </div>
-    
+
                     <div class="cart-action text-end">
-                        <a href="/" class="btn">
-                            <i class="fi-rs-shopping-bag mr-10"></i>Continue Shopping
+                        <a href="/" class="btn btn-black">
+                            <i class="fi-rs-shopping-bag mr-10"></i> Continue Shopping
                         </a>
-                    </div>
-    
-                    <div class="divider center_icon mt-50 mb-50">
-                        <i class="fi-rs-fingerprint"></i>
-                    </div>
-    
-                    <div class="row mb-50">
-                        <div class="col-lg-6 col-md-12">
-                            <div class="border p-md-4 p-30 border-radius cart-totals">
-                                <div class="heading_s1 mb-3">
-                                    <h4>Cart Totals</h4>
-                                </div>
-                                    <table >
-                                        <tbody>
-                                            <tr>
-                                                <td class="cart_total_label">Total</td>
-                                                <td class="cart_total_amount">
-                                                    <strong>
-                                                        <span class="font-xl fw-900 text-brand">
-                                                            ₹<%= totalAmount.toLocaleString() %>
-                                                        </span>
-                                                    </strong>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-    
-                                <% if (products.some(item => item.status === 'placed')) { %>
-                                    <a href="/checkout" class="btn btn-success">
-                                        <i class="fi-rs-box-alt mr-10"></i> Proceed To CheckOut
-                                    </a>
-                                <% } else { %>
-                                    <button class="btn btn-success" disabled 
-                                            style="background-color: #A6B1E1; color: white; border-color: darkgray;">
-                                        <i class="fi-rs-box-alt mr-10"></i> Proceed To CheckOut
-                                    </button>
-                                <% } %>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-    
 </main>
+
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>

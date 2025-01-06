@@ -73,11 +73,12 @@ router.post('/orders/update-status', adminAuth, orderController.updateOrderStatu
 
 //coupon Management ............
 
-router.get("/coupon",adminAuth,couponController.loadcoupon)
-router.post("/createcoupon",adminAuth,couponController.createCoupon)
-router.get("/editcoupon",adminAuth,couponController.editCoupon)
-router.get("/updatecoupon",adminAuth,couponController.updateCoupon)
-router.delete("/deletecoupon/:id", adminAuth, couponController.deleteCoupon);
+
+router.get("/coupon", adminAuth, couponController.loadcoupon);
+router.post("/createCoupon", adminAuth, couponController.createCoupon);
+router.get("/editCoupon", adminAuth, couponController.editCoupon);
+router.post("/updateCoupon", adminAuth, couponController.updateCoupon);
+router.delete("/deleteCoupon/:id", adminAuth, couponController.deleteCoupon);
 
 
 //Admin DashBoard & Sales Report................................
@@ -85,5 +86,6 @@ router.get('/dashboard', adminAuth, adminController.loadDashboard);
 router.get('/sales-report', adminAuth, adminController.loadSalesReport);
 router.post('/sales-report/generate', adminAuth, adminController.generateSalesReport);
 router.get('/sales-report/download', adminAuth, adminController.downloadSalesReport);
+
 
 module.exports=router

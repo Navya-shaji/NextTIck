@@ -24,6 +24,8 @@
             Categories
             <span class="dropdown-arrow">⬇️</span>
           </div>
+
+          
           <div id="categoryDropdown" class="category-brand-container dropdown-content">
             <ul>
               <% categories.forEach(function(category) { %>
@@ -157,11 +159,9 @@
           const currentUrl = new URL(window.location.href);
           currentUrl.searchParams.set('page', page);
           
-          // Preserve all existing filters and sort parameters
           window.location.href = currentUrl.toString();
         }
 
-        // Add this to your existing clear search function
         function clearSearch() {
           const searchInput = document.getElementById('searchInput');
           searchInput.value = '';

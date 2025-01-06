@@ -94,14 +94,14 @@ const addRefundToWallet = async (userId, amount, orderId) => {
 
         if (!wallet) {
 
-            wallet = new Wallet({ userId, balance: 0, transactions: [] });
+            wallet = new Wallet({ userId, totalBalance, transactions: [] });
         }
 
         if (!Array.isArray(wallet.transactions)) {
             wallet.transactions = [];
         }
 
-        wallet.balance += amount;
+        wallet.totalBalance += amount;
         wallet.transactions.push({
             type: 'Refund',
             amount: amount,

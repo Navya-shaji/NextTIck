@@ -76,7 +76,17 @@ const orderSchema =new Schema({
     returnReason: { 
         type: String,
         required: false
-    }
+    },
+    paymentId:{
+        type:String,
+        required:false
+    },
+    cancellationReason: {
+        type: String,
+        default: null
+    },
+   
+    
 })
 const Order =mongoose.model("Order",orderSchema);
 module.exports = Order;

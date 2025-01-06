@@ -19,7 +19,7 @@ const productDetail = async (req, res) => {
 
         const categoryOffer = findCategory?.categoryOffer || 0;
         const productOffer = product.productOffer || 0;
-        const totalOffer = categoryOffer + productOffer;
+        const totalOffer = Math.max(categoryOffer, productOffer);
 
         res.render("productDetails", {
             user: userData,

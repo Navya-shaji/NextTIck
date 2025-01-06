@@ -75,56 +75,45 @@
 
 /* Card Styles */
 .card {
-  border: 1px solid #dee2e6;
-  border-radius: 5px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .card-header {
-  background-color: #fff;
-  padding: 15px;
+  background-color: #f8f9fa;
   border-bottom: 1px solid #dee2e6;
 }
 .card-green .card-header{
-  background-color: #28a745;
+  background-color: #111111;
   color: white;
 }
 
 .card-body {
-  padding: 20px;
+  padding: 1rem;
 }
 
 /* Table Styles */
-.table {
+table {
   width: 100%;
-  table-layout: fixed; /* Ensure the table takes up available space without scrolling */
+  margin-bottom: 1rem;
+  color: #212529;
   border-collapse: collapse;
-  margin-bottom: 0;
 }
 
-.table th,
-.table td {
-  padding: 10px;
-  text-align: left;
-  border-bottom: 1px solid #dee2e6;
-  word-wrap: break-word; /* Ensure long text wraps within the cells */
+table th,
+table td {
+  padding: 0.75rem;
+  vertical-align: top;
+  border-top: 1px solid #dee2e6;
 }
 
-.table th {
-  font-weight: bold;
-  box-sizing: content-box;
+table thead th {
+  vertical-align: bottom;
+  border-bottom: 2px solid #dee2e6;
 }
 
-.table tbody tr:last-child td {
-  border-bottom: none;
-}
-
-/* Remove the horizontal scrollbar and make table layout fixed */
-.table-responsive {
-  width: 100%;
-  overflow: hidden; /* Hide overflow */
-  -webkit-overflow-scrolling: touch; /* Smooth scrolling for touch devices */
+table tbody + tbody {
+  border-top: 2px solid #dee2e6;
 }
 
 /* Order actions buttons */
@@ -133,13 +122,13 @@
   font-size: 14px;
 }
 .btn-info{
-  background-color: #17a2b8;
-  border-color: #17a2b8;
+  background-color: #070707;
+  border-color: #030303;
   color: white;
 }
 .btn-info:hover{
-  background-color: #138496;
-  border-color: #117a8b;
+  background-color: #020202;
+  border-color: #070707;
   color: white;
 }
 .btn-danger{
@@ -163,7 +152,6 @@
   color: black;
 }
 
-/* Wallet Styles */
 .contact-from-area {
   padding: 30px;
   border: 1px solid #dee2e6;
@@ -178,7 +166,6 @@
   margin-top: 90px;
 }
 
-/* Responsive adjustments (example) */
 @media (max-width: 768px) {
   .col-md-4 {
       flex: 0 0 100%;
@@ -199,32 +186,30 @@
   color: white;
 }
 .bg-success{
-  background-color: #28a745;
+  background-color: #060606;
 }
 .bg-danger{
   background-color: #dc3545;
 }
 .bg-info{
-  background-color: #17a2b8;
+  background-color: #070707;
 }
 .text-danger{
   color: #dc3545;
 }
 .text-success{
-  color: #28a745;
+  color: #0f0f0f;
 }
 
-/* Style for the actions column */
 .actions-column {
-  width: 200px; /* Set a fixed width for the actions column */
+  width: 200px;
   text-align: center;
 }
 
-/* Style for the buttons in the actions column */
 .actions-column .btn {
-  margin-bottom: 5px; /* Space between buttons */
-  width: 100%; /* Make buttons take full width of the column */
-  padding: 10px; /* Adjust padding for uniform button size */
+  margin-bottom: 5px; 
+  width: 100%;
+  padding: 10px; 
 }
 
 /* Optional: If you want to make the table responsive */
@@ -234,4 +219,23 @@
 section{
   padding-right: 67px;
 
+}
+.disabled {
+  opacity: 0.6;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+.wallet-balance {
+  background: #f8f9fa;
+  border-left: 4px solid #198754;
+  transition: all 0.3s ease;
+}
+
+.wallet-balance:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.wallet-balance .text-success {
+  font-size: 1.2rem;
 }

@@ -1,16 +1,18 @@
-<%- include("../../views/partials/user/header.ejs") %>
+
+
+
 <head>
   <link rel="stylesheet" href="/styles/forgot-pass-otp.css">
 </head>
 
-<div class="container col-4 login_wrap widget-taber-content p-30 background-white border-radius-5 mt-30">
+<div class="main-content">
     <div class="padding_eight_all bg-white">
       <div class="heading_s1">
         <h3 class="mb-30 text-center">Email Verification</h3>
       </div>
       <div class="otp-container">
         <form onsubmit="return validateOtpForm()">
-          <div class="form-group">
+          <div class="form-group-one">
             <label for="otp">Enter OTP:</label>
             <input type="text" id="otp" name="otp" class="form-control" required>
           </div>
@@ -40,47 +42,43 @@
 
    <script>
 
+let otpTimerInterval;
+let timer = 60;
 
-    let otpTimerInterval;
-    let timer=60;
-   function updateTimerColor(percentage){
+function updateTimerColor() {
     const timerElement = document.getElementById('otpTimer');
-    if(percentage >50){
-      timerElement.style.backgroundColor ='#28a745'
-    }else if(percentage>25){
-      timerElement.style.backgroundColor ='#ffc107';
-    }else{
-      timerElement.style.backgroundColor='#dc3545'
+    if (timer > 30) {
+        timerElement.className = 'otp-timer green';
+    } else if (timer > 10) {
+        timerElement.className = 'otp-timer yellow';
+    } else {
+        timerElement.className = 'otp-timer red';
     }
-   }
+}
 
-  
-
-
-    function startOtpTimer(){
-      const timerElement=document.getElementById('otpTimer');
-      otpTimerInterval=setInterval(function(){
-
-        const minutes = Math.floor(timer/60);
-        const seconds=timer %60;
-        timerElement.textContent = `${minutes}:${seconds<10?"0":""}${seconds}`;
-        updateTimerColor((timer/60)*100);
-        if(--timer<0){
-          clearInterval(otpTimerInterval);
-          timerElement.textContent='Expired';
-          timerElement.style.backgroundColor ='red'
+function startOtpTimer() {
+    const timerElement = document.getElementById('otpTimer');
+    otpTimerInterval = setInterval(() => {
+        const minutes = Math.floor(timer / 60);
+        const seconds = timer % 60;
+        timerElement.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        updateTimerColor();
+        if (--timer < 0) {
+            clearInterval(otpTimerInterval);
+            timerElement.textContent = 'Expired';
+            timerElement.className = 'otp-timer red';
         }
-      },1000)
-    }
-     
+    }, 1000);
+}
 
-   initializeOtpTimer();
+function initializeOtpTimer() {
+    clearInterval(otpTimerInterval);
+    timer = 60;
+    startOtpTimer();
+}
 
-    function intilizeOtoTimer(){
-      clearInterval(otpTimerInterval);
-      timer=60;
-      startOtpTimer();
-    }
+// Start the timer when the page loads
+initializeOtpTimer();
 
     function validateOtpForm(){
       const otpInput =document.getElementById('otp').value;
@@ -157,4 +155,3 @@
 
 
 
-<%- include("../../views/partials/user/footer.ejs") %>

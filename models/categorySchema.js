@@ -24,6 +24,11 @@ const categorySchema =new mongoose.Schema({
     createdAt:{
         type:Date,
         default:Date.now
+    },
+    totalSalesCount:{
+        type:Number,
+        required:true,
+        default:0
     }
 })
 

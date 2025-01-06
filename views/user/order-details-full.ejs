@@ -3,329 +3,286 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Details</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        .card {
-            margin-bottom: 20px;
-        }
-       
-    /* Main container styling */
-    .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 2rem;
-    }
-
-    /* Page title styling */
-    h1 {
-        color: #333;
-        font-size: 2.5rem;
-        margin-bottom: 2rem;
-        padding-bottom: 1rem;
-        border-bottom: 2px solid #eee;
-    }
-
-    /* Card styling */
-    .card {
-        border: none;
-        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-        border-radius: 12px;
-        margin-bottom: 30px;
-        background: #fff;
-    }
-
-    .card-body {
-        padding: 2rem;
-    }
-
-    .card-title {
-        color: #2c3e50;
-        font-size: 1.5rem;
-        margin-bottom: 1.5rem;
-    }
-
-    /* Text styling */
-    .card-text {
-        color: #555;
-        margin-bottom: 0.8rem;
-        line-height: 1.6;
-    }
-
-    .card-text strong {
-        color: #2c3e50;
-        font-weight: 600;
-    }
-
-    /* Address section styling */
-    h6 {
-        color: #2c3e50;
-        font-size: 1.1rem;
-        font-weight: 600;
-        margin-top: 2rem;
-        margin-bottom: 1rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 1px solid #eee;
-    }
-
-    address {
-        color: #666;
-        line-height: 1.8;
-        font-style: normal;
-        padding: 1rem;
-        background: #f8f9fa;
-        border-radius: 8px;
-        margin-bottom: 1.5rem;
-    }
-
-    /* Table styling */
-    .table {
-        margin-top: 1.5rem;
-        border-collapse: separate;
-        border-spacing: 0;
-    }
-
-    .table thead th {
-        background-color: #f8f9fa;
-        color: #2c3e50;
-        font-weight: 600;
-        padding: 1rem;
-        border-bottom: 2px solid #dee2e6;
-    }
-
-    .table tbody td {
-        padding: 1rem;
-        vertical-align: middle;
-        border-bottom: 1px solid #dee2e6;
-        color: #555;
-    }
-
-    .table tfoot td {
-        padding: 1rem;
-        font-weight: 600;
-        color: #2c3e50;
-    }
-
-    .table tfoot tr:last-child td {
-        border-top: 2px solid #dee2e6;
-        font-size: 1.1rem;
-        color: #2c3e50;
-    }
-
-    /* Status indicators */
-    .text-danger {
-        color: #dc3545 !important;
-        font-weight: 600;
-    }
-
-    /* Payment status styling */
-    .payment-status {
-        display: inline-block;
-        padding: 0.4rem 1rem;
-        border-radius: 20px;
-        font-size: 0.9rem;
-        font-weight: 500;
-    }
-
-    .payment-status.paid {
-        background-color: #d4edda;
-        color: #155724;
-    }
-
-    .payment-status.pending {
-        background-color: #fff3cd;
-        color: #856404;
-    }
-
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-        .container {
-            padding: 1rem;
+        :root {
+            --primary-color: #070707;
+            --secondary-color: #040404;
+            --accent-color: #040404;
+            --light-gray: #f8f9fa;
+            --border-color: #dee2e6;
         }
 
-        .card-body {
-            padding: 1.5rem;
+        body {
+            background-color: #f5f5f5;
+            font-family: 'Arial', sans-serif;
         }
 
-        h1 {
-            font-size: 2rem;
-        }
-
-        .table thead {
-            display: none;
-        }
-
-        .table, .table tbody, .table tr, .table td {
-            display: block;
-            width: 100%;
-        }
-
-        .table tr {
-            margin-bottom: 1rem;
-            border: 1px solid #dee2e6;
+        .invoice-container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            background: white;
+            padding: 2rem;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
-            padding: 0.5rem;
         }
 
-        .table td {
-            text-align: right;
-            padding: 0.5rem;
-            position: relative;
-            border: none;
+        .invoice-header {
+            border-bottom: 2px solid var(--border-color);
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .table td::before {
-            content: attr(data-label);
-            float: left;
-            font-weight: bold;
-            color: #2c3e50;
-        }
-    }
-
-    /* Animation for status changes */
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
-
-    .status-change {
-        animation: fadeIn 0.3s ease-in;
-    }
-
-    /* Print styles */
-    @media print {
-        .container {
-            width: 100%;
-            margin: 0;
-            padding: 0;
+        .invoice-title {
+            color: var(--primary-color);
+            font-size: 2rem;
+            font-weight: 700;
         }
 
-        .card {
-            box-shadow: none;
-            border: 1px solid #dee2e6;
+        .invoice-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-bottom: 2rem;
         }
-    }
-    .product-img {
-    max-width: 50px;   /* Restricts the image width to 50px */
-    max-height: 50px;  /* Restricts the image height to 50px */
-    object-fit: cover; /* Ensures the image maintains its aspect ratio and doesn't get distorted */
-}
-</style>
+
+        .details-section {
+            background: var(--light-gray);
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .details-title {
+            color: var(--secondary-color);
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .table {
+            margin-top: 2rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .table thead th {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            font-weight: 500;
+        }
+
+        .table tbody td {
+            padding: 1rem;
+            vertical-align: middle;
+        }
+
+        .table tfoot {
+            background-color: var(--light-gray);
+            font-weight: 600;
+        }
+
+        .product-img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 500;
+            text-align: center;
+            display: inline-block;
+        }
+
+        .status-paid {
+            background-color:  #c1fa95;
+            color: #040404;
+        }
+
+        .status-pending {
+            background-color: #c1fa95;
+            color: #040404;
+        }
+
+        .download-btn {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .download-btn:hover {
+            background-color: #070707;
+            color: white;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+
+            .invoice-container {
+                box-shadow: none;
+                margin: 0;
+                padding: 1rem;
+            }
+
+            .download-btn {
+                display: none;
+            }
+
+            .table thead th {
+                background-color: #f8f9fa !important;
+                color: #333 !important;
+                -webkit-print-color-adjust: exact;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .invoice-details {
+                grid-template-columns: 1fr;
+            }
+
+            .table thead {
+                display: none;
+            }
+
+            .table tbody td {
+                display: block;
+                text-align: right;
+                padding: 0.5rem;
+                border: none;
+            }
+
+            .table tbody td::before {
+                content: attr(data-label);
+                float: left;
+                font-weight: bold;
+            }
+
+            .table tbody tr {
+                border-bottom: 1px solid var(--border-color);
+            }
+        }
+    </style>
 </head>
 <body>
+    <div class="invoice-container">
+        <div class="invoice-header">
+            <div>
+                <p> #<%= order.orderId %></p>
+            </div>
+            <a href="#" class="download-btn">Download Invoice</a>
+        </div>
 
-    <div class="container mt-5">
-        <h1 class="mb-4">Order Details</h1>
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Order <%= order.orderId %></h5>
-                <p class="card-text"><strong>Status:</strong> <%= order.status %></p>
-                <p class="card-text"><strong>Date:</strong> <%= new Date(order.createdOn).toLocaleString() %></p>
-                <p class="card-text"><strong>Payment Status:</strong> <%= order.paymentStatus %></p>
-                <p class="card-text"><strong>Payment ID:</strong> <%= order.paymentId || 'N/A' %></p>
+        <div class="invoice-details">
+            <div class="details-section">
+                <h3 class="details-title">Order Information</h3>
+                <p><strong>Date:</strong> <%= new Date(order.createdOn).toLocaleString() %></p>
+                <p><strong>Status:</strong> <%= order.status %></p>
+                <p><strong>Payment Status:</strong> 
+                    <span class="status-badge <%= order.paymentStatus.toLowerCase() === 'paid' ? 'status-paid' : 'status-pending' %>">
+                        <%= order.paymentStatus %>
+                    </span>
+                </p>
+                <p><strong>Payment ID:</strong> <%= order.paymentId || 'N/A' %></p>
+            </div>
 
-                <h6 class="mt-4">Shipping Address</h6>
-                <address>
-                    <% if (address) { %>
-                        <%= address.name || 'N/A' %><br>
-                        <%= address.addressType || 'N/A' %><br>
-                        <%= address.street || 'N/A' %><br>
-                        <%= address.city || 'N/A' %>, <%= order.address.state || 'N/A' %> <%= order.address.pincode || 'N/A' %><br>
-                        Landmark: <%= address.landMark || 'N/A' %><br>
-                        Phone: .address.phone || 'N/A' %><br>
-                        <% if (address.altPhone) { %>
-                            Alt. Phone: <%= address.altPhone %>
-                        <% } %>
-                    <% } else { %>
-                        Address information not available
+            <div class="details-section">
+                <h3 class="details-title">Shipping Address</h3>
+                <% if (address) { %>
+                    <p><%= address.name %></p>
+                    <p><%= address.addressType %></p>
+                    <p><%= address.city %>, <%= address.state %> <%= address.pincode %></p>
+                    <p>Landmark: <%= address.landMark || 'N/A' %></p>
+                    <p>Phone: <%= address.phone %></p>
+                    <% if (address.altPhone) { %>
+                        <p>Alt. Phone: <%= address.altPhone %></p>
                     <% } %>
-                </address>
-
-                <h6 class="mt-4">Order Items</h6>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>image</th>
-                            <th>Product</th>
-                            <th>Quantity</th>
-                            <th>Price</th>
-                            <th>Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% order.orderItems.forEach(item => { %>
-                            <tr>
-                                <td>
-                                    <img src="/uploads/re-image/<%=item.product.productImage[0] %>" alt="Product" class="product-img me-3">
-                                </td>
-                                <td><%= item.product.productName %></td>
-                                <td><%= item.quantity %></td>
-                                <td>₹<%= item.price.toFixed(2) %></td>
-                                <td>₹<%= (item.quantity * item.price).toFixed(2) %></td>
-                            </tr>
-                        <% }); %>
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colspan="3" class="text-end"><strong>Subtotal:</strong></td>
-                            <td>₹<%= order.totalPrice.toFixed(2) %></td>
-                        </tr>
-                       
-                        <tr>
-                            <td colspan="3" class="text-end"><strong>Discount:</strong></td>
-                            <td>₹<%= (order.totalPrice - order.finalAmount).toFixed(2) %></td>
-                        </tr>
-                     
-                        <tr>
-                            <td colspan="3" class="text-end"><strong>Total:</strong></td>
-                            <td>₹<%= order.finalAmount.toFixed(2) %></td>
-                        </tr>
-                    </tfoot>
-                </table>
-
-                <% if (order.couponApplied) { %>
-                    <p class="card-text"><strong>Coupon Applied:</strong> Yes</p>
                 <% } %>
-
-                <% if (order.returnedByUser) { %>
-                    <p class="card-text text-danger"><strong>Returned by User</strong></p>
-                <% } %>
-
-                <div class="mt-4">
-                   
-                </div>
             </div>
         </div>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Description</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% order.orderItems.forEach(item => { %>
+                    <tr>
+                        <tr>
+                            <td data-label="Product">
+                                <% if (item.product && item.product.productImage && item.product.productImage.length > 0) { %>
+                                    <img src="/uploads/re-image/<%= item.product.productImage[0] %>" alt="Product" class="product-img">
+                                <% } else { %>
+                                    <img src="/uploads/re-image/default-image.jpg" alt="Product" class="product-img">
+                                <% } %>
+                            </td>
+                            <td data-label="Description">
+                                <%= item.product ? item.product.productName : 'Product not available' %>
+                            </td>
+                            <td data-label="Quantity">
+                                <%= item.quantity %>
+                            </td>
+                        </tr>
+                        
+                        <td data-label="Description"><%= item.product.productName %></td>
+                        <td data-label="Quantity"><%= item.quantity %></td>
+                        <td data-label="Price">₹<%= item.price.toFixed(2) %></td>
+                        <td data-label="Total">₹<%= (item.quantity * item.price).toFixed(2) %></td>
+                    </tr>
+                <% }); %>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="4" class="text-end">Subtotal:</td>
+                    <td>₹<%= order.totalPrice.toFixed(2) %></td>
+                </tr>
+                <tr>
+                    <td colspan="4" class="text-end">Discount:</td>
+                    <td>₹<%= (order.totalPrice - order.finalAmount).toFixed(2) %></td>
+                </tr>
+                <tr>
+                    <td colspan="4" class="text-end"><strong>Total Amount:</strong></td>
+                    <td><strong>₹<%= order.finalAmount.toFixed(2) %></strong></td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <% if (order.couponApplied) { %>
+            <p class="mt-3"><strong>Coupon Applied:</strong> Yes</p>
+        <% } %>
+
+        <% if (order.returnedByUser) { %>
+            <div class="alert alert-danger mt-3">
+                <strong>Note:</strong> This order has been returned by the user
+            </div>
+        <% } %>
     </div>
 
     <script>
-
-    function changeOrderStatus(orderId, newStatus) {
-        if (confirm(`Are you sure you want to change the order status to ${newStatus}?`)) {
-            fetch(`/orders/${orderId}/status`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ newStatus }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Order status updated successfully');
-                    location.reload();
-                } else {
-                    alert(data.message || 'Failed to update order status');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while updating the order status');
-            });
-        }
-    }
+        // Handle PDF download
+        document.querySelector('.download-btn').addEventListener('click', (event) => {
+            event.preventDefault();
+            window.print();
+        });
     </script>
-
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

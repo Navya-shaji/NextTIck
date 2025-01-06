@@ -1,7 +1,7 @@
 
-const User=require("../../models/userSchema");
-const mongoose=require("mongoose")
-const bcrypt=require("bcrypt")
+const User = require("../../models/userSchema");
+const mongoose = require("mongoose")
+const bcrypt = require("bcrypt")
 const Order = require("../../models/orderSchema");
 const PDFDocument = require('pdfkit');
 const ExcelJS = require('exceljs');
@@ -11,46 +11,45 @@ const Category = require('../../models/categorySchema');
 const Brand = require('../../models/brandSchema');
 
 
-const pageerror=async(req,res)=>{
+const pageerror = async (req, res) => {
     res.render("admin-error")
 }
 
 //loadig login page............................................................................................
 
-const loadLogin =(req,res)=>{
-    if(req.session.admin){
+const loadLogin = (req, res) => {
+    if (req.session.admin) {
         return res.redirect("/admin/dashboard")
     }
-    res.render("adminLogin",{message:null})
+    res.render("adminLogin", { message: null })
 }
 
 
 //login..........................................................................................................
 
-const login=async(req,res)=>{
+const login = async (req, res) => {
     try {
-        const {email,password} =req.body;
-        const admin =await User.findOne({email,isAdmin:true})
-        if(admin){
-            const passwordMatch = bcrypt.compare(password,admin.password);
-            if(passwordMatch){
+        const { email, password } = req.body;
+        const admin = await User.findOne({ email, isAdmin: true })
+        if (admin) {
+            const passwordMatch = bcrypt.compare(password, admin.password);
+            if (passwordMatch) {
                 req.session.admin = true
                 return res.redirect("/admin")
-            }else{
+            } else {
                 return res.redirect("/login")
             }
-        }else{
+        } else {
             return res.redirect("/login")
         }
     } catch (error) {
         return res.redirect("/pageerror")
-        
+
     }
 }
 
 
 //loading dashboard................................................................................................
-
 
 
 const getTopSellingData = async () => {
@@ -75,39 +74,40 @@ const getTopSellingData = async () => {
                 }
             },
             { $sort: { totalQuantity: -1 } },
-            { $limit: 5 } 
+            { $limit: 10 } // Fetch top 10
         ]);
 
-const topCategories = await Order.aggregate([
-  { $unwind: "$orderedItems" },
-  {
-      $lookup: {
-          from: "products",
-          localField: "orderedItems.id",
-          foreignField: "_id",
-          as: "productDetails"
-      }
-  },
-  { $unwind: "$productDetails" },
-  {
-      $lookup: {
-          from: "categories",
-          localField: "productDetails.category", 
-          foreignField: "_id",
-          as: "categoryDetails"
-      }
-  },
-  { $unwind: "$categoryDetails" },
-  {
-      $group: {
-          _id: "$categoryDetails._id",
-          totalQuantity: { $sum: "$orderedItems.quantity" },
-          categoryName: { $first: "$categoryDetails.name" }
-      }
-  },
-  { $sort: { totalQuantity: -1 } },
-  { $limit: 5 } 
-]);
+        const topCategories = await Order.aggregate([
+            { $unwind: "$orderedItems" },
+            {
+                $lookup: {
+                    from: "products",
+                    localField: "orderedItems.id",
+                    foreignField: "_id",
+                    as: "productDetails"
+                }
+            },
+            { $unwind: "$productDetails" },
+            {
+                $lookup: {
+                    from: "categories",
+                    localField: "productDetails.category",
+                    foreignField: "_id",
+                    as: "categoryDetails"
+                }
+            },
+            { $unwind: "$categoryDetails" },
+            {
+                $group: {
+                    _id: "$categoryDetails._id",
+                    totalQuantity: { $sum: "$orderedItems.quantity" },
+                    categoryName: { $first: "$categoryDetails.name" }
+                }
+            },
+            { $sort: { totalQuantity: -1 } },
+            { $limit: 10 } 
+        ]);
+
         const topBrands = await Order.aggregate([
             { $unwind: "$orderedItems" },
             {
@@ -127,7 +127,7 @@ const topCategories = await Order.aggregate([
                 }
             },
             { $sort: { totalQuantity: -1 } },
-            { $limit: 5 }
+            { $limit: 10 } 
         ]);
 
         return { topProducts, topCategories, topBrands };
@@ -144,7 +144,7 @@ const formatCurrency = (amount) => {
 
 const getDateRanges = () => {
     const today = new Date();
-    
+
     const startOfWeek = new Date(today);
     startOfWeek.setDate(today.getDate() - today.getDay());
     startOfWeek.setHours(0, 0, 0, 0);
@@ -165,13 +165,27 @@ const getDateRanges = () => {
     };
 };
 
-
-const loadDashboard = async (req,res)=>{
+const loadDashboard = async (req, res) => {
     try {
+        // Check if admin is logged in
         if (!req.session.admin) {
-            return res.redirect('login');
+            return res.redirect("login");
         }
+        let topTenProduct;
+        let topTenCategory;
+        let topTenBrand;
+        const trendingDetails = async () => {
+            try {
+                 topTenProduct = await Product.find({}).sort({ totalSalesCount: -1 }).limit(10)
+                 topTenCategory = await Category.find({}).sort({ totalSalesCount: -1 }).limit(10)
+                 topTenBrand = await Brand.find({}).sort({ totalSalesCount: -1 }).limit(10)
+            } catch (error) {
+        res.redirect("/admin/pageerror")
+            }
+        }
+        trendingDetails()
 
+        // Get date ranges for filtering
         const dateRanges = getDateRanges();
 
         const orders = await Order.find({})
@@ -179,22 +193,23 @@ const loadDashboard = async (req,res)=>{
             .sort({ createdOn: -1 });
 
         const stats = await Order.aggregate([
-                      {
-                          $group: {
-                              _id: null,
-                              totalSalesCount: { $sum: 1 },
-                              totalOrderAmount: {
-                                  $sum: { $toDouble: { $ifNull: ["$finalAmount", "0"] } }
-                              },
-                              totalDiscount: {
-                                  $sum: { $toDouble: { $ifNull: ["$discount", "0"] } }
-                              }
-                          }
-                      }
-                  ]);
-                  const { totalSalesCount = 0, totalOrderAmount = 0, totalDiscount = 0 } = stats[0] || {};
+            {
+                $group: {
+                    _id: null,
+                    totalSalesCount: { $sum: 1 },
+                    totalOrderAmount: {
+                        $sum: { $toDouble: { $ifNull: ["$finalAmount", 0] } }
+                    },
+                    totalDiscount: {
+                        $sum: { $toDouble: { $ifNull: ["$discount", 0] } }
+                    }
+                }
+            }
+        ]);
 
-         // weekly Sales Data
+        const { totalSalesCount = 0, totalOrderAmount = 0, totalDiscount = 0 } = stats[0] || {};
+
+        // Weekly Sales Data
         const dailySales = await Order.aggregate([
             {
                 $match: {
@@ -207,18 +222,12 @@ const loadDashboard = async (req,res)=>{
             },
             {
                 $group: {
-                    _id: { 
-                        $dayOfWeek: "$createdOn"
-                    },
-                    sales: { 
-                        $sum: { $toDouble: "$finalAmount" }
-                    },
+                    _id: { $dayOfWeek: "$createdOn" },
+                    sales: { $sum: { $toDouble: "$finalAmount" } },
                     orderCount: { $sum: 1 }
                 }
             },
-            {
-                $sort: { "_id": 1 }
-            }
+            { $sort: { "_id": 1 } }
         ]);
 
         // Monthly Sales Data
@@ -231,50 +240,31 @@ const loadDashboard = async (req,res)=>{
             },
             {
                 $group: {
-                    _id: {
-                        year: { $year: "$createdOn" },
-                        month: { $month: "$createdOn" }
-                    },
-                    sales: { 
-                        $sum: { $toDouble: "$finalAmount" }
-                    },
+                    _id: { month: { $month: "$createdOn" } },
+                    sales: { $sum: { $toDouble: "$finalAmount" } },
                     orderCount: { $sum: 1 }
                 }
             },
-            {
-                $sort: { 
-                    "_id.year": 1,
-                    "_id.month": 1
-                }
-            }
+            { $sort: { "_id.month": 1 } }
         ]);
 
         // Yearly Sales Data
         const yearlySales = await Order.aggregate([
             {
-                $match: {
-                    status: { $ne: "Cancelled" }
-                }
+                $match: { status: { $ne: "Cancelled" } }
             },
             {
                 $group: {
                     _id: { $year: "$createdOn" },
-                    sales: { 
-                        $sum: { $toDouble: "$finalAmount" }
-                    },
+                    sales: { $sum: { $toDouble: "$finalAmount" } },
                     orderCount: { $sum: 1 }
                 }
             },
-            {
-                $sort: { "_id": -1 }
-            },
-            {
-                $limit: 5
-            }
+            { $sort: { "_id": -1 } },
+            { $limit: 5 }
         ]);
 
-        // Format data for charts
-        const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
         const weeklyData = {
             labels: daysOfWeek,
             data: Array(7).fill(0),
@@ -282,13 +272,12 @@ const loadDashboard = async (req,res)=>{
         };
 
         dailySales.forEach(item => {
-            const dayIndex = item._id - 1;
+            const dayIndex = item._id - 1; 
             weeklyData.data[dayIndex] = formatCurrency(item.sales);
             weeklyData.orderCounts[dayIndex] = item.orderCount;
         });
 
-        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
-                          'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         const monthlyData = {
             labels: monthNames,
             data: Array(12).fill(0),
@@ -307,22 +296,19 @@ const loadDashboard = async (req,res)=>{
             orderCounts: yearlySales.map(item => item.orderCount)
         };
 
+        // Payment Method Stats
         const paymentStats = await Order.aggregate([
             {
                 $group: {
-                    _id: "$paymentMethod",
+                    _id: "$paymentStatus",
                     count: { $sum: 1 },
-                    total: { 
-                        $sum: { $toDouble: "$finalAmount" }
-                    }
+                    total: { $sum: { $toDouble: "$finalAmount" } }
                 }
             }
         ]);
 
-       
         const { topProducts, topCategories, topBrands } = await getTopSellingData();
 
-        // Calculate success rate
         const orderStatusStats = await Order.aggregate([
             {
                 $group: {
@@ -335,48 +321,38 @@ const loadDashboard = async (req,res)=>{
         const totalOrders = orderStatusStats.reduce((acc, curr) => acc + curr.count, 0);
         const successfulOrders = orderStatusStats.find(stat => stat._id === "Delivered")?.count || 0;
         const orderSuccessRate = totalOrders ? ((successfulOrders / totalOrders) * 100).toFixed(2) : 0;
-
-        // Render dashboard
-        console.log("weekly",weeklyData);
-        console.log("monthly",monthlyData);
-        console.log("yearly",yearlyData);
-        return res.render('dashboard', {
+        
+        // Render Dashboard
+        return res.render("dashboard", {
             orders,
-            // recentOrders,
-            totalSalesCount:totalSalesCount,
-            totalOrderAmount: totalOrderAmount ,
-            totalDiscount: totalDiscount,
-            // orderSuccessRate,
-            bestSellingProducts: topProducts,
-            bestSellingCategories: topCategories,
-            bestSellingBrands: topBrands,
+            totalSalesCount,
+            totalOrderAmount,
+            totalDiscount,
+            orderSuccessRate,
+            bestSellingProducts: topTenProduct,
+            bestSellingCategories: topTenCategory,
+            bestSellingBrands: topTenBrand,
             weekly: weeklyData,
             monthly: monthlyData,
             yearly: yearlyData,
-            paymentStats,
-            // currentMonth: monthNames[new Date().getMonth()],
-            // currentYear: new Date().getFullYear()
+            paymentStats
         });
-
     } catch (error) {
         console.error("Dashboard error:", error.message);
-        return res.redirect('/admin/pageNotFound');
+        return res.redirect("/admin/pageNotFound");
     }
 };
-
-
-//......................................
 
 
 
 //logout...........................................................................................................
 
-const logout =async(req,res)=>{
+const logout = async (req, res) => {
     try {
-        req.session.destroy(err=>{
-            if(err){
+        req.session.destroy(err => {
+            if (err) {
                 return res.redirect("/pageerror")
-                
+
             }
             res.redirect("/admin/login")
         })
@@ -484,11 +460,11 @@ const loadSalesReport = async (req, res) => {
 
         const orders = await Order.find({
             ...dateFilter,
-            status: { $nin: ['Pending', 'Processing'] } 
+            status: { $nin: ['Pending', 'Processing'] }
         })
-        .populate('userId', 'name')
-        .populate('orderItems.product', 'name')
-        .sort({ createdOn: -1 });
+            .populate('userId', 'name')
+            .populate('orderItems.product', 'name')
+            .sort({ createdOn: -1 });
 
         const totals = calculateTotals(orders);
 
@@ -509,7 +485,7 @@ const loadSalesReport = async (req, res) => {
 
     } catch (error) {
         console.error('Error in loadSalesReport:', error);
-        res.status(500).render('error', { 
+        res.status(500).render('error', {
             message: 'Error generating sales report',
             error: process.env.NODE_ENV === 'development' ? error : {}
         });
@@ -518,7 +494,6 @@ const loadSalesReport = async (req, res) => {
 
 
 //downloading the sales report ...................................
-
 const downloadSalesReport = async (req, res) => {
     try {
         const { format, period, startDate, endDate } = req.query;
@@ -528,9 +503,8 @@ const downloadSalesReport = async (req, res) => {
             ...dateFilter,
             status: { $nin: ['Pending', 'Processing'] }
         })
-        .populate('userId', 'name')
-        .populate('orderItems.product', 'name')
-        .sort({ createdOn: -1 });
+            .populate('userId', 'name')
+            .sort({ createdOn: -1 });
 
         const totals = calculateTotals(orders);
 
@@ -538,33 +512,31 @@ const downloadSalesReport = async (req, res) => {
             const doc = new PDFDocument();
             res.setHeader('Content-Type', 'application/pdf');
             res.setHeader('Content-Disposition', 'attachment; filename=sales-report.pdf');
-            
+
             doc.pipe(res);
-            
+
             doc.fontSize(20).text('Sales Report', { align: 'center' });
             doc.moveDown();
-            
+
             doc.fontSize(14).text('Summary', { underline: true });
             doc.fontSize(12)
                 .text(`Report Period: ${period.charAt(0).toUpperCase() + period.slice(1)}`)
                 .text(`Total Orders: ${totals.count}`)
                 .text(`Total Amount: ₹${totals.orderAmount.toFixed(2)}`)
-                .text(`Regular Discounts: ₹${totals.regularDiscount.toFixed(2)}`)
-                .text(`Coupon Discounts: ₹${totals.couponDiscount.toFixed(2)}`)
                 .text(`Final Amount: ₹${totals.finalAmount.toFixed(2)}`)
                 .text(`Cancelled Orders: ${totals.cancelledCount}`)
                 .text(`Returned Orders: ${totals.returnedCount}`);
-            
+
             doc.moveDown();
 
             doc.fontSize(14).text('Order Details', { underline: true });
             doc.moveDown();
 
             const startX = 50;
-            const columnWidth = 85;
+            const columnWidth = 120;
             doc.fontSize(10);
-            
-            ['Order ID', 'Date', 'Customer', 'Items', 'Amount', 'Discount', 'Final', 'Status'].forEach((header, i) => {
+
+            ['Order ID', 'Date', 'Customer', 'Amount', 'Final', 'Status'].forEach((header, i) => {
                 doc.text(header, startX + (i * columnWidth), doc.y, { width: columnWidth, align: 'left' });
             });
 
@@ -572,22 +544,19 @@ const downloadSalesReport = async (req, res) => {
 
             orders.forEach(order => {
                 const y = doc.y;
-                if (y > 700) { 
+                if (y > 700) {
                     doc.addPage();
                     doc.fontSize(10);
                 }
 
                 const date = new Date(order.createdOn).toLocaleDateString();
-                const itemsCount = order.orderItems.length;
 
                 doc.text(order.orderId.substring(0, 8), startX, doc.y, { width: columnWidth })
-                   .text(date, startX + columnWidth, doc.y - 12, { width: columnWidth })
-                   .text(order.userId?.name || 'N/A', startX + (columnWidth * 2), doc.y - 12, { width: columnWidth })
-                   .text(itemsCount.toString(), startX + (columnWidth * 3), doc.y - 12, { width: columnWidth })
-                   .text(`₹${order.totalPrice.toFixed(2)}`, startX + (columnWidth * 4), doc.y - 12, { width: columnWidth })
-                   .text(`₹${(order.discount || 0).toFixed(2)}`, startX + (columnWidth * 5), doc.y - 12, { width: columnWidth })
-                   .text(`₹${order.finalAmount.toFixed(2)}`, startX + (columnWidth * 6), doc.y - 12, { width: columnWidth })
-                   .text(order.status, startX + (columnWidth * 7), doc.y - 12, { width: columnWidth });
+                    .text(date, startX + columnWidth, doc.y - 12, { width: columnWidth })
+                    .text(order.userId?.name || 'N/A', startX + (columnWidth * 2), doc.y - 12, { width: columnWidth })
+                    .text(`₹${order.totalPrice.toFixed(2)}`, startX + (columnWidth * 3), doc.y - 12, { width: columnWidth })
+                    .text(`₹${order.finalAmount.toFixed(2)}`, startX + (columnWidth * 4), doc.y - 12, { width: columnWidth })
+                    .text(order.status, startX + (columnWidth * 5), doc.y - 12, { width: columnWidth });
 
                 doc.moveDown();
             });
@@ -611,9 +580,7 @@ const downloadSalesReport = async (req, res) => {
                 { header: 'Order ID', key: 'orderId', width: 20 },
                 { header: 'Date', key: 'date', width: 15 },
                 { header: 'Customer', key: 'customer', width: 20 },
-                { header: 'Items', key: 'items', width: 40 },
                 { header: 'Amount', key: 'amount', width: 15 },
-                { header: 'Discount', key: 'discount', width: 15 },
                 { header: 'Final Amount', key: 'final', width: 15 },
                 { header: 'Status', key: 'status', width: 15 }
             ];
@@ -623,17 +590,11 @@ const downloadSalesReport = async (req, res) => {
             });
 
             orders.forEach(order => {
-                const itemsList = order.orderItems
-                    .map(item => `${item.product.name} (${item.quantity})`)
-                    .join(', ');
-
                 worksheet.addRow({
                     orderId: order.orderId,
                     date: new Date(order.createdOn).toLocaleDateString(),
                     customer: order.userId?.name || 'N/A',
-                    items: itemsList,
                     amount: order.totalPrice,
-                    discount: order.discount || 0,
                     final: order.finalAmount,
                     status: order.status
                 });
@@ -643,14 +604,11 @@ const downloadSalesReport = async (req, res) => {
             worksheet.addRow(['Summary']);
             worksheet.addRow(['Total Orders', totals.count]);
             worksheet.addRow(['Total Amount', totals.orderAmount]);
-            worksheet.addRow(['Regular Discounts', totals.regularDiscount]);
-            worksheet.addRow(['Coupon Discounts', totals.couponDiscount]);
             worksheet.addRow(['Final Amount', totals.finalAmount]);
             worksheet.addRow(['Cancelled Orders', totals.cancelledCount]);
             worksheet.addRow(['Returned Orders', totals.returnedCount]);
 
             worksheet.getColumn('amount').numFmt = '₹#,##0.00';
-            worksheet.getColumn('discount').numFmt = '₹#,##0.00';
             worksheet.getColumn('final').numFmt = '₹#,##0.00';
 
             res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -665,9 +623,7 @@ const downloadSalesReport = async (req, res) => {
     }
 };
 
-
-
-module.exports={
+module.exports = {
     loadLogin,
     login,
     loadDashboard,

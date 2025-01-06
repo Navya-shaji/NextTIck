@@ -6,6 +6,9 @@ const bcrypt =require("bcrypt")
 const Category=require("../../models/categorySchema")
 const Product =require("../../models/productSchema")
 const brand=require("../../models/brandSchema");
+const PDFDocument = require('pdfkit');
+const Order = require('../../models/orderSchema');
+
 
 
 // signupPage loadSignup........................................
@@ -213,7 +216,6 @@ const resendOtp = async (req, res) => {
 
 const loadLogin = async (req, res) => {
     try {
-       
         if (!req.session.user) {
             return res.render("login");
         }
@@ -231,10 +233,10 @@ const loadLogin = async (req, res) => {
 
 const login = async (req, res) => {
     try {
-        if (req.method === "GET") {
+        // if (req.method === "GET") {
             
-            return res.render("login");
-        }
+        //     return res.render("login");
+        // }
 
         const { email, password } = req.body;
         const findUser = await User.findOne({ isAdmin: 0, email: email });

@@ -117,8 +117,8 @@ const searchProducts = async (req, res) => {
 
     const query = {
       $or: [
-        { productName: { $regex: searchTerm, $options: "i" } },
-        { description: { $regex: searchTerm, $options: "i" } },
+        { productName: { $regex: searchTerm, $options: "i" } }
+        
       ],
       isBlocked: false,
       quantity: { $gt: 0 },

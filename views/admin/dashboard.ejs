@@ -1,4 +1,62 @@
+<!-- views/admin/dashboard.ejs -->
+
 <%- include("../../views/partials/admin/header") %>
+<style>
+    body {
+        font-family: 'Roboto', sans-serif;
+        background-color: #f7f9fc;
+        color: #333;
+    }
+
+    h1, h5 {
+        color: #0C977F;
+        font-weight: 600;
+    }
+
+    .nav-link {
+        color: #555;
+        font-weight: 500;
+        transition: color 0.3s ease;
+    }
+
+    .nav-link:hover {
+        color: #0C977F;
+    }
+
+    .card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+        transform: scale(1.02);
+        box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-title {
+        font-weight: 500;
+    }
+
+    .form-select {
+        border-radius: 8px;
+        background-color: #ffffff;
+        box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.05);
+        transition: border-color 0.3s ease;
+    }
+
+    .form-select:focus {
+        border-color: #0C977F;
+        box-shadow: 0 0 6px rgba(12, 151, 127, 0.3);
+    }
+
+    canvas {
+        background: linear-gradient(to top, #ffffff, #f7f9fc);
+        border-radius: 10px;
+    }
+    
+</style>
 
 <div class="container-fluid mt-4">
     <h1 class="mb-4">Admin Dashboard</h1>
@@ -11,7 +69,7 @@
         </li>
         <!-- Add other admin navigation items here -->
     </ul>
-   <div class="row">
+    <div class="row">
         <div class="col-lg-4">
             <div class="card card-body mb-4" style="border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
                 <article class="icontext">
@@ -32,16 +90,7 @@
                 </article>
             </div>
         </div>
-        <div class="col-lg-4">
-            <div class="card card-body mb-4" style="border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
-                <article class="icontext">
-                    <div class="text">
-                        <h6 class="mb-1" style="color: #666">Total Discount</h6>
-                        <span style="font-size: 28px; color: #0C977F; font-weight: 600">₹<%= totalDiscount %></span>
-                    </div>
-                </article>
-            </div>
-        </div>
+       
     </div>
 
     <div class="card mb-4" style="border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
@@ -60,29 +109,7 @@
         </div>
     </div>
 
-    <div class="row">
-        <div style="display: none;"  class="col-lg-6">
-            <div class="card" style="border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
-                <div class="card-body">
-                    <h5 class="card-title" style="color: #0C977F">Payment Methods</h5>
-                    <div style="height: 300px;">
-                        <canvas id="paymentMethodChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div style="display: none;" class="col-lg-6">
-            <div class="card" style="border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
-                <div class="card-body">
-                    <h5 class="card-title" style="color: #0C977F">Order Status</h5>
-                    <div style="height: 300px;">
-                        <canvas id="orderStatusChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    <!-- Best-Selling Products, Categories, Brands Charts -->
     <div class="row">
         <div class="col-lg-12">
             <div class="card" style="border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
@@ -95,7 +122,6 @@
             </div>
         </div>
     </div>
-
     <div class="row">
         <div class="col-lg-6">
             <div class="card" style="border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
@@ -118,18 +144,13 @@
             </div>
         </div>
     </div>
-</section>
-
-</main>
-
+    
 <!-- Scripts -->
-<script src="backend/assets/js/vendors/jquery-3.6.0.min.js"></script>
-<script src="backend/assets/js/vendors/bootstrap.bundle.min.js"></script>
-<script src="backend/assets/js/vendors/select2.min.js"></script>
-<script src="backend/assets/js/vendors/perfect-scrollbar.js"></script>
-<script src="backend/assets/js/vendors/jquery.fullscreen.min.js"></script>
-<script src="backend/assets/js/vendors/chart.js"></script>
-<script src="backend/assets/js/main.js" type="text/javascript"></script>
+<script src="/js/vendors/jquery-3.6.0.min.js"></script>
+<script src="/js/vendors/bootstrap.bundle.min.js"></script>
+<script src="/js/vendors/select2.min.js"></script>
+<script src="/js/vendors/chart.js"></script>
+<script src="/js/main.js"></script>
 
 <script>
     const orders = <%- JSON.stringify(orders) %>;
@@ -142,8 +163,6 @@
 
     document.addEventListener('DOMContentLoaded', function() {
         initializeSalesChart('monthly');
-        initializePaymentMethodChart();
-        initializeOrderStatusChart();
         initializeBestSellingProductsChart();
         initializeBestSellingCategoriesChart();
         initializeBestSellingBrandsChart();
@@ -153,111 +172,87 @@
         });
     });
 
-    function initializeSalesChart(timeRange) {
-        const ctx = document.getElementById('salesChart').getContext('2d');
-        let data, labels;
+ // Example for Sales Chart
+function initializeSalesChart(timeRange) {
+    const ctx = document.getElementById('salesChart').getContext('2d');
+    let data, labels;
 
-        switch(timeRange) {
-            case 'weekly':
-                data = weeklyData.data;
-                labels = weeklyData.labels;
-                break;
-            case 'yearly':
-                data = yearlyData.data;
-                labels = yearlyData.labels;
-                break;
-            default:
-                data = monthlyData.data;
-                labels = monthlyData.labels;
-        }
+    switch (timeRange) {
+        case 'weekly':
+            data = weeklyData.data;
+            labels = weeklyData.labels;
+            break;
+        case 'yearly':
+            data = yearlyData.data;
+            labels = yearlyData.labels;
+            break;
+        default:
+            data = monthlyData.data;
+            labels = monthlyData.labels;
+    }
 
-        if (window.salesChart instanceof Chart) {
-            window.salesChart.destroy();
-        }
+    if (window.salesChart instanceof Chart) {
+        window.salesChart.destroy();
+    }
 
-        window.salesChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Sales Amount',
-                    data: data,
-                    fill: true,
-                    borderColor: '#0C977F',
-                    backgroundColor: 'rgba(12, 151, 127, 0.1)',
-                    tension: 0.4
-                }]
+    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+    gradient.addColorStop(0, 'rgba(12, 151, 127, 0.4)');
+    gradient.addColorStop(1, 'rgba(12, 151, 127, 0)');
+
+    window.salesChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Sales Amount',
+                data: data,
+                fill: true,
+                borderColor: '#0C977F',
+                backgroundColor: gradient,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return '₹' + value.toLocaleString('en-IN');
-                            }
+            scales: {
+                x: {
+                    grid: {
+                        drawBorder: false,
+                        display: false
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function (value) {
+                            return '₹' + value.toLocaleString('en-IN');
                         }
+                    },
+                    grid: {
+                        drawBorder: false,
+                        color: 'rgba(0, 0, 0, 0.05)'
                     }
                 }
             }
-        });
-    }
-
-    function initializePaymentMethodChart() {
-        const ctx = document.getElementById('paymentMethodChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: Object.keys(<%- JSON.stringify(paymentStats) %>),
-                datasets: [{
-                    data: Object.values(<%- JSON.stringify(paymentStats) %>).map(stat => stat.count),
-                    backgroundColor: [
-                        '#0C977F', '#45AAF2', '#FFA502', '#FF6B81'
-                    ]
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false
-            }
-        });
-    }
-
-    function initializeOrderStatusChart() {
-        const ctx = document.getElementById('orderStatusChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Delivered', 'Pending', 'Cancelled'],
-                datasets: [{
-                    data: [
-                        <%= totalSalesCount %>,
-                        <%= orders.filter(o => o.status === 'Pending').length %>,
-                        <%= orders.filter(o => o.status === 'Cancelled').length %>
-                    ],
-                    backgroundColor: [
-                        '#0C977F', '#FFA502', '#FF6B81'
-                    ]
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false
-            }
-        });
-    }
+        }
+    });
+}
 
     function initializeBestSellingProductsChart() {
         const ctx = document.getElementById('bestSellingProductsChart').getContext('2d');
         new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: bestSellingProducts.map(p => p.name),
+                labels: bestSellingProducts.map(p => p.productName),
                 datasets: [{
                     label: 'Units Sold',
-                    data: bestSellingProducts.map(p => p.totalQuantity),
+                    data: bestSellingProducts.map(p => p.totalSalesCount),
                     backgroundColor: [
                         '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
                         '#FF9F40', '#FF6B81', '#45AAF2', '#2ED573', '#FFA502'
@@ -275,48 +270,67 @@
             }
         });
     }
-
     function initializeBestSellingCategoriesChart() {
-        const ctx = document.getElementById('bestSellingCategoriesChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: bestSellingCategories.map(c => c.categoryName),
-                datasets: [{
-                    data: bestSellingCategories.map(c => c.totalQuantity),
-                    backgroundColor: [
-                        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'
-                    ]
-                }]
+    const ctx = document.getElementById('bestSellingCategoriesChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: bestSellingCategories.map(c => c.name), // Category names
+            datasets: [{
+                label: 'Total Sales',
+                data: bestSellingCategories.map(c => c.totalQuantity), // Sales count
+                backgroundColor: [
+                    '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'
+                ],
+                borderColor: [
+                    '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            indexAxis: 'y', // Horizontal bar
+            plugins: {
+                legend: {
+                    display: false,
+                }
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false
+            responsive: true,
+            scales: {
+                x: {
+                    beginAtZero: true
+                }
             }
-        });
-    }
+        }
+    });
+}
+function initializeBestSellingBrandsChart() {
+    const ctx = document.getElementById('bestSellingBrandsChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: bestSellingBrands.map(b => b.brandName), // Brand names
+            datasets: [{
+                data: bestSellingBrands.map(b => b.totalQuantity), // Sales count
+                backgroundColor: [
+                    '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+                    '#FF9F40', '#FF6B81', '#45AAF2', '#2ED573', '#FFA502'
+                ],
+                hoverOffset: 4
+            }]
+        },
+        options: {
+            plugins: {
+                legend: {
+                    position: 'right',
+                }
+            },
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+}
 
-    function initializeBestSellingBrandsChart() {
-        const ctx = document.getElementById('bestSellingBrandsChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: bestSellingBrands.map(b => b.brandName),
-                datasets: [{
-                    data: bestSellingBrands.map(b => b.totalQuantity),
-                    backgroundColor: [
-                        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'
-                    ]
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false
-            }
-        });
-    }
 </script>
 
-</body>
-</html>
-<%- include("../../views/partials/admin/footer") %>
+<%- include("../../views/partials/admin/footer") %>     

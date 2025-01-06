@@ -287,6 +287,256 @@
 .related{
 display: flex;
 }
+.detail-info {
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #ebebeb;
+    border-radius: 8px;
+}
+
+.title-detail {
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.product-detail-rating {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.pro-details-brand {
+    font-size: 14px;
+    color: #666;
+}
+
+.pro-details-brand a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.product-rate-cover {
+    display: flex;
+    align-items: center;
+}
+
+.product-rate .product-rating {
+    height: 10px;
+    background-color: #ffcc00;
+    border-radius: 3px;
+}
+
+.font-small {
+    font-size: 12px;
+    color: #999;
+}
+
+.product-price {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.text-brand {
+    color: #ff5722;
+}
+
+.old-price {
+    text-decoration: line-through;
+    color: #999;
+    font-size: 16px;
+}
+
+.save-price {
+    font-size: 16px;
+    color: #080808;
+}
+
+.short-desc {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.6;
+}
+
+.product_sort_info ul {
+    list-style: none;
+    padding: 0;
+}
+
+.product_sort_info ul li {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.quantity {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.quantity button {
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    font-size: 16px;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+}
+
+.quantity #quantity {
+    font-size: 16px;
+    margin: 0 10px;
+    width: 30px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.product-extra-link2 {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.button-add-to-cart {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.button-add-to-cart:hover {
+    background-color: #050505;
+}
+
+.action-btn {
+    font-size: 20px;
+    color: #666;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.action-btn:hover {
+    color: #ff5722;
+}
+
+.product-meta {
+    margin-top: 30px;
+}
+
+.product-meta li {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.in-stock {
+    font-weight: bold;
+}
+
+@media (max-width: 768px) {
+    .detail-info {
+        padding: 15px;
+    }
+
+    .title-detail {
+        font-size: 20px;
+    }
+
+    .product-price {
+        font-size: 18px;
+    }
+
+    .short-desc {
+        font-size: 13px;
+    }
+}
+.quantity {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+    width: max-content;
+}
+
+.quantity button {
+    background-color: #f9f9f9;
+    border: none;
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+    color: #333;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.quantity button:hover {
+    background-color: #007bff;
+    color: #fff;
+}
+
+#quantity {
+    display: inline-block;
+    width: 50px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    background-color: #fff;
+    line-height: 40px;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+}
+.product-meta {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    color: #757575;
+}
+
+.product-meta li {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    font-weight: 400;
+}
+
+.product-meta a {
+    color: #007bff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.product-meta a:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+.product-meta .in-stock {
+    font-weight: bold;
+    color: #28a745; /* Green color for in-stock items */
+    margin-left: 5px;
+}
+
+.product-meta .text-success {
+    color: #28a745; /* Green color for availability */
+}
+
+.product-meta .ml-5 {
+    margin-left: 5px;
+}
+
+.product-meta li:last-child {
+    font-weight: bold;
+}
+
 
 </style>
 
@@ -524,6 +774,7 @@ display: flex;
 <%- include("../../views/partials/user/footer") %>
 
 <script>
+    // Add to Cart Handler.........................
    function addToCartHandler(event, productId) {
     event.preventDefault();
 
