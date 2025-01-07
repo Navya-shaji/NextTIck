@@ -537,6 +537,25 @@ display: flex;
     font-weight: bold;
 }
 
+.brand-container {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: #555;
+    display: inline-block;
+    margin: 10px 0;
+}
+
+.brand-link {
+    text-decoration: none;
+    color: #007BFF; /* A nice blue shade */
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.brand-link:hover {
+    color: #0056b3; /* Darker blue for hover effect */
+    text-decoration: underline;
+}
 
 </style>
 
@@ -637,7 +656,6 @@ display: flex;
 
                                     <ul class="product-meta font-xs color-grey mt-50">
                                         <li class="mb-5">Stock Code: <a href="#">FWM15VKT</a></li>
-                                        <li class="mb-5">Tags: <a href="#" rel="tag"></a> <a href="#" rel="tag"><%= category.name %></a> <a href="#" rel="tag"></a></li>
                                         <li>Availability:<span class="in-stock text-success ml-5"><%= quantity %></span>Items in stock</li>
                                     </ul>
                                 </div>

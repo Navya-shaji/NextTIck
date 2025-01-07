@@ -62,6 +62,7 @@ const getcheckoutPage = async (req, res) => {
 
             const products = cart.items.map(item => {
                 const product = item.productId;
+                console.log("product", item)
                 const productImage = product?.productImage || [];
                 return {
                     _id: product._id,
@@ -97,6 +98,7 @@ const getcheckoutPage = async (req, res) => {
             return res.render("checkout", { user, product: productData, subtotal, quantity, addressData, availableCoupons });
         }
     } catch (error) {
+        console.log("error", error)
         console.error("Error fetching checkout page:", error.message);
         return res.redirect("/pageNotFound");
     }
