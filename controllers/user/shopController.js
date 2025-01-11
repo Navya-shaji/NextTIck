@@ -4,7 +4,7 @@ const Brand = require("../../models/brandSchema");
 const User = require("../../models/userSchema");
 
 
-//for loading the shopping page........................
+//for loading the shopping page.........................................................................................................
 
 const loadshoppingPage = async (req, res) => {
   try {
@@ -13,7 +13,7 @@ const loadshoppingPage = async (req, res) => {
     const categories = await Category.find({ isListed: true });
     const categoryIds = categories.map((category) => category._id);
     const page = parseInt(req.query.page) || 1;
-    const limit = 4; // Changed to 4 products per page
+    const limit = 3; 
     const skip = (page - 1) * limit;
 
     let query = {
@@ -27,13 +27,13 @@ const loadshoppingPage = async (req, res) => {
     if (sortOption) {
       switch (sortOption) {
         case 'popularity':
-          sort = { salesCount: -1 }; 
+          sort = { quantity: -1 }; 
           break;
         case 'price_asc':
-          sort = { regularPrice: 1 };
+          sort = {salesPrice: 1 };
           break;
         case 'price_desc':
-          sort = { regularPrice: -1 };
+          sort = { salesPrice: -1 };
           break;
         case 'rating':
           sort = { averageRating: -1 };
@@ -73,7 +73,6 @@ const loadshoppingPage = async (req, res) => {
     if (req.query.query) {
       query.$or = [
         { productName: { $regex: req.query.query, $options: "i" } },
-        { description: { $regex: req.query.query, $options: "i" } }
       ];
     }
 
@@ -89,6 +88,7 @@ const loadshoppingPage = async (req, res) => {
     const totalPages = Math.ceil(totalProducts / limit);
 
     const brands = await Brand.find({ isBlocked: false });
+    console.log("brands", brands);
 
     res.render("shop", {
       user: userData,
@@ -106,13 +106,13 @@ const loadshoppingPage = async (req, res) => {
   }
 };
 
-//for serching the products ...........................................
+//for serching the products .........................................................................................................
 
 const searchProducts = async (req, res) => {
   try {
     const searchTerm = req.query.query || "";
     const page = parseInt(req.query.page) || 1;
-    const limit = 9;
+    const limit = 3;
     const skip = (page - 1) * limit;
 
     const query = {

@@ -1,169 +1,159 @@
 <%- include("../../views/partials/admin/header") %>
-<style>
-    /* Status select styles */
-.status-select {
-    font-weight: 500;
-    padding: 4px 8px;
-    border-radius: 4px;
-}
 
-.status-pending {
-    background-color: #fef3c7;
-    border-color: #fcd34d;
-}
+    <head>
+        <link rel="stylesheet" href="styles/adminOrder.css">
+    </head>
 
-.status-processing {
-    background-color: #dbeafe;
-    border-color: #93c5fd;
-}
-
-.status-shipped {
-    background-color: #e0e7ff;
-    border-color: #818cf8;
-}
-
-.status-delivered {
-    background-color: #d1fae5;
-    border-color: #34d399;
-}
-
-.status-cancelled {
-    background-color: #fee2e2;
-    border-color: #fca5a5;
-}
-
-.status-return-request,
-.status-returned {
-    background-color: #f3e8ff;
-    border-color: #c084fc;
-}  
-thead{
-    background-color: black;
-} 
-.btn.btn-info.btn-sm {
-        background-color: gray; 
-        color: white; 
-        border: none; 
-    }
-</style>
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Order Management</h3>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Order ID</th>
-                                    <th>Customer</th>
-                                    <th>Date</th>
-                                    <th>Status</th>
-                                    <th>Total</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <% orders.forEach(order => { %>
+    <div class="container-fluid">
+        <div class="row">
+         
+                
+                    <div style="background-color: white;" >
+                        <h3 style="font-family:math; margin-left: 24px; margin-top: 15px; font-size: 35px" class="card-title">Order Management</h3>
+                   
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped">
+                                <thead>
                                     <tr>
-                                        <td><%= order.orderId %></td>
-                                        <td><%= order.userName %></td>
-                                        <td><%= new Date(order.createdOn).toLocaleDateString() %></td>
-                                        <td>
-                                            <select class="form-select status-select" data-order-id="<%= order._id %>">
-                                                <option value="Pending" <%= order.status === 'Pending' ? 'selected' : '' %>>Pending</option>
-                                                <option value="Processing" <%= order.status === 'Processing' ? 'selected' : '' %>>Processing</option>
-                                                <option value="Shipped" <%= order.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
-                                                <option value="Delivered" <%= order.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
-                                                <option value="Cancelled" <%= order.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
-                                                <option value="Return Request" <%= order.status === 'Return Request' ? 'selected' : '' %>>Return Request</option>
-                                                <option value="Returned" <%= order.status === 'Returned' ? 'selected' : '' %>>Returned</option>
-                                            </select>
-                                        </td>
-                                        <td>₹<%= order.finalAmount.toFixed(2) %></td>
-                                        <td>
-                                            <a href="/admin/orders/<%= order._id %>" class="btn btn-info btn-sm">View Details</a>
-                                        </td>
+                                        <th>Order ID</th>
+                                        <th>Customer</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                        <th>Total</th>
+                                        <th>Actions</th>
                                     </tr>
-                                <% }); %>
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    <% orders.forEach(order=> { %>
+                                        <tr>
+                                            <td>
+                                                <%= order.orderId %>
+                                            </td>
+                                            <td><%= order.userName %></td>
+
+                                            <td>
+                                                <%= new Date(order.createdOn).toLocaleDateString() %>
+                                            </td>
+                                            <td>
+                                                <select class="form-select status-select"
+                                                    data-order-id="<%= order._id %>">
+                                                    <option value="Pending" <%=order.status==='Pending' ? 'selected'
+                                                        : '' %>>Pending</option>
+                                                    <option value="Processing" <%=order.status==='Processing'
+                                                        ? 'selected' : '' %>>Processing</option>
+                                                    <option value="Shipped" <%=order.status==='Shipped' ? 'selected'
+                                                        : '' %>>Shipped</option>
+                                                    <option value="Delivered" <%=order.status==='Delivered' ? 'selected'
+                                                        : '' %>>Delivered</option>
+                                                    <option value="Cancelled" <%=order.status==='Cancelled' ? 'selected'
+                                                        : '' %>>Cancelled</option>
+                                                    <option value="Return Request" <%=order.status==='Return Request'
+                                                        ? 'selected' : '' %>>Return Request</option>
+                                                    <option value="Returned" <%=order.status==='Returned' ? 'selected'
+                                                        : '' %>>Returned</option>
+                                                </select>
+                                            </td>
+                                            <td>₹<%= order.finalAmount.toFixed(2) %>
+                                            </td>
+                                            <td>
+                                                <a href="/admin/orders/<%= order._id %>"
+                                                    class="btn btn-info btn-sm">View Details</a>
+                                            </td>
+                                        </tr>
+                                        <% }); %>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.status-select').forEach(select => {
-        const currentStatus = select.value;
-        
-        // Disable select if order is delivered or canceled
-        if (currentStatus === 'Delivered' || currentStatus === 'Cancelled') {
-            select.disabled = true;
-        }
 
-        select.addEventListener('change', async function() {
-            const orderId = this.dataset.orderId;
-            const newStatus = this.value;
-            
-            // Additional check to prevent status change for delivered or canceled orders
-            if (currentStatus === 'Delivered' || currentStatus === 'Cancelled') {
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'Cannot change status of delivered or canceled orders',
-                    icon: 'error',
-                    confirmButtonText: 'OK'
-                });
-                this.value = currentStatus;
-                return;
-            }
 
-            try {
-                const response = await fetch('/admin/orders/update-status', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ orderId, status: newStatus })
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    Swal.fire({
-                        title: 'Success!',
-                        text: 'Status updated successfully',
-                        icon: 'success', 
-                        confirmButtonText: 'OK'
-                    });
-                } else {
-                    Swal.fire({
-                        title: 'Error!',
-                        text: 'Failed to update status: ' + data.message,
-                        icon: 'error',
-                        confirmButtonText: 'OK'
-                    });
-                    this.value = currentStatus;
+    <div class="pagination-container mt-4">
+        <ul class="pagination justify-content-center">
+            <% if (currentPage> 1) { %>
+                <li class="page-item">
+                    <a class="page-link" href="?page=<%= currentPage - 1 %>">&laquo; Previous</a>
+                </li>
+                <% } %>
+
+                    <% for (let i=1; i <=totalPages; i++) { %>
+                        <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                            <a class="page-link" href="?page=<%= i %>">
+                                <%= i %>
+                            </a>
+                        </li>
+                        <% } %>
+
+                            <% if (currentPage < totalPages) { %>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=<%= currentPage + 1 %>">Next &raquo;</a>
+                                </li>
+                                <% } %>
+        </ul>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.status-select').forEach(select => {
+                const currentStatus = select.value;
+
+                if (currentStatus === 'Delivered' || currentStatus === 'Cancelled' || currentStatus === 'Returned') {
+                    select.disabled = true;
+                    return;
                 }
-            } catch (error) {
-                console.error('Error updating status:', error);
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'Failed to update status',
-                    icon: 'error',
-                    confirmButtonText: 'OK'
-                });
-                this.value = currentStatus;
-            }
-        });
-    });
-});
-</script>
 
-<%- include("../../views/partials/admin/footer") %>
+                select.addEventListener('change', async function () {
+                    const orderId = this.dataset.orderId;
+                    const newStatus = this.value;
+
+                    try {
+                        const response = await fetch('/admin/orders/update-status', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ orderId, status: newStatus }),
+                        });
+
+                        const data = await response.json();
+
+                        if (data.success) {
+                            Swal.fire({
+                                title: 'Success!',
+                                text: 'Status updated successfully',
+                                icon: 'success',
+                                confirmButtonText: 'OK',
+                            });
+                        } else {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'Failed to update status: ' + data.message,
+                                icon: 'error',
+                                confirmButtonText: 'OK',
+                            });
+                            this.value = currentStatus;
+                        }
+                    } catch (error) {
+                        console.error('Error updating status:', error);
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Failed to update status',
+                            icon: 'error',
+                            confirmButtonText: 'OK',
+                        });
+                        this.value = currentStatus;
+                    }
+                });
+            });
+        });
+
+    </script>
+
+    <%- include("../../views/partials/admin/footer") %>

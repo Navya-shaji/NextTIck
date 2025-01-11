@@ -67,6 +67,7 @@
   .form-group {
     display: flex;
     flex-direction: column;
+
   }
   
   label {
@@ -84,7 +85,7 @@
   }
   
   input:focus {
-    border-color: #007bff;
+    border-color: #080808;
     outline: none;
   }
   
@@ -103,14 +104,14 @@
   }
   
   button.btn {
-    background-color: #d34ef1;
+    background-color: #0a0a0a;
     color: white;
     font-weight: bold;
     transition: background-color 0.3s ease;
   }
   
   button.btn:hover {
-    background-color: #0056b3;
+    background-color: #0a0a0a;
   }
   
   button.google-btn {
@@ -136,7 +137,7 @@
   }
   
   .register-text a {
-    color: #007bff;
+    color: #070707;
     text-decoration: none;
   }
   
@@ -179,22 +180,26 @@ img {
 
 .forgot-password-link {
   font-size: 14px;
-  color: #6200ea; 
+  /* color: #5c5b5e;  */
   text-decoration: none; 
   font-weight: 500; 
   border: 1px solid transparent; 
   padding: 5px 10px; 
   border-radius: 4px; 
-  background-color: rgba(98, 0, 234, 0.1);
+  /* background-color: rgba(98, 0, 234, 0.1); */
+
   transition: all 0.3s ease; 
     text-align: center;
+    width: 50%;
+    justify-content: center;
+    margin-left: 25%;
 }
 
 .forgot-password-link:hover {
   color: #ffffff; 
-  background-color: #6200ea;
-  border-color: #6200ea;
-  box-shadow: 0px 4px 6px rgba(98, 0, 234, 0.3); 
+  background-color: #868686;
+  border-color: #666667;
+  /* box-shadow: 0px 4px 6px rgba(98, 0, 234, 0.3);  */
   transform: scale(1.05); 
 }
 

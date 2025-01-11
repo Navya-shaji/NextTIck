@@ -141,16 +141,16 @@ table tbody + tbody {
   border-color: #b21f2d;
   color: white;
 }
-.btn-warning{
+/* .btn-warning{
   background-color: #ffc107;
   border-color: #ffc107;
   color: black;
-}
-.btn-warning:hover{
+} */
+/* .btn-warning:hover{
   background-color: #e0a800;
   border-color: #d39e00;
   color: black;
-}
+} */
 
 .contact-from-area {
   padding: 30px;
@@ -238,4 +238,107 @@ section{
 
 .wallet-balance .text-success {
   font-size: 1.2rem;
+}
+ /* Compact table styling */
+ table {
+  width: 70%;
+  margin: 0 auto;
+  border-collapse: collapse;
+  font-size: 14px; /* Adjust font size */
+}
+
+th, td {
+  padding: 8px 12px;
+  text-align: left;
+}
+
+th {
+  font-weight: bold;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  padding: 6px; /* Reduced padding for compact inputs */
+  font-size: 14px;
+}
+
+button {
+  padding: 6px 12px; /* Reduced button size */
+  font-size: 14px;
+}
+
+.form-container {
+  margin: 20px auto;
+  text-align: center;
+}
+.nav-pills .nav-link {
+  display: block; /* Ensures text stays horizontal */
+  white-space: nowrap;  /* Prevents wrapping of text */
+  text-align: left;     /* Aligns text to the left */
+  font-size: 16px;      /* Adjust the font size as needed */
+  padding: 10px 15px;   /* Adds padding for better spacing */
+  border-radius: 5px;  
+  background-color: white; /* Optional: Rounds the corners */
+}
+
+.nav-pills .nav-link.active {
+  background-color: #fff; /* Active link background color */
+  color: #000;               /* Active link text color */
+}
+
+.card {
+  border: none;              /* Optional: Removes card border */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Adds shadow */
+}
+
+.card-body {
+  padding: 20px;             /* Adjust padding inside the card */
+}
+
+#orders-tab{
+  background-color: white;
+  color: #000;
+}
+#address-tab{
+  background-color: white;
+  color: #000;
+
+}
+#wallet-history-tab{
+  background-color: white;
+  color: #000;
+
+}
+#logout{
+  background-color: white;
+  color: #000;
+
+}
+/* Table Styling */
+.table th, .table td {
+  text-align: center; /* Center align table contents */
+  vertical-align: middle; /* Vertically align contents */
+  font-size: 14px; /* Reduce font size for compact view */
+}
+
+.table-sm th, .table-sm td {
+  padding: 8px; /* Adjust padding for compactness */
+}
+
+.badge {
+  font-size: 12px; 
+}
+
+h3 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Pagination Buttons */
+#prev-page, #next-page {
+  font-size: 14px;
+  padding: 5px 10px;
+  cursor: pointer;
 }

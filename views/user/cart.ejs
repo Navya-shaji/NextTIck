@@ -245,66 +245,163 @@
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    async function updateQuantity(productId, change) {
+ async function updateQuantity(productId, change) {
+    try {
         const quantityElement = document.getElementById(`qty-${productId}`);
         const totalPriceElement = document.getElementById(`totalPrice-${productId}`);
-        const totalCartAmountElement = document.querySelector('.cart_total_amount span');
-
-        let currentQty = parseInt(quantityElement.value) || 0;
+        const totalAmountElement = document.querySelector('.total-amount');
+        const currentQty = parseInt(quantityElement.value) || 0;
         const newQuantity = currentQty + change;
 
+        // Disable buttons during operation to prevent multiple clicks
+        const decreaseBtn = document.querySelector(`#qty-${productId}`).parentElement.querySelector('.qty-down');
+        const increaseBtn = document.querySelector(`#qty-${productId}`).parentElement.querySelector('.qty-up');
+        decreaseBtn.disabled = true;
+        increaseBtn.disabled = true;
+
+        // Validate quantity limits
         if (newQuantity < 1) {
-            Swal.fire({
+            await Swal.fire({
                 icon: "warning",
                 title: "Minimum quantity reached",
-                text: "The minimum quantity is 1"
+                text: "The minimum quantity allowed is 1",
+                confirmButtonColor: '#424874',
+                timer: 2000,
+                timerProgressBar: true,
+                showConfirmButton: false
             });
+            // Re-enable buttons with appropriate states
+            decreaseBtn.disabled = true;
+            decreaseBtn.style.backgroundColor = '#A6B1E1';
+            increaseBtn.disabled = false;
+            increaseBtn.style.backgroundColor = '#424874';
             return;
         }
 
         if (newQuantity > 5) {
-            Swal.fire({
+            await Swal.fire({
                 icon: "warning",
                 title: "Maximum quantity reached",
-                text: "The maximum quantity allowed is 5"
+                text: "The maximum quantity allowed is 5",
+                confirmButtonColor: '#424874',
+                timer: 2000,
+                timerProgressBar: true,
+                showConfirmButton: false
             });
+            // Re-enable buttons with appropriate states
+            decreaseBtn.disabled = false;
+            decreaseBtn.style.backgroundColor = '#424874';
+            increaseBtn.disabled = true;
+            increaseBtn.style.backgroundColor = '#A6B1E1';
             return;
         }
 
-        try {
-            const response = await fetch('/cart/update-quantity', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    productId,
-                    quantity: newQuantity
-                })
-            });
-
-            const data = await response.json();
-
-            if (data.success) {
-                quantityElement.value = newQuantity;
-                totalPriceElement.innerText = `₹${data.totalPrice}`;
-                totalCartAmountElement.innerText = `₹${data.cartTotal.toLocaleString()}`;
-            } else {
-                Swal.fire({
-                    icon: "error",
-                    title: "Update failed",
-                    text: data.message || "Error updating cart."
-                });
+        // Show loading state with minimum duration
+        const loadingAlert = Swal.fire({
+            title: 'Updating cart...',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showConfirmButton: false,
+            willOpen: () => {
+                Swal.showLoading();
+            },
+            didOpen: () => {
+                // Ensure loading shows for at least 500ms
+                return new Promise(resolve => setTimeout(resolve, 500));
             }
-        } catch (error) {
-            console.error('Error:', error);
-            Swal.fire({
-                icon: "error",
-                title: "Error",
-                text: "Unable to update cart. Please try again."
+        });
+
+        // Make API request
+        const response = await fetch('/cart/update-quantity', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                productId,
+                quantity: newQuantity
+            })
+        });
+
+        const data = await response.json();
+        
+        // Ensure minimum loading time has passed
+        await new Promise(resolve => setTimeout(resolve, 500));
+        await loadingAlert.close();
+
+        if (data.success) {
+            // Show success message
+            await Swal.fire({
+                icon: 'success',
+                title: 'Updated Successfully',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 1500,
+                timerProgressBar: true
             });
+
+            // Update quantity display
+            quantityElement.value = newQuantity;
+            
+            // Update item total price
+            totalPriceElement.innerText = `₹${data.totalPrice.toLocaleString()}`;
+            
+            // Update cart total
+            totalAmountElement.innerText = `₹${data.cartTotal.toLocaleString()}`;
+            
+            // Update button states
+            decreaseBtn.disabled = newQuantity <= 1;
+            increaseBtn.disabled = newQuantity >= 5;
+            
+            decreaseBtn.style.backgroundColor = newQuantity <= 1 ? '#A6B1E1' : '#424874';
+            increaseBtn.style.backgroundColor = newQuantity >= 5 ? '#A6B1E1' : '#424874';
+        } else {
+            throw new Error(data.message || "Error updating cart.");
         }
+    } catch (error) {
+        console.error('Error:', error);
+        await Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: error.message || "Unable to update cart. Please try again.",
+            confirmButtonColor: '#424874',
+            timer: 3000,
+            timerProgressBar: true
+        });
+    } finally {
+        // Re-enable buttons in case of error
+        const decreaseBtn = document.querySelector(`#qty-${productId}`).parentElement.querySelector('.qty-down');
+        const increaseBtn = document.querySelector(`#qty-${productId}`).parentElement.querySelector('.qty-up');
+        const currentQty = parseInt(document.getElementById(`qty-${productId}`).value) || 0;
+        
+        decreaseBtn.disabled = currentQty <= 1;
+        increaseBtn.disabled = currentQty >= 5;
+        
+        decreaseBtn.style.backgroundColor = currentQty <= 1 ? '#A6B1E1' : '#424874';
+        increaseBtn.style.backgroundColor = currentQty >= 5 ? '#A6B1E1' : '#424874';
     }
+}
+
+// Initialize quantity buttons on page load
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.detail-qty').forEach(detailQty => {
+        const quantityInput = detailQty.querySelector('.qty-val');
+        if (quantityInput) {
+            const qty = parseInt(quantityInput.value) || 0;
+            const decreaseBtn = detailQty.querySelector('.qty-down');
+            const increaseBtn = detailQty.querySelector('.qty-up');
+            
+            if (decreaseBtn && increaseBtn) {
+                decreaseBtn.disabled = qty <= 1;
+                increaseBtn.disabled = qty >= 5;
+                
+                decreaseBtn.style.backgroundColor = qty <= 1 ? '#A6B1E1' : '#424874';
+                increaseBtn.style.backgroundColor = qty >= 5 ? '#A6B1E1' : '#424874';
+            }
+        }
+    });
+});
 
     function confirmRemoveProduct(productId) {
         Swal.fire({

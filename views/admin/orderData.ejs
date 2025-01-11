@@ -1,185 +1,208 @@
 <%- include("../../views/partials/admin/header") %>
-<style>
-    thead {
-        background-color: black;
-    }
-    .product-img {
-    max-width: 50px;   /* Restricts the image width to 50px */
-    max-height: 50px;  /* Restricts the image height to 50px */
-    object-fit: cover; /* Ensures the image maintains its aspect ratio and doesn't get distorted */
-}
-</style>
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Order Details</h3>
-                    <a href="/admin/orderList" class="btn btn-secondary float-right">Back to Orders</a>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h4>Order Information</h4>
-                            <p><strong>Order ID:</strong> <%= order.orderId %></p>
-                            <p><strong>Date:</strong> <%= new Date(order.createdOn).toLocaleString() %></p>
-                            <p><strong>Status:</strong> <%= order.status %></p>
-                            <p><strong>Total Amount:</strong> ₹<%= order.finalAmount.toFixed(2) %></p>
-                            <% if (order.discount > 0) { %>
-                                <p><strong>Discount Applied:</strong> ₹<%= order.discount.toFixed(2) %></p>
+    <style>
+        thead {
+            background-color: black;
+        }
+
+        .product-img {
+            max-width: 50px;
+            max-height: 50px;
+            object-fit: cover;
+        }
+    </style>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+
+                <h3 style="font-family:math; margin-left: 6px; margin-top: 15px; font-size: 35px " class="card-title">
+                    Order Details</h3>
+            </div>
+            <div>
+                <a style="font-family:math; margin-right: 116px; margin-top: 15px; font-size: 15px "
+                    href="/admin/orderList" class="btn btn-secondary float-right">Back to Orders</a>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4
+                            style="font-family:math; margin-left: 0px; margin-top: 15px; font-size: 35px ; color:rgb(39, 72, 16)">
+                            Order Information</h4>
+                        <p><strong>Order ID:</strong>
+                            <%= order.orderId %>
+                        </p>
+                        <p><strong>Date:</strong>
+                            <%= new Date(order.createdOn).toLocaleString() %>
+                        </p>
+                        <p><strong>Status:</strong>
+                            <%= order.status %>
+                        </p>
+                        <p><strong>Total Amount:</strong> ₹<%= order.finalAmount.toFixed(2) %>
+                        </p>
+                        <% if (order.discount > 0) { %>
+                            <p>Discount Applied: ₹<%= order.discount.toFixed(2) %></p>
+                        <% } %>
+                        
+                        <% if (order.couponApplied) { %>
+                            <p>Coupon Applied: Yes</p>
+                            <% if (order.couponDetails) { %>
+                                <p>Coupon Code: <%= order.couponCode %></p>
+                                <p>Coupon Discount: ₹<%= order.couponDetails.discount.toFixed(2) %></p>
                             <% } %>
-                            <% if (order.couponApplied) { %>
-                                <p><strong>Coupon Applied:</strong> Yes</p>
-                                <% if (order.couponDetails) { %> <!-- Optional, only show if coupon details are available -->
-                                    <p><strong>Coupon Code:</strong> <%= coupons.couponName %></p>
-                                    <p><strong>Coupon Discount:</strong> ₹<%= order.couponDetails.discount.toFixed(2) %></p>
-                                <% } %>
+                        <% } %>
+                        
+                        <% if (order.offerApplied) { %>
+                            <p>Offer Applied: Yes</p>
+                            <% if (order.offerDetails) { %>
+                                <p>Offer Details: <%= order.offerDetails.description %></p>
+                                <p>Offer Discount: ₹<%= order.offerDetails.discount.toFixed(2) %></p>
                             <% } %>
-                            <% if (order.offerApplied) { %> <!-- Optional, only show if offer applied -->
-                                <p><strong>Offer Applied:</strong> Yes</p>
-                                <% if (order.offerDetails) { %> <!-- Optional, only show if offer details are available -->
-                                    <p><strong>Offer Details:</strong> <%= order.offerDetails.description %></p>
-                                    <p><strong>Offer Discount:</strong> ₹<%= order.offerDetails.discount.toFixed(2) %></p>
-                                <% } %>
-                            <% } %>
-                        </div>
-                        <div class="col-md-6">
-                            <h4>Customer Information</h4>
-                            <p><strong>Name:</strong> <%= order.userId.name %></p>
-                            <p><strong>Email:</strong> <%= order.userId.email %></p>
-                            <% if (order.paymentId) { %>
-                                <p><strong>Payment ID:</strong> <%= order.paymentId %></p>
-                            <% } %>
-                            <% if (order.paymentMethod) { %>
-                                <p><strong>Payment Method:</strong> <%= order.paymentMethod %></p>
-                            <% } %>
-                        </div>
+                        <% } %>
+                        
                     </div>
+                    <div class="col-md-6">
+                        <h4 style="font-family:math;  margin-top: 15px; font-size: 35px ; color:rgb(39, 72, 16)">
+                            Customer Information</h4>
+                        <p><strong>Name:</strong>
+                            <%= order.userId.name %>
+                        </p>
+                        <p><strong>Email:</strong>
+                            <%= order.userId.email %>
+                        </p>
+                        <% if (order.paymentId) { %>
+                            <p><strong>Payment ID:</strong>
+                                <%= order.paymentId %>
+                            </p>
+                            <% } %>
+                                <% if (order.paymentMethod) { %>
+                                    <p><strong>Payment Method:</strong>
+                                        <%= order.paymentMethod %>
+                                    </p>
+                                    <% } %>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <h4>Order Items</h4>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>image</th>
+
+                                    <th>Product</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% order.orderItems.forEach(item=> { %>
+                                    <tr>
+                                        <td>
+                                            <% if (item.product && item.product.productImage &&
+                                                item.product.productImage[0]) { %>
+                                                <img src="/uploads/re-image/<%= item.product.productImage[0] %>"
+                                                    alt="Product" class="product-img me-3">
+                                                <% } else { %>
+                                                    <img src="/uploads/re-image/default-product-image.jpg"
+                                                        alt="Default Product" class="product-img me-3">
+                                                    <% } %>
+                                        </td>
+                                        <td>
+                                            <%= item.product.name %>
+                                        </td>
+                                        <td>
+                                            <%= item.quantity %>
+                                        </td>
+                                        <td>₹<%= item.price.toFixed(2) %>
+                                        </td>
+                                        <td>₹<%= (item.quantity * item.price).toFixed(2) %>
+                                        </td>
+                                    </tr>
+                                    <% }); %>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="3" class="text-right"><strong>Total:</strong></td>
+                                    <td>₹<%= order.totalPrice.toFixed(2) %>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="text-end"><strong>Discount:</strong></td>
+                                    <td>₹<%= (order.totalPrice - order.finalAmount).toFixed(2) %>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="text-right"><strong>Final Amount:</strong></td>
+                                    <td>₹<%= order.finalAmount.toFixed(2) %>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Display User's Return Reason -->
+                <% if (order.status==='Return Request' || order.status==='Returned' ) { %>
                     <div class="row mt-4">
                         <div class="col-12">
-                            <h4>Order Items</h4>
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>image</th>
-
-                                        <th>Product</th>
-                                        <th>Quantity</th>
-                                        <th>Price</th>
-                                        <th>Subtotal</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <% order.orderItems.forEach(item => { %>
-                                        <tr>
-                                            <td>
-                                                <img src="/uploads/re-image/<%=item.product.productImage[0] %>" alt="Product" class="product-img me-3">
-                                            </td>
-                                            <td><%= item.product.name %></td>
-                                            <td><%= item.quantity %></td>
-                                            <td>₹<%= item.price.toFixed(2) %></td>
-                                            <td>₹<%= (item.quantity * item.price).toFixed(2) %></td>
-                                        </tr>
-                                    <% }); %>
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <td colspan="3" class="text-right"><strong>Total:</strong></td>
-                                        <td>₹<%= order.totalPrice.toFixed(2) %></td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="3" class="text-end"><strong>Discount:</strong></td>
-                                        <td>₹<%= (order.totalPrice - order.finalAmount).toFixed(2) %></td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="3" class="text-right"><strong>Final Amount:</strong></td>
-                                        <td>₹<%= order.finalAmount.toFixed(2) %></td>
-                                    </tr>
-                                </tfoot>
-                            </table>
+                            <h4>Return Reason (User's Reason)</h4>
+                            <p><strong>Reason: </strong>
+                                <%= order.returnReason || 'No reason provided' %>
+                            </p>
                         </div>
                     </div>
-
-                    <!-- Display User's Return Reason -->
-                    <% if (order.status === 'Return Request' || order.status === 'Returned') { %>
-                        <div class="row mt-4">
-                            <div class="col-12">
-                                <h4>Return Reason (User's Reason)</h4>
-                                <p><strong>Reason: </strong><%= order.returnReason || 'No reason provided' %></p>
-                            </div>
-                        </div>
                     <% } %>
 
-                    <!-- Update Order Status Form -->
-                    <div class="row mt-4">
-                        <div class="col-12">
-                            <h4>Update Order Status</h4>
-                            <form id="updateStatusForm">
-                                <div class="form-group">
-                                    <select class="form-control" id="orderStatus" name="status">
-                                        <option value="Pending" <%= order.status === 'Pending' ? 'selected' : '' %>>Pending</option>
-                                        <option value="Processing" <%= order.status === 'Processing' ? 'selected' : '' %>>Processing</option>
-                                        <option value="Shipped" <%= order.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
-                                        <option value="Delivered" <%= order.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
-                                        <option value="Cancelled" <%= order.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
-                                        <option value="Return Request" <%= order.status === 'Return Request' ? 'selected' : '' %>>Return Request</option>
-                                        <option value="Returned" <%= order.status === 'Returned' ? 'selected' : '' %>>Returned</option>
-                                    </select>
-                                </div>
-                                <button type="submit" class="btn btn-primary" style="background-color: black;">Update Status</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+
             </div>
         </div>
     </div>
-</div>
+    </div>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const updateStatusForm = document.getElementById('updateStatusForm');
-    updateStatusForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const status = document.getElementById('orderStatus').value;
-        try {
-            const response = await fetch('/admin/orders/update-status', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ orderId: '<%= order._id %>', status: status })
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const updateStatusForm = document.getElementById('updateStatusForm');
+            updateStatusForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                const status = document.getElementById('orderStatus').value;
+                try {
+                    const response = await fetch('/admin/orders/update-status', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ orderId: '<%= order._id %>', status: status })
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Status Updated',
+                            text: 'Order status updated successfully!',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Update Failed',
+                            text: 'Failed to update order status: ' + data.message,
+                            confirmButtonText: 'Try Again'
+                        });
+                    }
+                } catch (error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'An error occurred while updating the order status.',
+                        confirmButtonText: 'Close'
+                    });
+                    console.error('Error updating order status:', error);
+                }
             });
-            const data = await response.json();
-            if (data.success) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Status Updated',
-                    text: 'Order status updated successfully!',
-                    confirmButtonText: 'OK'
-                }).then(() => {
-                    location.reload(); // Reload the page after the user acknowledges
-                });
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Update Failed',
-                    text: 'Failed to update order status: ' + data.message,
-                    confirmButtonText: 'Try Again'
-                });
-            }
-        } catch (error) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'An error occurred while updating the order status.',
-                confirmButtonText: 'Close'
-            });
-            console.error('Error updating order status:', error);
-        }
-    });
-});
-</script>
+        });
+    </script>
 
-<%- include("../../views/partials/admin/footer") %>
+    <%- include("../../views/partials/admin/footer") %>

@@ -54,22 +54,23 @@
                 </td>
               </tr>
 
-              <!-- Offer Price -->
+              <!-- Discount Percentage -->
               <tr>
-                <th>Discount Amount (₹)</th>
+                <th>Discount Percentage</th>
                 <td>
                   <div class="input-group">
-                    <span class="input-group-text">₹</span>
                     <input
                       type="number"
                       id="offer-price"
                       name="offerPrice"
                       value="<%= coupon.offerPrice %>"
-                      placeholder="Enter discount amount"
+                      placeholder="Enter discount percentage"
                       class="form-control"
                       required
-                      min="0"
+                      min="1"
+                      max="100"
                     />
+                    <span class="input-group-text">%</span>
                   </div>
                 </td>
               </tr>
@@ -108,79 +109,120 @@
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  function validateForm() {
+    const form = document.getElementById('coupon-form');
+    const formData = new FormData(form);
+    
+    // Validate coupon name
+    const couponName = formData.get('couponName');
+    if (!/^[A-Z0-9]+$/.test(couponName)) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Invalid Coupon Name',
+        text: 'Coupon code must contain only uppercase letters and numbers'
+      });
+      return false;
+    }
 
-          <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-          <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-          <script>
-            async function updateCoupon() {
-              try {
-                const form = document.getElementById('coupon-form');
-                const formData = new FormData(form);
-                const couponId = document.getElementById('coupon-id').value;
+    // Validate discount percentage
+    const offerPrice = parseFloat(formData.get('offerPrice'));
+    if (isNaN(offerPrice) || offerPrice < 1 || offerPrice > 100) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Invalid Discount Percentage',
+        text: 'Discount percentage must be between 1 and 100'
+      });
+      return false;
+    }
 
-                // Basic validation
-                const offerPrice = parseFloat(formData.get('offerPrice'));
-                if (offerPrice <= 0) {
-                  Swal.fire({
-                    icon: 'error',
-                    title: 'Invalid Discount Amount',
-                    text: 'Discount amount must be greater than 0'
-                  });
-                  return;
-                }
+    // Validate minimum purchase amount
+    const minimumPrice = parseFloat(formData.get('minimumPrice'));
+    if (isNaN(minimumPrice) || minimumPrice < 0) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Invalid Minimum Purchase Amount',
+        text: 'Minimum purchase amount must be 0 or greater'
+      });
+      return false;
+    }
 
-                const startDate = new Date(formData.get('startDate'));
-                const endDate = new Date(formData.get('endDate'));
-                if (endDate < startDate) {
-                  Swal.fire({
-                    icon: 'error',
-                    title: 'Invalid Dates',
-                    text: 'End date cannot be before start date'
-                  });
-                  return;
-                }
+    // Validate dates
+    const startDate = new Date(formData.get('startDate'));
+    const endDate = new Date(formData.get('endDate'));
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-                const response = await fetch(`/admin/updateCoupon?id=${couponId}`, {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json'
-                  },
-                  body: JSON.stringify({
-                    couponName: formData.get('couponName'),
-                    startDate: formData.get('startDate'),
-                    endDate: formData.get('endDate'),
-                    offerPrice: formData.get('offerPrice'),
-                    minimumPrice: formData.get('minimumPrice')
-                  })
-                });
+    if (startDate < today) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Invalid Start Date',
+        text: 'Start date must be today or a future date'
+      });
+      return false;
+    }
 
-                if (response.ok) {
-                  Swal.fire({
-                    icon: 'success',
-                    title: 'Success',
-                    text: 'Coupon updated successfully',
-                    showConfirmButton: false,
-                    timer: 1500
-                  }).then(() => {
-                    window.location.href = '/admin/coupon';
-                  });
-                } else {
-                  const errorData = await response.text();
-                  throw new Error(errorData);
-                }
-              } catch (error) {
-                console.error('Error updating coupon:', error);
-                Swal.fire({
-                  icon: 'error',
-                  title: 'Error',
-                  text: error.message || 'Failed to update coupon'
-                });
-              }
-            }
-          </script>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+    if (endDate <= startDate) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Invalid End Date',
+        text: 'End date must be after start date'
+      });
+      return false;
+    }
+
+    return true;
+  }
+
+  async function updateCoupon() {
+    if (!validateForm()) {
+      return;
+    }
+
+    try {
+      const form = document.getElementById('coupon-form');
+      const formData = new FormData(form);
+      const couponId = document.getElementById('coupon-id').value;
+
+      const response = await fetch(`/admin/updateCoupon?id=${couponId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          couponName: formData.get('couponName'),
+          startDate: formData.get('startDate'),
+          endDate: formData.get('endDate'),
+          offerPrice: formData.get('offerPrice'),
+          minimumPrice: formData.get('minimumPrice')
+        })
+      });
+
+      if (response.ok) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: 'Coupon updated successfully',
+          showConfirmButton: false,
+          timer: 1500
+        }).then(() => {
+          window.location.href = '/admin/coupon';
+        });
+      } else {
+        const errorData = await response.text();
+        throw new Error(errorData);
+      }
+    } catch (error) {
+      console.error('Error updating coupon:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.message || 'Failed to update coupon'
+      });
+    }
+  }
+</script>
 <%- include("../../views/partials/admin/footer") %>
+

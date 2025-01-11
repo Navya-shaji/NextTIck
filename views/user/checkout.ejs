@@ -727,7 +727,7 @@ function copyCouponCode(couponCode) {
         },
         body: JSON.stringify({
             address: selectedAddressId,
-            products: `<%- JSON.stringify(product) %>`,
+            products: `<%- JSON.stringify(product) %>`, 
             subtotal: subtotal,
             total: subtotal - discount,
             paymentMethod: 'online'

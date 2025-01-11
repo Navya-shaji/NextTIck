@@ -1,0 +1,53 @@
+.status-select {
+    font-weight: 500;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.status-pending {
+    background-color: #fef3c7;
+    border-color: #fcd34d;
+}
+
+.status-processing {
+    background-color: #dbeafe;
+    border-color: #93c5fd;
+}
+
+.status-shipped {
+    background-color: #e0e7ff;
+    border-color: #818cf8;
+}
+
+.status-delivered {
+    background-color: #d1fae5;
+    border-color: #34d399;
+}
+
+.status-cancelled {
+    background-color: #fee2e2;
+    border-color: #fca5a5;
+}
+
+.status-return-request,
+.status-returned {
+    background-color: #f3e8ff;
+    border-color: #c084fc;
+}
+
+thead {
+    background-color: black;
+}
+
+.btn.btn-info.btn-sm {
+    background-color: gray;
+    color: white;
+    border: none;
+}
+
+th {
+    font-size: 15px;
+    font-weight: bold;
+    font-family: monospace;
+}
+

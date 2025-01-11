@@ -159,6 +159,7 @@ const getListedCategory = async (req,res)=>{
        
         await Category.updateOne({_id:id},{$set:{isListed:false}})
         res.redirect("/admin/category")
+        
     }catch(error){
         res.redirect("/pageerror")
     }

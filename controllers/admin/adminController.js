@@ -74,7 +74,7 @@ const getTopSellingData = async () => {
                 }
             },
             { $sort: { totalQuantity: -1 } },
-            { $limit: 10 } // Fetch top 10
+            { $limit: 10 } 
         ]);
 
         const topCategories = await Order.aggregate([
@@ -167,7 +167,6 @@ const getDateRanges = () => {
 
 const loadDashboard = async (req, res) => {
     try {
-        // Check if admin is logged in
         if (!req.session.admin) {
             return res.redirect("login");
         }
@@ -452,19 +451,30 @@ const calculateTotals = (orders) => {
 
 
 // loading the salereport page.........................................................
-
+// Backend modifications (in the loadSalesReport function)
 const loadSalesReport = async (req, res) => {
     try {
         const { period = 'monthly', startDate, endDate } = req.query;
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
+        
         const dateFilter = getDateFilter(period, startDate, endDate);
-
-        const orders = await Order.find({
+        const baseFilter = {
             ...dateFilter,
             status: { $nin: ['Pending', 'Processing'] }
-        })
+        };
+
+        // Get total count for pagination
+        const totalOrders = await Order.countDocuments(baseFilter);
+        const totalPages = Math.ceil(totalOrders / limit);
+
+        const orders = await Order.find(baseFilter)
             .populate('userId', 'name')
             .populate('orderItems.product', 'name')
-            .sort({ createdOn: -1 });
+            .sort({ createdOn: -1 })
+            .skip(skip)
+            .limit(limit);
 
         const totals = calculateTotals(orders);
 
@@ -480,6 +490,14 @@ const loadSalesReport = async (req, res) => {
             startDate,
             endDate,
             ordersByStatus,
+            pagination: {
+                page,
+                limit,
+                totalPages,
+                totalOrders,
+                hasPrev: page > 1,
+                hasNext: page < totalPages
+            },
             title: 'Sales Report'
         });
 
@@ -492,6 +510,12 @@ const loadSalesReport = async (req, res) => {
     }
 };
 
+// Add this helper function to handle pagination URLs
+const generatePaginationUrl = (currentUrl, newPage) => {
+    const url = new URL(currentUrl);
+    url.searchParams.set('page', newPage);
+    return url.search;
+};
 
 //downloading the sales report ...................................
 const downloadSalesReport = async (req, res) => {

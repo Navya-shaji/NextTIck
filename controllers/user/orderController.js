@@ -87,21 +87,27 @@ const cancelOrder = async (req, res) => {
 };
 
 //Refund adding...................................
-
 const addRefundToWallet = async (userId, amount, orderId) => {
     try {
         let wallet = await Wallet.findOne({ userId });
 
         if (!wallet) {
-
-            wallet = new Wallet({ userId, totalBalance, transactions: [] });
+            // Initialize new wallet with the refund amount as the initial balance
+            wallet = new Wallet({
+                userId,
+                totalBalance: amount,
+                transactions: []
+            });
+        } else {
+            // If wallet exists, ensure transactions array exists
+            if (!Array.isArray(wallet.transactions)) {
+                wallet.transactions = [];
+            }
+            // Add refund amount to existing balance
+            wallet.totalBalance += amount;
         }
 
-        if (!Array.isArray(wallet.transactions)) {
-            wallet.transactions = [];
-        }
-
-        wallet.totalBalance += amount;
+        // Add the transaction record
         wallet.transactions.push({
             type: 'Refund',
             amount: amount,
@@ -111,11 +117,11 @@ const addRefundToWallet = async (userId, amount, orderId) => {
         });
 
         await wallet.save();
+        return wallet;
     } catch (error) {
         console.error('Error processing refund:', error);
         throw error;
     }
-
 };
 
 

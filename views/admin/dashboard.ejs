@@ -9,7 +9,7 @@
     }
 
     h1, h5 {
-        color: #0C977F;
+        color: #0000;
         font-weight: 600;
     }
 
@@ -20,7 +20,7 @@
     }
 
     .nav-link:hover {
-        color: #0C977F;
+        color: #0000;
     }
 
     .card {
@@ -47,25 +47,28 @@
     }
 
     .form-select:focus {
-        border-color: #0C977F;
-        box-shadow: 0 0 6px rgba(12, 151, 127, 0.3);
+        border-color: #0000;
+        box-shadow: #0000;
     }
 
     canvas {
         background: linear-gradient(to top, #ffffff, #f7f9fc);
         border-radius: 10px;
     }
-    
+a{
+       font-size: 25px; 
+       color:black;
+        font-weight:  500;
+       font-family: monospace;
+    }
 </style>
 
 <div class="container-fluid mt-4">
-    <h1 class="mb-4">Admin Dashboard</h1>
+    <h1  style="font-size: 32px; color:black; font-weight: 600; font-family: Verdana, Geneva, Tahoma, sans-serif;" class="mb-4">Admin Dashboard</h1>
     <ul class="nav flex-column">
+       
         <li class="nav-item">
-            <a class="nav-link" href="/admin/dashboard">Dashboard</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="/admin/sales-report">Sales Report</a>
+            <a href="/admin/sales-report">Sales Report</a>
         </li>
         <!-- Add other admin navigation items here -->
     </ul>
@@ -75,7 +78,7 @@
                 <article class="icontext">
                     <div class="text">
                         <h6 class="mb-1" style="color: #666">Total Revenue</h6>
-                        <span style="font-size: 28px; color: #0C977F; font-weight: 600">₹<%= totalOrderAmount %></span>
+                        <span style="font-size: 28px; color:black; font-weight: 600">₹<%= totalOrderAmount %></span>
                     </div>
                 </article>
             </div>
@@ -85,7 +88,7 @@
                 <article class="icontext">
                     <div class="text">
                         <h6 class="mb-1" style="color: #666">Total Orders</h6>
-                        <span style="font-size: 28px; color: #0C977F; font-weight: 600"><%= totalSalesCount %></span>
+                        <span style="font-size: 28px;  color:black; font-weight: 600"><%= totalSalesCount %></span>
                     </div>
                 </article>
             </div>
@@ -93,11 +96,11 @@
        
     </div>
 
-    <div class="card mb-4" style="border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
+    <div class="card mb-4" style="border-radius: 10px; box-shadow: black">
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h5 class="card-title mb-0" style="color: #0C977F">Sales Statistics</h5>
-                <select class="form-select" id="timeRange" style="width: auto; border-color: #0C977F; color: #0C977F; max-width: 200px">
+                <h5 class="card-title mb-0" style="color: black">Sales Statistics</h5>
+                <select class="form-select" id="timeRange" style="width: auto; border-color:black; color:black; max-width: 200px">
                     <option value="monthly">Monthly</option>
                     <option value="weekly">Weekly</option>
                     <option value="yearly">Yearly</option>
@@ -114,7 +117,7 @@
         <div class="col-lg-12">
             <div class="card" style="border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
                 <div class="card-body">
-                    <h5 class="card-title" style="color: #0C977F">Best-Selling Products</h5>
+                    <h5 class="card-title" style="color: black">Best-Selling Products</h5>
                     <div style="height: 300px;">
                         <canvas id="bestSellingProductsChart"></canvas>
                     </div>
@@ -126,7 +129,7 @@
         <div class="col-lg-6">
             <div class="card" style="border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
                 <div class="card-body">
-                    <h5 class="card-title" style="color: #0C977F">Best-Selling Categories</h5>
+                    <h5 class="card-title" style="color:black">Best-Selling Categories</h5>
                     <div style="height: 300px;">
                         <canvas id="bestSellingCategoriesChart"></canvas>
                     </div>
@@ -136,7 +139,7 @@
         <div class="col-lg-6">
             <div class="card" style="border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
                 <div class="card-body">
-                    <h5 class="card-title" style="color: #0C977F">Best-Selling Brands</h5>
+                    <h5 class="card-title" style="color:black">Best-Selling Brands</h5>
                     <div style="height: 300px;">
                         <canvas id="bestSellingBrandsChart"></canvas>
                     </div>
@@ -207,7 +210,7 @@ function initializeSalesChart(timeRange) {
                 label: 'Sales Amount',
                 data: data,
                 fill: true,
-                borderColor: '#0C977F',
+                borderColor: '#92C5F9',
                 backgroundColor: gradient,
                 tension: 0.4
             }]

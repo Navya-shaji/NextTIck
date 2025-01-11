@@ -37,7 +37,6 @@ const createRazorpayOrder = async (amount) => {
 
 //getting checkout page..........................................................
 
-
 const getcheckoutPage = async (req, res) => {
     try {
         const user = req.session.user;
@@ -54,52 +53,80 @@ const getcheckoutPage = async (req, res) => {
         const availableCoupons = await Coupon.find({ expireOn: { $gte: new Date() } });
 
         if (!productId) {
+            // Handle cart checkout
             const cart = await Cart.findOne({ userId: user._id }).populate("items.productId");
-
+            
             if (!cart || !cart.items || cart.items.length === 0) {
                 return res.redirect("/");
             }
 
-            const products = cart.items.map(item => {
-                const product = item.productId;
-                console.log("product", item)
-                const productImage = product?.productImage || [];
-                return {
-                    _id: product._id,
-                    productName: product.productName,
-                    productImage: productImage.length > 0 ? productImage : ["default-image.jpg"],
-                    salesPrice: product.salesPrice || 0,
-                    quantity: item.quantity || 1,
-                };
-            });
+            // Filter out invalid products and map valid ones
+            const products = cart.items
+                .filter(item => item.productId && item.productId._id) // Ensure product exists and has _id
+                .map(item => {
+                    const product = item.productId;
+                    return {
+                        _id: product._id,
+                        productName: product.productName || 'Unknown Product',
+                        productImage: Array.isArray(product.productImage) && product.productImage.length > 0 
+                            ? product.productImage 
+                            : ["default-image.jpg"],
+                        salesPrice: parseFloat(product.salesPrice || 0),
+                        quantity: parseInt(item.quantity || 1),
+                    };
+                });
 
-            const subtotal = products.reduce((sum, item) => {
-                return sum + item.salesPrice * item.quantity;
-            }, 0);
-
-            return res.render("checkout", { user, product: products, subtotal, quantity: null, addressData, availableCoupons });
-        }
-
-        if (productId) {
-            const product = await Product.findById(productId);
-            if (!product) {
-                return res.redirect("/pageNotFound");
+            if (products.length === 0) {
+                // If no valid products after filtering
+                console.log("No valid products found in cart");
+                return res.redirect("/");
             }
 
-            const productData = {
-                _id: product._id,
-                productName: product.productName,
-                productImage: product.productImage?.length > 0 ? product.productImage : ["default-image.jpg"],
-                salePrice: product.salesPrice || 0,
-                quantity: quantity
-            };
+            const subtotal = products.reduce((sum, item) => {
+                return sum + (item.salesPrice * item.quantity);
+            }, 0);
 
-            const subtotal = productData.salePrice * quantity;
-            return res.render("checkout", { user, product: productData, subtotal, quantity, addressData, availableCoupons });
+            return res.render("checkout", {
+                user,
+                product: products,
+                subtotal,
+                quantity: null,
+                addressData,
+                availableCoupons
+            });
         }
+
+        // Handle single product checkout
+        const product = await Product.findById(productId);
+        if (!product) {
+            console.log("Product not found:", productId);
+            return res.redirect("/pageNotFound");
+        }
+
+        const productData = {
+            _id: product._id,
+            productName: product.productName || 'Unknown Product',
+            productImage: Array.isArray(product.productImage) && product.productImage.length > 0 
+                ? product.productImage 
+                : ["default-image.jpg"],
+            salesPrice: parseFloat(product.salesPrice || 0),
+            quantity: parseInt(quantity)
+        };
+
+        const subtotal = productData.salesPrice * productData.quantity;
+        
+        return res.render("checkout", {
+            user,
+            product: productData,
+            subtotal,
+            quantity,
+            addressData,
+            availableCoupons
+        });
+
     } catch (error) {
-        console.log("error", error)
-        console.error("Error fetching checkout page:", error.message);
+        console.error("Error fetching checkout page:", error);
+        console.error(error.stack);
         return res.redirect("/pageNotFound");
     }
 };

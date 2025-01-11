@@ -2,606 +2,449 @@
 <head>
   <link rel="stylesheet" href="/styles/profile.css">
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-
 </head>
+
 <main class="main">
- <div class="page-header breadcrumb-wrap mb-3">
-   <div class="container">
-     <div class="breadcrumb">
-       <a href="home" rel="nofollow">Home</a>
-       <span></span> Profile <span></span> Account
-     </div>
-   </div>
- </div>
-  <section class="pt-10 pb-10">
-   <div class="container">
-     <div class="row">
-       <div class="col-lg-10 m-auto">
-         <div class="row">
-           <div class="col-md-4">
-             <div class="dashboard-menu">
-               <ul class="nav flex-column" role="tablist">
-                 <li class="nav-item">
-                   <a class="nav-link active" id="dashboard-tab" data-bs-toggle="tab" href="#dashboard" role="tab" aria-controls="dashboard" aria-selected="false">
-                     <i class="fi-rs-settings-sliders mr-10"></i>Dashboard
-                   </a>
-                 </li>
-                 <li class="nav-item">
-                   <a class="nav-link" id="address-tab" data-bs-toggle="tab" href="#address" role="tab" aria-controls="address" aria-selected="false">
-                     <i class="fi-rs-marker mr-10"></i>My Address
-                   </a>
-                 </li>
-                 <li class="nav-item">
-                   <a class="nav-link" id="orders-tab" data-bs-toggle="tab" href="#orders" role="tab" aria-controls="orders" aria-selected="false">
-                     <i class="fi-rs-shopping-bag mr-10"></i>Orders
-                   </a>
-                 </li>
-                 <!-- <li class="nav-item">
-                   <a class="nav-link" id="track-orders-tab" data-bs-toggle="tab" href="#track-orders" role="tab" aria-controls="track-orders" aria-selected="false">
-                     <i class="fi-rs-shopping-cart-check mr-10"></i>Wallet Status
-                   </a>
-                 </li> -->
-                 <li class="nav-item">
-                   <a class="nav-link" id="track-orders-tab" data-bs-toggle="tab" href="#wallet-history" role="tab" aria-controls="track-orders" aria-selected="false">
-                     <i class="fi-rs-shopping-cart-check mr-10"></i>Wallet History
-                   </a>
-                 </li>
-                 <!-- <li class="nav-item">
-                   <a class="nav-link" id="track-orders-tab" data-bs-toggle="tab" href="#referal" role="tab" aria-controls="track-orders" aria-selected="false">
-                     <i class="fi-rs-shopping-cart-check mr-10"></i>Referals
-                   </a>
-                 </li> -->
-                 <li class="nav-item">
-                   <a class="nav-link" href="/logout">
-                     <i class="fi-rs-sign-out mr-10"></i>Logout
-                   </a>
-                 </li>
-               </ul>
-             </div>
-           </div>
-           <div class="col-md-8">
-             <div class="tab-content dashboard-content">
-
-               <div class="tab-pane fade show active" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
-                 <div class="card card-green">
-                   <div class="card-header">
-                     <h5 style="background-color: black;" class="mb-0 text-center">User Profile</h5>
-                   </div>
-                   <div class="card-body text-center">
-                     <h5 class="card-title"></h5>
-                     <p class="card-text">
-                      <strong>Name: <%=user.name %></strong>
-                    </p>
-                     <p class="card-text">
-                       <strong>Phone: <%=user.phone %></strong>
-                     </p>
-                     <p class="card-text">
-                       <strong>Email: <%=user.email%></strong>
-                     </p>
-                     <a style="background-color: black; color: white;" href="change-email" class="btn btn-sm ">Change Email</a>
-
-                     <a style="background-color: black; color: white;" href="/change-password" class="btn btn-sm ">Change Password</a>
-                   </div>
-                 </div>
-               </div>
-
-               
-    <!-- Modal profile update -->
-    <div class="modal fade" id="changeProfileModal" tabindex="-1" aria-labelledby="changeProfileModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-              <div class="modal-header">
-                  <h5 class="modal-title" id="changeProfileModalLabel">Change Profile</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  <div class="container py-5">
+    <div class="row">
+      <div class="col-lg-3">
+        <!-- Sidebar -->
+        <div class="card mb-4">
+          <div class="card-body">
+            <div class="d-flex flex-column align-items-center text-center">
+              <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="User Avatar" class="rounded-circle" width="150">
+              <div class="mt-3">
+                <h4><%= user.name %></h4>
+                <p class="text-muted font-size-sm"><%= user.email %></p>
               </div>
-              <div class="modal-body">
-                  <!-- Change Profile Form -->
-                  <form id="profileForm">
-                      <div class="mb-3">
-                          <div id="error1" style="color:red;"></div>
-                          <label for="fullName" class="form-label">Full Name</label>
-                          <input type="text" class="form-control" id="newName" name="name" placeholder="Enter your full name">
-                      </div>
-                      <div class="mb-3">
-                          <div id="error2" style="color:red;"></div>
-                          <label for="phone" class="form-label">Phone Number</label>
-                          <input type="tel" class="form-control" id="newPhone" name="email" placeholder="Enter your phone number">
-                      </div>
-                      <div class="mb-3">
-                          <input type="hidden" id="userId" value="<%=user.id%>">
-                      </div>
-                  </form>
-              </div>
-              <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                  <button type="submit" class="btn btn-save" id="saveChangesBtn">Save Changes</button>
-              </div>
+            </div>
+            <hr class="my-4">
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                <h6 class="mb-0">Wallet Balance</h6>
+                <span class="text-secondary">₹<%= wallet.totalBalance.toFixed(2) %></span>
+              </li>
+            </ul>
           </div>
+        </div>
+        
+        <!-- Navigation -->
+        <div class="card">
+          <div class="card-body">
+            <nav class="nav flex-column nav-pills">
+              <a class="nav-link active" id="dashboard-tab" data-bs-toggle="pill" href="#dashboard">Dashboard</a>
+              <a class="nav-link" id="orders-tab" data-bs-toggle="pill" href="#orders">Orders</a>
+              <a class="nav-link" id="address-tab" data-bs-toggle="pill" href="#address">Addresses</a>
+              <a class="nav-link" id="wallet-history-tab" data-bs-toggle="pill" href="#wallet-history">Wallet History</a>
+              <a class="nav-link" id="logout" href="/logout">Logout</a>
+            </nav>
+          </div>
+        </div>
       </div>
-  </div>
-
-
-               <div class="tab-pane fade" id="address" role="tabpanel" aria-labelledby="address-tab">
-                <div class="row">
-                    <% if (userAddress && userAddress.address) { %>
-                        <% userAddress.address.forEach((address) => { %>
-                            <div class="col-lg-6">
-                                <div class="card mb-3 mb-lg-0">
-                                    <div class="card-header">
-                                        <h5 class="mb-0"><%=address.addressType %></h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <address>
-                                            <strong><%=address.name %></strong><br />
-                                            <%=address.city %><br />
-                                            <%=address.landmark %><br />
-                                            <%=address.state %><br />
-                                        </address>
-                                        <p><strong>Pincode:</strong> <%=address.pincode %></p>
-                                        <p><strong>Phone:</strong> <%=address.phone %></p>
-                                        <p><strong>Alt Phone:</strong> <%=address.altPhone %></p>
-                                        <div class="d-flex justify-content-between">
-                                          <a style="background-color: black; color: white;" href="/edit-address/<%=address.id %>" class="btn btn-sm ">Edit</a>
-                                          <a style="background-color: black; color: white;" href="/delete-address/<%=address.id %>" class="btn btn-sm ">Delete</a>
-
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        <% }) %>
-                    <% } else { %>
-                        <div class="col-lg-6">
-                            <div class="card mb-3 mb-lg-0">
-                                <div class="card-header">
-                                    <h5  class="mb-0">No Address</h5>
-                                </div>
-                                <div class="card-body">
-                                    <p>No address available. Please add one.</p>
-                                </div>
-                            </div>
-                        </div>
-                    <% } %>
+      
+      <div class="col-lg-9">
+        <div class="card">
+          <div class="card-body">
+            <div class="tab-content">
+              <!-- Dashboard Tab -->
+              <div class="tab-pane fade show active" id="dashboard" role="tabpanel">
+                <h3 class="mb-4">Profile Information</h3>
+                <form id="updateProfileForm">
+                  <div class="mb-3">
+                    <label for="name" class="form-label"><strong>Name:</strong></label>
+                    <input type="text" id="name" name="name" class="form-control" value="<%= user.name %>" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="phone" class="form-label"><strong>Phone:</strong></label>
+                    <input type="text" id="phone" name="phone" class="form-control" value="<%= user.phone %>" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="email" class="form-label"><strong>Email:</strong></label>
+                    <input type="email" id="email" name="email" class="form-control" value="<%= user.email %>" readonly>
+                  </div>
+                
+                  
+                  <div>
+                  <a href="/change-password" class="btn btn-sm" style="background-color: black; color: white; padding: 8px 12px; text-decoration: none; border-radius: 5px; font-size: 14px; border: 1px solid white;">
+                    Change Password
+                  </a>
+                  <button type="submit" class="btn btn-primary"  style="background-color: black; color: white; padding: 8px 12px; text-decoration: none; border-radius: 5px; font-size: 14px; border: 1px solid white;">
+                    Save Changes
+                  </button>
                 </div>
-                <div class="mt-3 text-center">
-                    <a  href="/add-address">
-                        <button class="btn btn-primary">
-                            Add Address
-                        </button>
-                    </a>
-                </div>
-            </div>
-
-          <div class="tab-pane fade" id="orders" role="tabpanel" aria-labelledby="orders-tab">
-                 <div class="card">
-                   <div class="card-header">
-                     <h5 class="mb-0">Your Orders</h5>
-                   </div>
-                   <div class="card-body">
-                     <div class="table-responsive">
-                       <table class="table">
-                         <thead>
-                           <tr>
-                             <th>Order</th>
-                             <th>Date</th>
-                             <th>Status</th>
-                             <th>Total</th>
-                             <th>PaymentStatus</th>
-                             <th>Actions</th>
-                           </tr>
-                         </thead>
-                         <tbody>
-                           <% if (typeof orders !== 'undefined' && orders && orders.length > 0) { %>
-                             <% orders.forEach(order => { %>
-                               <tr>
-                                 <td>#<%= order.orderId %></td>
-                                 <td><%= new Date(order.createdOn).toLocaleDateString() %></td>
-                                 <td><%= order.status %></td>
-                                 <td>₹<%= order.finalAmount ? order.finalAmount.toFixed(2) : '0.00' %></td>
-                                 <td><%=order.paymentStatus %></td>
-                                 <td class="actions-column">
-                                  <form action="/orders/view/<%= order._id %>" method="GET" class="d-inline mb-2">
-                                    <button type="submit" class="btn btn-info">
-                                      View
-                                    </button>
-                                  </form>
-                                  <% if (order.status === 'Pending') { %>
-                                    <button type="button" class="btn btn-danger cancel-order-btn" data-order-id="<%= order._id %>">
-                                      Cancel Order
-                                    </button>
-                                  <% } %>
-                                  <% if (order.status === 'Delivered') { %>
-                                    <button type="button" class="btn btn-warning return-order-btn" data-order-id="<%= order._id %>">
-                                      Return Order
-                                    </button>
-                                  <% } %>
-                                  <% if(order.paymentStatus === 'Pending') { %>
-                                      <button type="button" onclick="retryPayment('<%=order._id%>', '<%=order.address%>', '<%=order.finalAmount%>', '<%=order.totalPrice%>',  <%=JSON.stringify(order.orderItems)%>)" class="btn btn-success">
-                                        Retry Payment
-                                      </button>
-                                      <% } %>
-                                </td>
-                                
-                             <% }); %>
-                           <% } else { %>
-                             <tr>
-                               <td colspan="5" class="text-center">No orders found.</td>
-                             </tr>
-                           <% } %>
-                         </tbody>
-                       </table>
-                     </div>
-                   </div>
-                 </div>
-                 
-               </div>
-
-               
-
-               <div class="tab-pane fade" id="wallet-history" role="tabpanel" aria-labelledby="wallet-history-tab">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">Wallet Balance</h5>
-                        <span class="fw-bold text-success">₹<%= wallet.totalBalance.toFixed(2) %></span>
-                      </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Date </th>
-                                        <th>Type</th>
-                                        <th>Status</th>
-                                        <th>Amount</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <% if (wallet && wallet.transactions && wallet.transactions.length > 0) { %>
-                                        <% wallet.transactions
-                                            .sort((a, b) => new Date(b.date) - new Date(a.date))
-                                            .forEach(transaction => { %>
-                                            <tr>
-                                                <td><%= new Date(transaction.date).toLocaleDateString() %></td>
-                                                <td>
-                                                    <span class="badge <%= transaction.type === 'Deposit' ? 'bg-success' : 
-                                                                          transaction.type === 'Refund' ? 'bg-info' : 
-                                                                          'bg-danger' %>">
-                                                        <%= transaction.type.toUpperCase() %>
-                                                    </span>
-                                                </td>
-                                                <td><%= transaction.description || 'Wallet Transaction' %></td>
-                                                <td class="<%= transaction.type === 'Withdrawal' || transaction.type === 'Purchase' ? 'text-danger' : 'text-success' %>">
-                                                    <%= transaction.type === 'Withdrawal' || transaction.type === 'Purchase' ? '-' : '+' %>₹<%= transaction.amount %>
-                                                </td>
-                                            </tr>
-                                        <% }) %>
-                                    <% } else { %>
-                                        <tr>
-                                            <td colspan="4" class="text-center">No transactions found.</td>
-                                        </tr>
-                                    <% } %>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            
+                
+                
+                  <div>
+                    
+                  </div>
+                </form>
+              </div>
               
-              <div class="tab-pane fade" id="track-orders" role="tabpanel" aria-labelledby="track-orders-tab">
-                <div class="card">
-                  <div class="card-header">
-                    <h5 class="mb-0">Wallet</h5>
-                  </div>
-                  <div class="card-body contact-from-area">
-                    <div class="row">
-                      <div class="col-lg-8 mx-auto text-center mt-90">
-                        <form>
-                          <div class="form-group">
-                            <label for="walletAmount" class="h4">Amount</label>
-                            <input type="number" id="walletAmount" class="form-control" placeholder="Enter amount to add" />
-                          </div>
-                          <button type="button" class="btn btn-success" id="addMoneyBtn" >Add Money</button>
-                        </form>
-                      </div>
-                    </div>
-                  </div>
+              <!-- Orders Tab -->
+              <div class="tab-pane fade" id="orders" role="tabpanel">
+                <h3 class="mb-4">Your Orders</h3>
+                <div class="table-responsive">
+                  <table class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th>Order</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Total</th>
+                        <th>Payment Status</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% if (typeof orders !== 'undefined' && orders && orders.length > 0) { %>
+                        <% orders.forEach(order => { %>
+                          <tr>
+                            <td>#<%= order.orderId %></td>
+                            <td><%= new Date(order.createdOn).toLocaleDateString() %></td>
+                            <td><%= order.status %></td>
+                            <td>₹<%= order.finalAmount ? order.finalAmount.toFixed(2) : '0.00' %></td>
+                            <td><%= order.paymentStatus %></td>
+                            <td>
+                              <form action="/orders/view/<%= order._id %>" method="GET" class="d-inline mb-2">
+                                <button type="submit" class="btn btn-info btn-sm">View</button>
+                              </form>
+                              <% if (order.status === 'Pending') { %>
+                                <button type="button" class="btn btn-danger btn-sm cancel-order-btn" data-order-id="<%= order._id %>">
+                                  Cancel Order
+                                </button>
+                              <% } %>
+                              <% if (order.status === 'Delivered') { %>
+                                <button type="button" class="btn btn-warning btn-sm return-order-btn" style="background-color: #EA1A85;" data-order-id="<%= order._id %>">
+                                  Return Order
+                                </button>
+                              <% } %>
+                              <% if (order.paymentStatus === 'Pending') { %>
+                                <button type="button" class="btn btn-success btn-sm" onclick="retryPayment('<%= order._id %>', '<%= order.address %>', '<%= order.finalAmount %>', '<%= order.totalPrice %>', <%= JSON.stringify(order.orderItems) %>)">
+                                  Retry Payment
+                                </button>
+                              <% } %>
+                            </td>
+                          </tr>
+                        <% }); %>
+                      <% } else { %>
+                        <tr>
+                          <td colspan="6" class="text-center">No orders found.</td>
+                        </tr>
+                      <% } %>
+                    </tbody>
+                  </table>
                 </div>
               </div>
-
-
-               <div class="tab-pane fade" id="referal" role="tabpanel" aria-labelledby="track-orders-tab">
-                 <div class="card">
-                   <div class="card-header">
-                     <h5 class="mb-0">Referal</h5>
-                   </div>
-                   <div class="card-body">
-                     <h6 class="mb-3">Refer your friends and earn money!</h6>
-                     <p>Share this link: <strong></strong></p>
-                     <p>Earned: ₹</p>
-                   </div>
-                 </div>
-               </div>
-             </div>
-           </div>
-         </div>
-       </div>
-     </div>
-   </div>
- </section>
+              
+              <!-- Address Tab -->
+              <div class="tab-pane fade" id="address" role="tabpanel">
+                <h3 class="mb-4">Your Addresses</h3>
+                <div class="row">
+                  <% if (userAddress && userAddress.address) { %>
+                    <% userAddress.address.forEach((address) => { %>
+                      <div class="col-md-6 mb-3">
+                        <div class="card">
+                          <div class="card-header">
+                            <h5 class="mb-0"><%= address.addressType %></h5>
+                          </div>
+                          <div class="card-body">
+                            <address>
+                              <strong><%= address.name %></strong><br />
+                              <%= address.city %><br />
+                              <%= address.landmark %><br />
+                              <%= address.state %><br />
+                            </address>
+                            <p><strong>Pincode:</strong> <%= address.pincode %></p>
+                            <p><strong>Phone:</strong> <%= address.phone %></p>
+                            <p><strong>Alt Phone:</strong> <%= address.altPhone %></p>
+                            <div class="d-flex justify-content-between">
+                              <a href="/edit-address/<%= address.id %>" class="btn btn-primary btn-sm">Edit</a>
+                              <a href="/delete-address/<%= address.id %>" class="btn btn-danger btn-sm">Delete</a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    <% }) %>
+                  <% } else { %>
+                    <div class="col-12">
+                      <p>No addresses available. Please add one.</p>
+                    </div>
+                  <% } %>
+                </div>
+                <div class="mt-3">
+                  <a href="/add-address" class="btn btn-primary">Add New Address</a>
+                </div>
+              </div>
+              
+              <!-- Wallet History Tab -->
+              <div class="tab-pane fade" id="wallet-history" role="tabpanel">
+                <h3 class="mb-4">Wallet Transactions</h3>
+                <div class="table-responsive">
+                  <table class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                        <th>Amount</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% if (wallet && wallet.transactions && wallet.transactions.length > 0) { %>
+                        <% wallet.transactions.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(transaction => { %>
+                          <tr>
+                            <td><%= new Date(transaction.date).toLocaleDateString() %></td>
+                            <td>
+                              <span class="badge <%= transaction.type === 'Deposit' ? 'bg-success' : 
+                                                    transaction.type === 'Refund' ? 'bg-info' : 
+                                                    'bg-danger' %>">
+                                <%= transaction.type.toUpperCase() %>
+                              </span>
+                            </td>
+                            <td><%= transaction.description || 'Wallet Transaction' %></td>
+                            <td class="<%= transaction.type === 'Withdrawal' || transaction.type === 'Purchase' ? 'text-danger' : 'text-success' %>">
+                              <%= transaction.type === 'Withdrawal' || transaction.type === 'Purchase' ? '-' : '+' %>₹<%= transaction.amount %>
+                            </td>
+                          </tr>
+                        <% }) %>
+                      <% } else { %>
+                        <tr>
+                          <td colspan="4" class="text-center">No transactions found.</td>
+                        </tr>
+                      <% } %>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </main>
+
 <%- include("../../views/partials/user/footer.ejs") %>
 
-
-<!-- SweetAlert Script -->
+<!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.14/dist/sweetalert2.all.min.js"></script>
 <script>
+ document.getElementById('updateProfileForm').addEventListener('submit', async (e) => {
+  e.preventDefault(); // Prevent form submission
 
-  document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.cancel-order-btn').forEach(button => {
-        button.addEventListener('click', function () {
-            const orderId = this.getAttribute('data-order-id');
-            cancelOrder(orderId);
-            console.log(orderId)
-        });
-    });
-});
+  const formData = new FormData(e.target); // Get form data
+  const data = Object.fromEntries(formData.entries()); // Convert FormData to an object
 
-async function retryPayment(orderId, address, subtotal, total, products) {
   try {
-    console.log(orderId, address, subtotal, total, products)
-    fetch('/orders/retry-payment', {
-      method: 'POST',
+    const response = await fetch('/updateProfile', {
+      method: 'POST', // HTTP method
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json', // Specify JSON content
       },
-      body: JSON.stringify({ orderId }),
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (!data.success) {
-            throw new Error(data.message || 'Failed to create order');
-        }
-        const options = {
-            key: data.data.key_id, 
-            amount: data.data.amount,
-            currency: data.data.currency,
-            name: data.data.name,
-            description: data.data.description,
-            order_id: data.data.order_id,
-            handler: function (response) {
-                verifyRazorpayPayment(response, {
-                  address: address,
-                    products: JSON.stringify(products),
-                    subtotal: subtotal,
-                    total:total,
-                    retryPayment:true,
-                    orderId
-                });
-            },
-            prefill: data.prefill,
-            theme: {
-                color: '#3399cc'
-            }
-        };
-        const rzp = new Razorpay(options);
-        rzp.on('payment.failed', function (response) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Payment Failed',
-                text: response.error.description
-            });
-        });
+      body: JSON.stringify(data), // Send JSON data
+    });
 
-        rzp.open();
-    })
+    const result = await response.json(); // Parse JSON response
 
+    if (result.success) {
+      // Show success notification
+      Swal.fire({
+        icon: 'success',
+        title: 'Profile Updated!',
+        text: result.message,
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
+      // Optionally update the UI with the new data
+      document.getElementById('name').value = data.name;
+      document.getElementById('phone').value = data.phone;
+    } else {
+      // Handle error case
+      Swal.fire({
+        icon: 'error',
+        title: 'Update Failed',
+        text: result.message,
+      });
+    }
   } catch (error) {
-    console.error('Error during payment:', error);
-  }
-}
-
-function verifyRazorpayPayment(response, orderDetails) {
-    alert("sending payment success")
-    fetch('/verify-payment', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            razorpay_payment_id: response.razorpay_payment_id,
-            razorpay_order_id: response.razorpay_order_id,
-            razorpay_signature: response.razorpay_signature,
-            orderDetails: orderDetails,
-            retryPayment:true,
-            orderId: orderDetails.orderId
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            Swal.fire({
-                icon: 'success',
-                title: 'Payment Successful!',
-                text: 'Your order has been placed successfully',
-                showConfirmButton: false,
-                timer: 1500
-            }).then(() => {
-                window.location.href = `/orderConfirmation`;
-            });
-        } else {
-            throw new Error(data.message || 'Payment verification failed ');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        Swal.fire({
-            icon: 'error',
-            title: 'Payment Verification Failed ',
-            text: error.message || 'Failed to verify payment'
-        });
-    });
-}
-
-function cancelOrder(orderId, orderAmount) {
+    // Handle unexpected errors
+    console.error('Error updating profile:', error);
     Swal.fire({
-        title: "Are you sure?",
-        text: "Do you want to cancel this order?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#d33",
-        cancelButtonColor: "#3085d6",
-        confirmButtonText: "Yes, cancel it!"
-    }).then((result) => {
-        if (result.isConfirmed) {
-            fetch('/orders/cancel', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    orderId: orderId,
-                    status: "Cancelled"
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                   
-                    
-                    Swal.fire({
-                        title: "Cancelled!",
-                        text: data.message || "Order has been cancelled successfully.",
-                        icon: "success",
-                        timer: 1500,
-                        showConfirmButton: false
-                    }).then(() => {
-                        location.reload(); 
-                    });
-                } else {
-                    Swal.fire({
-                        title: "Error",
-                        text: data.message || "Failed to cancel the order.",
-                        icon: "error"
-                    });
-                }
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                Swal.fire({
-                    title: "Error",
-                    text: "An error occurred while cancelling the order.",
-                    icon: "error"
-                });
-            });
-        }
+      icon: 'error',
+      title: 'Error',
+      text: 'An unexpected error occurred.',
     });
-}
-
-
-document.addEventListener('DOMContentLoaded', () => {
-
-  document.querySelectorAll('.return-order-btn').forEach(button => {
-        button.addEventListener('click', function () {
-            const orderId = this.getAttribute('data-order-id');
-            redirectToReturnReason(orderId); 
-        });
-    });
+  }
 });
 
-function redirectToReturnReason(orderId) {
-    Swal.fire({
-        title: "Are you sure?",
-        text: "Do you want to proceed to return this order?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#d33",
-        cancelButtonColor: "#3085d6",
-        confirmButtonText: "Yes, proceed!"
-    }).then((result) => {
-        if (result.isConfirmed) {
 
-          window.location.href = `/return-reason?orderId=${orderId}`;
-
-        }
-    });
-}
-
-  document.getElementById('addMoneyBtn').addEventListener('click', async () => {
+  async function retryPayment(orderId, address, subtotal, total, products) {
     try {
-      const amount = 500; 
-      const userId = 'exampleUserId123'; 
-      const response = await fetch('/createRazorpayOrder', {
+      const response = await fetch('/orders/retry-payment', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ amount, userId }),
+        body: JSON.stringify({ orderId }),
       });
 
       const data = await response.json();
 
       if (!data.success) {
-        throw new Error(data.message || 'Failed to create Razorpay order');
+        throw new Error(data.message || 'Failed to create order');
       }
 
-      const { order } = data;
-
-  
       const options = {
-        key: 'YOUR_RAZORPAY_KEY', 
-        amount: order.amount, // Amount in paisa (e.g., 500 INR = 50000 paisa)
-        currency: 'INR',
-        name: 'Your App Name',
-        description: 'Add Money to Wallet',
-        image: 'https://your-logo-url.com/logo.png',
-        order_id: order.id, // Razorpay order ID
-        handler: async function (response) {
-          try {
-            // Send payment success data to backend to update wallet
-            const paymentData = {
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_signature: response.razorpay_signature,
-              userId: 'exampleUserId123', // Replace with actual user ID
-            };
-
-            const result = await fetch('/updateWalletAfterPayment', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(paymentData),
-            });
-
-            const data = await result.json();
-            if (data.success) {
-              alert('Wallet updated successfully!');
-              location.reload(); 
-            } else {
-              alert('Failed to update wallet: ' + data.message);
-            }
-          } catch (error) {
-            console.error('Error updating wallet:', error);
-            alert('An error occurred. Please contact support.');
-          }
+        key: data.data.key_id,
+        amount: data.data.amount,
+        currency: data.data.currency,
+        name: data.data.name,
+        description: data.data.description,
+        order_id: data.data.order_id,
+        handler: function (response) {
+          verifyRazorpayPayment(response, {
+            address: address,
+            products: JSON.stringify(products),
+            subtotal: subtotal,
+            total: total,
+            retryPayment: true,
+            orderId
+          });
         },
-        prefill: {
-          name: 'Customer Name', 
-          email: 'customer@example.com', 
-          contact: '9876543210',  
-        },
+        prefill: data.prefill,
         theme: {
-          color: '#3399cc',
-        },
+          color: '#3399cc'
+        }
       };
 
       const rzp = new Razorpay(options);
+      rzp.on('payment.failed', function (response) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Payment Failed',
+          text: response.error.description
+        });
+      });
+
       rzp.open();
     } catch (error) {
       console.error('Error during payment:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'An error occurred during payment. Please try again.'
+      });
     }
-  });
+  }
 
-  </script>
+  function verifyRazorpayPayment(response, orderDetails) {
+    fetch('/verify-payment', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        razorpay_payment_id: response.razorpay_payment_id,
+        razorpay_order_id: response.razorpay_order_id,
+        razorpay_signature: response.razorpay_signature,
+        orderDetails: orderDetails,
+        retryPayment: true,
+        orderId: orderDetails.orderId
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Payment Successful!',
+          text: 'Your order has been placed successfully',
+          showConfirmButton: false,
+          timer: 1500
+        }).then(() => {
+          window.location.href = `/orderConfirmation`;
+        });
+      } else {
+        throw new Error(data.message || 'Payment verification failed');
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Payment Verification Failed',
+        text: error.message || 'Failed to verify payment'
+      });
+    });
+  }
+
+  function cancelOrder(orderId) {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to cancel this order?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, cancel it!"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        fetch('/orders/cancel', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            orderId: orderId,
+            status: "Cancelled"
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            Swal.fire({
+              title: "Cancelled!",
+              text: data.message || "Order has been cancelled successfully.",
+              icon: "success",
+              timer: 1500,
+              showConfirmButton: false
+            }).then(() => {
+              location.reload();
+            });
+          } else {
+            Swal.fire({
+              title: "Error",
+              text: data.message || "Failed to cancel the order.",
+              icon: "error"
+            });
+          }
+        })
+        .catch(error => {
+          console.error("Error:", error);
+          Swal.fire({
+            title: "Error",
+            text: "An error occurred while cancelling the order.",
+            icon: "error"
+          });
+        });
+      }
+    });
+  }
+
+  function redirectToReturnReason(orderId) {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to proceed to return this order?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, proceed!"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = `/return-reason?orderId=${orderId}`;
+      }
+    });
+  }
+</script>

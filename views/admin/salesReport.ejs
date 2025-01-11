@@ -1,6 +1,20 @@
 <%- include("../../views/partials/admin/header") %>
 <style>
-    
+    .pagination-info {
+        color: #6c757d;
+        font-size: 0.875rem;
+    }
+    .pagination .page-link {
+        padding: 0.375rem 0.75rem;
+    }
+    .pagination .active .page-link {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+    }
+    .per-page-select {
+        width: auto;
+        display: inline-block;
+    }
 </style>
 <div class="content-main">
     <div class="content-header d-flex justify-content-between align-items-center">
@@ -39,24 +53,6 @@
                 </div>
             </div>
         </div>
-        <!-- <div class="col-12 col-md-6 col-lg-3 mb-4">
-            <div class="card h-100 border-info">
-                <div class="card-body">
-                    <h6 class="card-subtitle mb-2 text-muted">Regular Discounts</h6>
-                    <h3 class="card-title text-info">₹<%= totals.regularDiscount.toFixed(2) %></h3>
-                    <p class="card-text small">Non-coupon discounts</p>
-                </div>
-            </div>
-        </div> -->
-        <!-- <div class="col-12 col-md-6 col-lg-3 mb-4">
-            <div class="card h-100 border-warning">
-                <div class="card-body">
-                    <h6 class="card-subtitle mb-2 text-muted">Coupon Discounts</h6>
-                    <h3 class="card-title text-warning">₹<%= totals.couponDiscount.toFixed(2) %></h3>
-                    <p class="card-text small">Discounts from coupons</p>
-                </div>
-            </div>
-        </div> -->
     </div>
 
     <!-- Filters -->
@@ -91,6 +87,10 @@
                         <i class="fas fa-sync-alt"></i> Update Report
                     </button>
                 </div>
+
+                <!-- Hidden pagination fields -->
+                <input type="hidden" name="page" value="<%= pagination?.page || 1 %>">
+                <input type="hidden" name="limit" value="<%= pagination?.limit || 10 %>">
             </form>
         </div>
     </div>
@@ -116,21 +116,7 @@
                             <td><%= order.orderId %></td>
                             <td><%= new Date(order.createdOn).toLocaleDateString() %></td>
                             <td><%= order.userId?.name || 'N/A' %></td>
-                            <!-- <td>
-                                <% const itemCount = order.orderItems.length %>
-                                <%= order.orderItems[0]?.product?.name || 'N/A' %>
-                                <% if (itemCount > 1) { %>
-                                    <span class="badge bg-secondary">+<%= itemCount - 1 %> more</span>
-                                <% } %>
-                            </td> -->
                             <td class="text-end">₹<%= order.totalPrice.toFixed(2) %></td>
-                            <!-- <td class="text-end">
-                                ₹<%= (order.discount || 0).toFixed(2) %>
-                                <% if (order.couponApplied) { %>
-                                    <span class="badge bg-warning text-dark">Coupon</span>
-                                <% } %>
-                            </td> -->
-                            
                             <td class="text-end">₹<%= order.finalAmount.toFixed(2) %></td>
                             <td>
                                 <% const statusClass = {
@@ -145,13 +131,64 @@
                         </tr>
                         <% }); %>
                     </tbody>
-
                 </table>
-                
+
+                <!-- Pagination Controls -->
+                <div class="d-flex justify-content-between align-items-center mt-4 flex-wrap">
+                    <div class="pagination-info mb-2 mb-md-0">
+                        Showing <%= ((pagination.page - 1) * pagination.limit) + 1 %> to 
+                        <%= Math.min(pagination.page * pagination.limit, pagination.totalOrders) %> 
+                        of <%= pagination.totalOrders %> orders
+                    </div>
+                    
+                    <nav aria-label="Sales report pagination" class="mb-2 mb-md-0">
+                        <ul class="pagination mb-0">
+                            <li class="page-item <%= !pagination.hasPrev ? 'disabled' : '' %>">
+                                <a class="page-link" href="#" onclick="changePage(1)" aria-label="First">
+                                    <span aria-hidden="true">&laquo;&laquo;</span>
+                                </a>
+                            </li>
+                            
+                            <li class="page-item <%= !pagination.hasPrev ? 'disabled' : '' %>">
+                                <a class="page-link" href="#" onclick="changePage(<%= pagination.page - 1 %>)" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+
+                            <% for(let i = Math.max(1, pagination.page - 2); i <= Math.min(pagination.totalPages, pagination.page + 2); i++) { %>
+                                <li class="page-item <%= pagination.page === i ? 'active' : '' %>">
+                                    <a class="page-link" href="#" onclick="changePage(<%= i %>)"><%= i %></a>
+                                </li>
+                            <% } %>
+
+                            <li class="page-item <%= !pagination.hasNext ? 'disabled' : '' %>">
+                                <a class="page-link" href="#" onclick="changePage(<%= pagination.page + 1 %>)" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+
+                            <li class="page-item <%= !pagination.hasNext ? 'disabled' : '' %>">
+                                <a class="page-link" href="#" onclick="changePage(<%= pagination.totalPages %>)" aria-label="Last">
+                                    <span aria-hidden="true">&raquo;&raquo;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+
+                    <div class="d-flex align-items-center">
+                        <label class="me-2">Per page:</label>
+                        <select class="form-select form-select-sm per-page-select" onchange="changeLimit(this.value)">
+                            <% [10, 25, 50, 100].forEach(size => { %>
+                                <option value="<%= size %>" <%= pagination.limit === size ? 'selected' : '' %>>
+                                    <%= size %>
+                                </option>
+                            <% }) %>
+                        </select>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    
 </div>
 
 <script>
@@ -181,6 +218,19 @@ function downloadReport(format) {
     }
     
     window.location.href = url;
+}
+
+function changePage(page) {
+    const form = document.getElementById('filter-form');
+    form.querySelector('input[name="page"]').value = page;
+    form.submit();
+}
+
+function changeLimit(limit) {
+    const form = document.getElementById('filter-form');
+    form.querySelector('input[name="limit"]').value = limit;
+    form.querySelector('input[name="page"]').value = 1; 
+    form.submit();
 }
 
 </script>

@@ -46,6 +46,9 @@
             <% } %>
           </div>
         </div>
+
+        
+     
         
         <div class="filter-section">
           <!-- <div class="filter-title" style="color: black;">Availability</div> -->
@@ -64,16 +67,22 @@
               <% } %>
             <% } %>
             
-            <label for="sort">Sort by:</label>
-            <select name="sort" onchange="this.form.submit()" class="form-select">
-              <!-- <option value="newest" <%= query.sort === 'newest' ? 'selected' : '' %>>Newest</option> -->
-              <option value="price_asc" <%= query.sort === 'price_asc' ? 'selected' : '' %>>Price: Low to High</option>
-              <option value="price_desc" <%= query.sort === 'price_desc' ? 'selected' : '' %>>Price: High to Low</option>
-              <option value="name_asc" <%= query.sort === 'name_asc' ? 'selected' : '' %>>Name: A-Z</option>
-              <option value="name_desc" <%= query.sort === 'name_desc' ? 'selected' : '' %>>Name: Z-A</option>
-              <!-- <option value="popularity" <%= query.sort === 'popularity' ? 'selected' : '' %>>Popularity</option> -->
-              <!-- <option value="rating" <%= query.sort === 'rating' ? 'selected' : '' %>>Rating</option> -->
-            </select>
+      
+            
+<div class="sorting">
+  <form method="GET" action="/shop" class="sort-form">
+    <label for="sort">Sort By:</label>
+    <select name="sort" id="sort" onchange="this.form.submit()">
+      <option value="newest" <%= !query.sort || query.sort === 'newest' ? 'selected' : '' %>>Newest</option>
+      <option value="popularity" <%= query.sort === 'popularity' ? 'selected' : '' %>>Popularity</option>
+      <option value="price_asc" <%= query.sort === 'price_asc' ? 'selected' : '' %>>Price: Low to High</option>
+      <option value="price_desc" <%= query.sort === 'price_desc' ? 'selected' : '' %>>Price: High to Low</option>
+      <option value="rating" <%= query.sort === 'rating' ? 'selected' : '' %>>Rating</option>
+      <option value="name_asc" <%= query.sort === 'name_asc' ? 'selected' : '' %>>Name: A to Z</option>
+      <option value="name_desc" <%= query.sort === 'name_desc' ? 'selected' : '' %>>Name: Z to A</option>
+    </select>
+    
+
           </form>
         </div>
 

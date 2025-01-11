@@ -269,7 +269,7 @@ const renderChangePasswordPage = async (req, res) => {
 };
 
 const changePasswordValid = async (req, res) => {
-    try {
+    try { 
         const { email } = req.body;
         const userExists = await User.findOne({ email });
         if (userExists) {
@@ -338,30 +338,36 @@ const resetPassword = async (req, res) => {
     }
 };
 
-
-
 const updateProfile = async (req, res) => {
     try {
-        const { name, phone, email, userId } = req.body;
+      const { name, phone, email} = req.body;
+  
+      const userId = req.session.user;
+      const user = await User.findById(userId);
+  
+      if (!user) {
+        return res.status(404).json({ success: false, message: 'User not found.' });
+      }
+  
+      if (name) user.name = name;
+      if (phone) user.phone = phone;
+      if (email) user.email = email;
+      await user.save();
 
-        const findUser = await User.findByIdAndUpdate(
-            { _id: userId },
-            { $set: { username: name, phone: phone, email: email } },
-            { new: true }
-        );
-        if (findUser) {
-            return res.status(200).json({ success: true, message: "Profile updated successfully" });
-        } else {
-            return res.status(404).json({ success: false, message: "User not found" });
-        }
+      req.session.user = {
+        name: user.name,
+        phone: user.phone,
+      };
+  
+      res.json({ success: true, message: 'Profile updated successfully!' });
+
+
     } catch (error) {
-        console.error("Profile update error:", error.message);
-        res.status(500).json({ success: false, message: "Internal server error" });
+      console.error('Error updating profile:', error);
+      res.status(500).json({ success: false, message: 'An error occurred while updating the profile.' });
     }
-};
-
-
-
+  };
+  
 const getAddressPage = async (req, res) => {
     try {
         const userId = req.session.user._id;
@@ -681,6 +687,7 @@ module.exports = {
     addMoney,
     getWalletHistory,
     refundToWallet,
-    getWalletForUser
+    getWalletForUser,
+    updateProfile
 
 }

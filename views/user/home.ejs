@@ -200,6 +200,109 @@
             height: 100%;
             object-fit: cover;
         }
+/* General Reset */
+body, h2, p, span {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.ftco-section {
+  padding: 50px 0;
+}
+
+.choose-wrap {
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+.choose-wrap.img {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.text {
+  position: relative;
+  z-index: 2;
+}
+
+.text-white {
+  color: #fff;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-black {
+  color: #000;
+}
+
+.text .subheading {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.text h2 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+.text p {
+  font-size: 14px;
+  line-height: 1.8;
+  margin-bottom: 20px;
+}
+
+.text a.btn {
+  background-color: #000;
+  color: #fff;
+  border: 1px solid transparent;
+  text-transform: uppercase;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 50px;
+  padding: 10px 20px;
+  text-decoration: none;
+  transition: all 0.3s ease-in-out;
+}
+
+.text a.btn:hover {
+  background-color: #fff;
+  color: #000;
+  border-color: #000;
+}
+
+.bg-light {
+  background-color: #d9e4ef !important;
+}
+
+.divider-one, .divider-two {
+  margin-bottom: 20px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .text h2 {
+    font-size: 24px;
+  }
+
+  .text p {
+    font-size: 13px;
+  }
+
+  .text a.btn {
+    font-size: 12px;
+    padding: 8px 16px;
+  }
+}
 
 </style>
 
@@ -226,29 +329,7 @@
 				  </div>
 			  </div>
 			</div>
-		  
-<!-- 
-	      <div class="slider-item js-fullheight">
-	      	<div class="overlay"></div>
-	        <div class="container-fluid p-0">
-	          <div class="row d-flex no-gutters slider-text align-items-center justify-content-end" data-scrollax-parent="true">
-              <img class="img-fluid" src="/images/kylefromthenorth-TeOH1b-t3Nc-unsplash.jpg" alt="Watch Collection 2024">
-
-		          <div class="one-forth d-flex align-items-center ftco-animate" data-scrollax=" properties: { translateY: '70%' }">
-		          	<div class="text">
-		          		<span class="subheading">#New Arrival</span>
-		          		<div class="horizontal">
-				            <h1 class="mb-4 mt-3">New watches Winter Collection</h1>
-				            <p class="mb-4">From sleek designs to understated elegance, nextTick offers minimalist watches that are crafted to complement your everyday style. Explore timepieces that are subtle yet captivating.</p>
-				            
-				            <p><a href="#" class="btn-custom">Discover Now</a></p>
-				          </div>
-		            </div>
-		          </div>
-	        	</div>
-	        </div>
-	      </div>
-	    </div> -->
+		
     </section>
 
     <section class="ftco-section ftco-no-pt ftco-no-pb">
@@ -315,10 +396,6 @@
 
                     <img class="img-fluid" src="/uploads/re-image/<%= product.productImage[0] %>" alt="<%= product.productName %>">
 
-                    <!-- <span class="product-offer-box"><%=product.productOffer%> %Offer</span> -->
-                    <!-- Add category offer here -->
-                      <!-- <span class="category-offer-box"><%=product.category.offer%>% Category Offer</span> -->
-
                     
                     <div class="overlay"></div>
                     
@@ -370,10 +447,6 @@
                       <span>Add to cart <i class="ion-ios-add ml-1"></i></span>
                     </a>
 
-                    <a href="#" class="buy-now text-center py-2">
-                      Buy now <span><i class="ion-ios-cart ml-1"></i></span>
-                    </a>
-
                   </p>
                 </div>
               </div>
@@ -384,7 +457,45 @@
         <% } %>
       </div>
     </div>
+
+
+
   </section>
+              
+            </div>
+             <div class="container">
+              <div class="horizontal-line"></div>
+              <div class="video-grid">
+                  <div class="video-box">
+                      <video autoplay muted loop playsinline>
+                          <source src="/video/one.mp4" type="video/mp4">
+                          Your browser does not support the video tag.
+                      </video>
+                  </div>
+                  <div class="video-box">
+                      <video autoplay muted loop playsinline>
+                          <source src="/video/nine.mp4" type="video/mp4">
+                          Your browser does not support the video tag.
+                      </video>
+                  </div>
+                  <div class="video-box">
+                      <video autoplay muted loop playsinline>
+                          <source src="/video/four.mp4" type="video/mp4">
+                          Your browser does not support the video tag.
+                      </video>
+                  </div>
+                  <div class="video-box">
+                      <video autoplay muted loop playsinline>
+                          <source src="/video/six.mp4" type="video/mp4">
+                          Your browser does not support the video tag.
+                      </video>
+                  </div>
+              </div>
+          </div>
+          </section>
+           
+  </section>
+  
   
   
 <section class="ftco-section ftco-choose ftco-no-pb ftco-no-pt">
@@ -400,7 +511,7 @@
             <span class="subheading">Men's Watches</span>
             <h2>Men's Collection</h2>
             <p>Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean.</p>
-            <p><a href="#" class="btn btn-black px-3 py-2">Shop now</a></p>
+            <p><a href="/shop" class="btn btn-black px-3 py-2">Shop now</a></p>
           </div>
         </div>
       </div>
@@ -417,7 +528,7 @@
                   <span class="subheading">Women's Watches</span>
                   <h2>Women's Collection</h2>
                   <p>Explore our timeless classics, crafted with precision and style, where innovation meets the art of watchmaking—your perfect companion awaits.</p>
-                  <p><a href="#" class="btn btn-black px-3 py-2">Shop now</a></p>
+                  <p><a href="/shop" class="btn btn-black px-3 py-2">Shop now</a></p>
                 </div>
               </div>
             </div>
@@ -431,7 +542,7 @@
                     <span class="subheading">Summer Sale</span>
                     <h2>Extra 50% Off</h2>
                     <p>Discover timeless style this season! Dive into our exclusive collection of watches and save big on precision-crafted timepieces. Perfect for every moment, only while stocks last!</p>
-                    <p><a href="#" class="btn btn-black px-3 py-2">Shop now</a></p>
+                    <p><a href="/shop" class="btn btn-black px-3 py-2">Shop now</a></p>
                   </div>
                 </div>
               </div>
@@ -444,7 +555,7 @@
                     <span class="subheading">Watches</span>
                     <h2>Best Sellers</h2>
                     <p>"Crafted to perfection, our best-selling watches stand at the crossroads of timeless design and modern innovation, where style meets precision by the endless sea of sophistication."</p>
-                    <p><a href="#" class="btn btn-black px-3 py-2">Shop now</a></p>
+                    <p><a href="/shop" class="btn btn-black px-3 py-2">Shop now</a></p>
                   </div>
                 </div>
               </div>
@@ -454,40 +565,7 @@
       </div>
     </div>
   </div>
-</section>
-              
-      </div>
-       <div class="container">
-        <div class="horizontal-line"></div>
-        <div class="video-grid">
-            <div class="video-box">
-                <video autoplay muted loop playsinline>
-                    <source src="/video/one.mp4" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
-            </div>
-            <div class="video-box">
-                <video autoplay muted loop playsinline>
-                    <source src="/video/nine.mp4" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
-            </div>
-            <div class="video-box">
-                <video autoplay muted loop playsinline>
-                    <source src="/video/four.mp4" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
-            </div>
-            <div class="video-box">
-                <video autoplay muted loop playsinline>
-                    <source src="/video/six.mp4" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
-            </div>
-        </div>
-    </div>
-    </section>
-     
+
 
    
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

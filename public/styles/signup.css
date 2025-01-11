@@ -25,13 +25,10 @@ body {
 }
 
 .container:hover {
-  transform: translateY(-3px); /* Slight lift effect */
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2); /* Soft shadow */
   background: linear-gradient(135deg, #ffffff,#efebf0); /* Diagonal gradient overlay */
   border: 2px solid rgba(0, 0, 0, 0.1); /* Light border for elegance */
 }
-
-
 
 
 .image-section {
@@ -112,7 +109,7 @@ input[type="password"]:focus {
 
 /* Button Styles */
 .signup-btn {
-  background-color: #d34ef1;
+  background-color: #050505;
   color: #fff;
   padding: 0.6rem;
   border: none;
@@ -124,7 +121,7 @@ input[type="password"]:focus {
 }
 
 .signup-btn:hover {
-  background-color: #b03bd4;
+  background-color: #050505;
   transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
@@ -177,4 +174,25 @@ input[type="tel"]:focus,
 input[type="password"]:focus {
   border-color: #007bff;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+p{
+  text-align: center;
+}
+.login-text {
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  color: #555; /* Soft gray for text */
+  text-align: center;
+  margin-top: 20px;
+}
+
+.login-text a {
+  color: #007BFF; /* Blue color for link */
+  text-decoration: none; /* Remove underline */
+  font-weight: bold; /* Make link text bold */
+}
+
+.login-text a:hover {
+  color: #0056b3; /* Darker blue on hover */
+  text-decoration: underline; /* Add underline on hover */
 }

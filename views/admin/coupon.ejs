@@ -92,6 +92,7 @@
     margin-top: 3px;
     display: none;
 }
+
 </style>
 
 <section class="content-main">
@@ -171,9 +172,37 @@
                     </tbody>
                 </table>
             </div>
+            
+            <!-- Pagination Controls -->
+            <nav aria-label="Page navigation" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    <% if (currentPage > 1) { %>
+                        <li class="page-item">
+                            <a class="page-link" href="?page=<%= currentPage - 1 %>&limit=<%= limit %>" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                    <% } %>
+                    
+                    <% for(let i = 1; i <= totalPages; i++) { %>
+                        <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                            <a class="page-link" href="?page=<%= i %>&limit=<%= limit %>"><%= i %></a>
+                        </li>
+                    <% } %>
+                    
+                    <% if (currentPage < totalPages) { %>
+                        <li class="page-item">
+                            <a class="page-link" href="?page=<%= currentPage + 1 %>&limit=<%= limit %>" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    <% } %>
+                </ul>
+            </nav>
         </div>
     </div>
 </section>
+
 <!-- Add Coupon Modal -->
 <div class="modal fade" id="addCouponModal" tabindex="-1" aria-labelledby="addCouponModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
@@ -198,9 +227,9 @@
                       <div class="col-md-6 mb-3">
                           <label for="offerPrice" class="form-label">Discount Percentage %</label>
                           <div class="input-group">
-                              <!-- <span class="input-group-text"></span> -->
                               <input type="number" id="offerPrice" name="offerPrice" class="form-control" 
-                                  min="0" placeholder="e.g., 0%" required />
+                                  min="1" max="100" placeholder="e.g., 10%" required />
+                              <span class="input-group-text">%</span>
                           </div>
                           <div id="error-discount" class="error-message"></div>
                       </div>
@@ -210,9 +239,9 @@
                       <div class="col-md-6 mb-3">
                           <label for="minimumPrice" class="form-label">Minimum Purchase Amount</label>
                           <div class="input-group">
-                              <!-- <span class="input-group-text"></span> -->
+                              <span class="input-group-text">₹</span>
                               <input type="number" id="minimumPrice" name="minimumPrice" class="form-control" 
-                                  min="0" placeholder="e.g., ₹1000" required />
+                                  min="0" placeholder="e.g., 1000" required />
                           </div>
                           <div id="error-min-amount" class="error-message"></div>
                       </div>
@@ -256,8 +285,8 @@
     function validateForm() {
         let isValid = true;
         const couponName = document.getElementById('coupon-name').value;
-        const offerPrice = document.getElementById('offerPrice').value;
-        const minimumPrice = document.getElementById('minimumPrice').value;
+        const offerPrice = parseFloat(document.getElementById('offerPrice').value);
+        const minimumPrice = parseFloat(document.getElementById('minimumPrice').value);
         const startDate = document.getElementById('startDate').value;
         const endDate = document.getElementById('endDate').value;
 
@@ -271,16 +300,16 @@
             isValid = false;
         }
 
-        // Validate discount amount
-        if (offerPrice <= 0) {
-            document.getElementById('error-discount').textContent = 'Discount amount must be greater than 0';
+        // Validate discount percentage
+        if (isNaN(offerPrice) || offerPrice < 1 || offerPrice > 100) {
+            document.getElementById('error-discount').textContent = 'Discount percentage must be between 1 and 100';
             document.getElementById('error-discount').style.display = 'block';
             isValid = false;
         }
 
         // Validate minimum purchase amount
-        if (minimumPrice <= 0) {
-            document.getElementById('error-min-amount').textContent = 'Minimum purchase amount must be greater than 0';
+        if (isNaN(minimumPrice) || minimumPrice < 0) {
+            document.getElementById('error-min-amount').textContent = 'Minimum purchase amount must be 0 or greater';
             document.getElementById('error-min-amount').style.display = 'block';
             isValid = false;
         }
@@ -432,9 +461,17 @@
     document.getElementById('addCouponModal').addEventListener('show.bs.modal', function (event) {
         setDefaultStartDate();
     });
+
+    // Add this function to handle pagination
+    function changePage(page) {
+        const urlParams = new URLSearchParams(window.location.search);
+        urlParams.set('page', page);
+        window.location.search = urlParams.toString();
+    }
 </script>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 <%- include("../../views/partials/admin/footer") %>
+

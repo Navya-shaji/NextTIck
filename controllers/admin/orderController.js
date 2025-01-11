@@ -7,29 +7,57 @@ const Wallet = require('../../models/walletSchema');
 const mongoose = require('mongoose');
 
 
+//listing orders......................................................................................................
 const listOrders = async (req, res) => {
     try {
+        const page = parseInt(req.query.page, 10) || 1; 
+        const limit = 20; 
+        const skip = (page - 1) * limit;
+
+        const totalOrders = await Order.countDocuments(); 
+        const totalPages = Math.ceil(totalOrders / limit);
+
         const orders = await Order.find({})
             .populate('userId', 'name email')
             .populate('orderItems.product')
             .populate('address')
             .sort({ createdOn: -1 })
+            .skip(skip) 
+            .limit(limit) 
             .lean();
 
         const processedOrders = orders.map(order => ({
             ...order,
-            userName: order.userId ? order.userId.name : 'Unknown User'
+            userName: order.userId ? order.userId.name : 'Unknown User',
+            couponDetails: order.couponApplied ? `Coupon: ${order.couponCode} applied.` : 'No coupon applied.',
+            
+            offerDetails: order.offerApplied ? order.offerDetails : 'No offer applied.'
         }));
+        console.log(processedOrders);
+        
+
+        if (req.headers.accept === 'application/json') {
+            return res.json({
+                orders: processedOrders,
+                currentPage: page,
+                totalPages,
+            });
+        }
 
         res.render('orders', { 
             orders: processedOrders,
-            title: 'Order Management'
+            currentPage: page,
+            totalPages,
+            title: 'Order Management',
         });
     } catch (error) {
         console.error('Error fetching orders:', error);
         res.status(500).render('admin/error', { message: 'Failed to fetch orders' });
     }
 };
+
+//updating the order status................................................................................................................
+
 const updateOrderStatus = async (req, res) => {
     try {
         const { orderId, status } = req.body;
@@ -74,6 +102,8 @@ const updateOrderStatus = async (req, res) => {
 };
 
 
+//for getting cancelled orders...............................................................
+
 const getCancelledOrders = async (req, res) => {
     try {
         const cancelledOrders = await Order.find({ status: 'Cancelled' })
@@ -92,22 +122,38 @@ const getCancelledOrders = async (req, res) => {
         res.status(500).render('admin/error', { message: 'Failed to fetch cancelled orders' });
     }
 };
+
+//getting order details...........................................................................................................
 const getAdminOrderDetails = async (req, res) => {
     try {
         const { orderId } = req.params;
-        
+
         const order = await Order.findById(orderId)
-            .populate('userId', 'name email') 
-            .populate('orderItems.product') 
-            .lean(); 
+            .populate('userId', 'name email')
+            .populate('orderItems.product', 'name price productImage') // Add productImage to population
+            .populate('address', 'street city postalCode')
+            .lean();
 
         if (!order) {
             return res.status(404).render('admin/error', { message: 'Order not found' });
         }
 
+        // Process order items to ensure productImage exists
+        order.orderItems = order.orderItems.map(item => ({
+            ...item,
+            product: {
+                ...item.product,
+                productImage: item.product?.productImage || ['default-product-image.jpg'] // Provide a default image
+            }
+        }));
+
         res.render('orderData', {
-            order, 
+            order,
             title: 'Order Details',
+            offerApplied: order.offerApplied || 'No Offer',
+            couponDetails: order.couponApplied
+                ? `${order.couponApplied.code} (Discount: ₹${order.couponApplied.discount})`
+                : 'No Coupon',
         });
     } catch (error) {
         console.error('Error fetching order details:', error);

@@ -4,7 +4,6 @@
     const passport=require("../config/passport")
     const productController = require("../controllers/user/productController")
     const {userAuth} = require('../middlewares/auth');
-    // const{isuser}=require("../middlewares/auth")
     const profileController =require("../controllers/user/profileController")
     const cartController = require("../controllers/user/cartController");
     const shopController =require("../controllers/user/shopController");
@@ -15,9 +14,8 @@
 
 
 
-    //homepage.............................
+    //homepage........................................................................................................
     router.get("/",userController.loadHomepage);
-    // router.get("/login",userController.login)
     router.get("/logout",userController.logout)
 
     router.get("/pageNotFound",userController.pageNotFound)
@@ -31,22 +29,24 @@
         res.redirect('/',)
     })
 
-    // login page.........
+    // login page........................................................................................................
     router.get("/pageNotFound",userController.pageNotFound)
     router.get("/login",userController.loadLogin)
     router.post("/login",userController.login)
 
-    //Product Management....................
+    //Product Management...............................................................................................
     router.get("/productDetails",productController.productDetail);
 
 
-    //profile Management.............................
+    //profile Management...............................................................................................
     router.get("/forgot-password",profileController.getForgotPassPage);
     router.post("/forgot-email-valid",profileController.forgotEmailValid);
     router.post("/verify-passForgot-otp",profileController.verifyForgotPassOtp)
     router.get("/reset-password",profileController.getResetPassPage);
     router.post("/resend-forgot-otp",profileController.resendOtp);
     router.post("/reset-password",profileController.postNewPassword);
+    router.post('/update-profile', profileController.updateProfile);
+
 
     router.get("/userProfile",userAuth,profileController.userProfile);
     router.post("/updateProfile",userAuth,profileController.updateProfile);
@@ -62,7 +62,7 @@
     router.post("/change-password", userAuth, profileController.changePasswordValid);
     router.post("/verify-changepassword-otp", userAuth, profileController.verifyChangepassOtp);
     router.post("/reset-password", userAuth, profileController.resetPassword);
-    //Address Management...............................
+    //Address Management...............................................................................................
 
     router.get("/add-address",userAuth,profileController.addAddress);
     router.post("/addaddress",userAuth,profileController.postAddAddress);
@@ -72,27 +72,27 @@
     router.get("/delete-address/:id",userAuth,profileController.deleteAddress);
 
 
-    //wishlist Management............................
+    //wishlist Management...............................................................................................
 
     router.get("/wishlist",userAuth,wishlistController.loadWishlist);
     router.post("/addToWishlist",userAuth,wishlistController.addToWishlist)
     router.delete('/wishlist/remove/:id', wishlistController.removeFromWishlist);
 
-    //shoping management........................
+    //shoping management...............................................................................................
 
     router.get('/shop', shopController.loadshoppingPage);
     router.get('/search', shopController.searchProducts);
     router.get('/filter', shopController.loadshoppingPage);
     router.get('/sort', shopController.loadshoppingPage);
 
-    //cart management................................................................................................................
+    //cart management...............................................................................................
 
     router.post('/addToCart',userAuth,cartController.addToCart);
     router.get('/cart', cartController.getCart);
     router.post('/cart/update-quantity', userAuth, cartController.updateQuantity);
     router.post('/cart/remove', userAuth, cartController.removeFromCart);
 
-    //checkoutpage........................
+    //checkoutpage...................................................................................................
     router.get("/checkout",userAuth,checkoutController.getcheckoutPage);
     router.post("/checkout",userAuth,checkoutController.postCheckout);
     router.get("/orderConfirmation",checkoutController.orderConfirm);
@@ -100,7 +100,7 @@
     router.post("/orders/retry-payment",userAuth,checkoutController.retryPayment);
 
     
-    //order management...............................................
+    //order management...............................................................................................
 
     router.get('/history', userAuth, orderController.getOrderHistory);
     router.post('/orders/cancel', userAuth, orderController.cancelOrder);
@@ -118,12 +118,12 @@
    
 
 
-    // wallet...........................................
+    // wallet.........................................................................................................................
 
     router.post('/add-money', walletController.createRazorpayOrder);
     router.post('/update-balance', walletController.updateWalletBalance);
     router.post('/wallet/refund', walletController.refundToWallet);
-
+    // coupon.........................................................................................................................
     router.post("/apply-coupon",checkoutController.applyCoupon);
 
     module.exports = router

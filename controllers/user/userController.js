@@ -15,9 +15,12 @@ const Order = require('../../models/orderSchema');
 
 const loadSignup =async(req,res)=>{
     try {
-        return res.render("signup")
-    } catch (error) {
-        console.log("Home Page Not Loading",error);
+        const error = req.session.errorMessage;
+        req.session.errorMessage=''
+        return res.render("signup",{message:error})
+
+        } catch (error) {
+        console.log("Signup Page Not Loading",error);
         res.status(500).send("Server Error")
         
     }
@@ -25,36 +28,47 @@ const loadSignup =async(req,res)=>{
 }
 
 
- //pageNotFound..................................................
+//Signup Page............................................................
 
-const pageNotFound = async (req, res) => {
+
+const signup =async(req,res)=>{
     try {
-        res.render("page-404");
+        const {name,phone,email,password,cpassword}=req.body
+        if(password!==cpassword){
+            res.session.errorMessage = "Password do not matched "
+            res.redirect("/signup")
+            return res.render("signup",{message:"Passwords do not match "})
+        }
+
+        const findUser=await User.findOne({email});
+        if(findUser){
+            return res.render("signup",{message:"User with this email Already exists"})
+        }
+
+        const otp=generateOtp();
+        
+        const emailSent =await sendVerificationEmail(email,otp)
+        if(!emailSent){
+            return res.json("email-error")
+        }
+
+        req.session.userOtp=otp;
+        req.session.userData={name,phone,email,password}
+        
+
+        res.render("verify-otp");
+        console.log("OTP Sent",otp)
+
+
+
     } catch (error) {
-        console.error("Error rendering 404 page:", error);
-        res.status(500).send("An error occurred");
+        console.error("signup error",error);
+        res.redirect("/pageNotFound")
+        
     }
-};
+}
 
 
-
-//HomePage Loading.........................................................
-
-
-const loadHomepage = async (req, res) => {
-    try {
-     
-      const products = await Product.find({}).populate('category'); 
-
-      const userData = req.session.user ?? req.session.passport?.user
-      res.render('home', { products, user:userData });
-    } catch (error) {
-      console.error('Error loading homepage:', error);
-      res.status(500).send('Internal Server Error');
-    }
-  };
-  
- 
   
 //GenerateOtp function()....................................................
 
@@ -96,44 +110,36 @@ async function sendVerificationEmail(email,otp){
 
 
 
-//Signup Page............................................................
+ //pageNotFound..................................................
 
-
-const signup =async(req,res)=>{
+const pageNotFound = async (req, res) => {
     try {
-        const {name,phone,email,password,cpassword}=req.body
-        if(password!==cpassword){
-           return res.render("signup",{message:"Passwords do not match "})
-        }
-
-        const findUser=await User.findOne({email});
-        if(findUser){
-            return res.render("signup",{message:"User with this email already exists"})
-        }
-
-        const otp=generateOtp();
-
-        const emailSent =await sendVerificationEmail(email,otp)
-        if(!emailSent){
-            return res.json("email-error")
-        }
-
-        req.session.userOtp=otp;
-        req.session.userData={name,phone,email,password}
-        
-
-        res.render("verify-otp");
-        console.log("OTP Sent",otp)
-
-
-
+        res.render("page-404");
     } catch (error) {
-        console.error("signup error",error);
-        res.redirect("/pageNotFound")
-        
+        console.error("Error rendering 404 page:", error);
+        res.status(500).send("An error occurred");
     }
-}
+};
 
+
+
+//HomePage Loading.........................................................
+
+
+const loadHomepage = async (req, res) => {
+    try {
+     
+      const products = await Product.find({}).populate('category'); 
+
+      const userData = req.session.user ?? req.session.passport?.user
+      res.render('home', { products, user:userData });
+    } catch (error) {
+      console.error('Error loading homepage:', error);
+      res.status(500).send('Internal Server Error');
+    }
+  };
+  
+ 
 //Password Securing.........................................
 
 const securePassword = async (password) => {
@@ -164,7 +170,7 @@ const verifyOtp = async (req, res) => {
                 password: passwordHash,
             });
             await saveUserData.save();
-            req.session.user = saveUserData._id;
+            req.session.user = saveUserData;
 
          
             delete req.session.userOtp;
@@ -233,10 +239,6 @@ const loadLogin = async (req, res) => {
 
 const login = async (req, res) => {
     try {
-        // if (req.method === "GET") {
-            
-        //     return res.render("login");
-        // }
 
         const { email, password } = req.body;
         const findUser = await User.findOne({ isAdmin: 0, email: email });
