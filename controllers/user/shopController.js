@@ -13,7 +13,7 @@ const loadshoppingPage = async (req, res) => {
     const categories = await Category.find({ isListed: true });
     const categoryIds = categories.map((category) => category._id);
     const page = parseInt(req.query.page) || 1;
-    const limit = 3; 
+    const limit = 6; 
     const skip = (page - 1) * limit;
 
     let query = {
@@ -88,8 +88,8 @@ const loadshoppingPage = async (req, res) => {
     const totalPages = Math.ceil(totalProducts / limit);
 
     const brands = await Brand.find({ isBlocked: false });
-    console.log("brands", brands);
-
+    console.log("Fetched brands:", brands);
+    
     res.render("shop", {
       user: userData,
       products,
@@ -112,7 +112,7 @@ const searchProducts = async (req, res) => {
   try {
     const searchTerm = req.query.query || "";
     const page = parseInt(req.query.page) || 1;
-    const limit = 3;
+    const limit = 6;
     const skip = (page - 1) * limit;
 
     const query = {

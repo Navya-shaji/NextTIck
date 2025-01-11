@@ -1,345 +1,391 @@
 <%- include("../../views/partials/user/header") %>
-<head>
-  <link rel="stylesheet" href="/styles/shop-page.css">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
- 
-</head>
 
-<div class="main-container">
-  <section class="shop-page">
-    <div class="shop-topbar">
-      <div class="search-bar">
-        <form action="/search" method="GET" class="search-form" id="searchForm">
-          <input type="text" name="query" placeholder="Search items..." class="search-input" id="searchInput" value="<%= query.query || '' %>" />
-          <button type="submit" class="search-button">Search</button>
-          <button type="button" class="clear-button" onclick="clearSearch()">Clear</button>
-        </form>
-      </div>
-    </div>
-    <div class="product-list-container">
-      <aside class="sidebar">
-        <!-- Categories Dropdown -->
-        <div class="filter-section">
-          <div class="filter-title" onclick="toggleDropdown('categoryDropdown')">
-            Categories
-            <span class="dropdown-arrow">⬇️</span>
-          </div>
+  <head>
+    <link rel="stylesheet" href="/styles/shop-page.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-          
-          <div id="categoryDropdown" class="category-brand-container dropdown-content">
-            <ul>
-              <% categories.forEach(function(category) { %>
-                <li class="filter-item">
-                  <a href="/shop?category=<%= category._id %>" class="<%= query.category === category._id.toString() ? 'active' : '' %>">
-                    <%= category.name %>
-                  </a>
-                </li>
-              <% }); %>
-            </ul>
-            <!-- Clear category filter link/button -->
-            <% if (query.category) { %>
-              <div class="clear-category">
-                <a href="/shop" class="clear-category-link">
-                  Clear <span class="clear-arrow">⬅️</span> <!-- You can replace the arrow with any icon you like -->
-                </a>
-              </div>
-            <% } %>
-          </div>
-        </div>
+  </head>
 
-        
-     
-        
-        <div class="filter-section">
-          <!-- <div class="filter-title" style="color: black;">Availability</div> -->
-          <label>
-            <!-- <input type="checkbox" name="inStock" value="true" <%= query.inStock === 'true' ? 'checked' : '' %>> In Stock Only -->
-          </label>
-        </div>
-      </aside>
-
-      <main class="product-content">
-        <div class="sort-options">
-          <form id="sortForm" action="/shop" method="GET">
-            <% for (const [key, value] of Object.entries(query)) { %>
-              <% if (key !== 'sort' && key !== 'page') { %>
-                <input type="hidden" name="<%= key %>" value="<%= value %>">
-              <% } %>
-            <% } %>
-            
-      
-            
-<div class="sorting">
-  <form method="GET" action="/shop" class="sort-form">
-    <label for="sort">Sort By:</label>
-    <select name="sort" id="sort" onchange="this.form.submit()">
-      <option value="newest" <%= !query.sort || query.sort === 'newest' ? 'selected' : '' %>>Newest</option>
-      <option value="popularity" <%= query.sort === 'popularity' ? 'selected' : '' %>>Popularity</option>
-      <option value="price_asc" <%= query.sort === 'price_asc' ? 'selected' : '' %>>Price: Low to High</option>
-      <option value="price_desc" <%= query.sort === 'price_desc' ? 'selected' : '' %>>Price: High to Low</option>
-      <option value="rating" <%= query.sort === 'rating' ? 'selected' : '' %>>Rating</option>
-      <option value="name_asc" <%= query.sort === 'name_asc' ? 'selected' : '' %>>Name: A to Z</option>
-      <option value="name_desc" <%= query.sort === 'name_desc' ? 'selected' : '' %>>Name: Z to A</option>
-    </select>
-    
-
+  <div class="main-container">
+    <section class="shop-page">
+      <div class="shop-topbar">
+        <div class="search-bar">
+          <form action="/search" method="GET" class="search-form" id="searchForm">
+            <input type="text" name="query" placeholder="Search items..." class="search-input" id="searchInput"
+              value="<%= query.query || '' %>" />
+            <button type="submit" class="search-button">Search</button>
+            <button type="button" class="clear-button" onclick="clearSearch()">Clear</button>
           </form>
         </div>
-
-        <!-- In your product grid section -->
-        <div class="product-grid">
-          <% products.forEach(function(product) { %>
-            <div class="product-card">
-              <span class="wishlist-btn" onclick="addToWishlist('<%= product._id %>')">❤️</span>
-              <button class="btn btn-link p-0" style="border: none; background: none; color: white;" onclick="window.location.href='/productDetails?id=<%= product._id %>'">
-                👁‍🗨
-            </button>
-          
-             <img src="/uploads/re-image/<%= product.productImage[0] %>" alt="<%= product.productName %>" />
-              <h4><%= product.productName %></h4>
-              <p>Brand: <%= product.brand %></p>
-              <span><%= product.category.name %></span>
-              <p>Price: ₹
-                <% if (product.salePrice && product.salePrice < product.regularPrice) { %>
-                  <%= product.salePrice.toLocaleString('en-IN') %>
-                  <span class="text-muted">
-                    <strike>₹<%= product.regularPrice.toLocaleString('en-IN') %></strike>
-                  </span>
-                <% } else { %>
-                  <%= product.regularPrice.toLocaleString('en-IN') %>
-                <% } %>
-              </p>
-              <p>Rating: <%= product.averageRating ? product.averageRating.toFixed(1) : 'N/A' %> / 5</p>
-              <p>In Stock: <%= product.quantity %></p>
-              <button class="add-to-cart-btn" onclick="addToCartHandler(event, '<%= product._id %>')" 
-                <%= product.quantity > 0 ? '' : 'disabled' %>>
-                <%= product.quantity > 0 ? 'Add to Cart' : 'Out of Stock' %>
-              </button>
+      </div>
+      <div class="product-list-container">
+        <aside class="sidebar">
+          <!-- Categories Dropdown -->
+          <div class="filter-section">
+            <div class="filter-title" onclick="toggleDropdown('categoryDropdown')">
+              Categories
+              <span class="dropdown-arrow">⬇️</span>
             </div>
-          <% }); %>
-        </div>
 
-        <!-- Pagination section -->
-        <div class="pagination">
-          <% if (totalPages > 1) { %>
-            <% 
-              const pageRange = 2;
-              const startPage = Math.max(1, currentPage - pageRange);
-              const endPage = Math.min(totalPages, currentPage + pageRange);
-            %>
-            
-            <% if (currentPage > 1) { %>
-              <button onclick="changePage(`<%= currentPage - 1 %>`)">Previous</button>
-            <% } %>
-            
-            <% if (startPage > 1) { %>
-              <button onclick="changePage(1)">1</button>
-              <% if (startPage > 2) { %>
-                <span>...</span>
+
+            <div id="categoryDropdown" class="category-brand-container dropdown-content">
+              <ul>
+                <% categories.forEach(function(category) { %>
+                  <li class="filter-item">
+                    <a href="/shop?category=<%= category._id %>"
+                      class="<%= query.category === category._id.toString() ? 'active' : '' %>">
+                      <%= category.name %>
+                    </a>
+                  </li>
+                  <% }); %>
+              </ul>
+              <!-- Clear category filter link/button -->
+              <% if (query.category) { %>
+                <div class="clear-category">
+                  <a href="/shop" class="clear-category-link">
+                    Clear <span class="clear-arrow">⬅️</span> <!-- You can replace the arrow with any icon you like -->
+                  </a>
+                </div>
+                <% } %>
+            </div>
+          </div>
+
+          <div class="filter-section">
+            <div class="filter-title" onclick="toggleDropdown('brandDropdown')">
+              Brands
+              <span class="dropdown-arrow">⬇️</span>
+            </div>
+          
+            <div id="brandDropdown" class="category-brand-container dropdown-content">
+              <ul>
+                <% brands.forEach(function(brand) { %>
+                  <li class="filter-item">
+                    <a href="/shop?brand=<%= brand._id %>"
+                       class="<%= query.brand === brand._id.toString() ? 'active' : '' %>">
+                      <%= brand.brandName %>
+                    </a>
+                  </li>
+                <% }); %>
+              </ul>
+              <% if (query.brand) { %>
+                <div class="clear-category">
+                  <a href="/shop" class="clear-category-link">
+                    Clear <span class="clear-arrow">⬅️</span>
+                  </a>
+                </div>
               <% } %>
-            <% } %>
-            
-            <% for(let i = startPage; i <= endPage; i++) { %>
-              <button 
-                onclick="changePage(`<%= i %>`)"
-                class="<%= currentPage === i ? 'active' : '' %>"
-              ><%= i %></button>
-            <% } %>
-            
-            <% if (endPage < totalPages) { %>
-              <% if (endPage < totalPages - 1) { %>
-                <span>...</span>
-              <% } %>
-              <button onclick="changePage(`<%= totalPages %>`)"><%= totalPages %></button>
-            <% } %>
-            
-            <% if (currentPage < totalPages) { %>
-              <button onclick="changePage(`<%= currentPage + 1 %>`)">Next</button>
-            <% } %>
-          <% } %>
-        </div>
-        
-
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-        <script>
-        function changePage(page) {
-          const currentUrl = new URL(window.location.href);
-          currentUrl.searchParams.set('page', page);
+            </div>
+          </div>
           
-          window.location.href = currentUrl.toString();
-        }
-
-        function clearSearch() {
-          const searchInput = document.getElementById('searchInput');
-          searchInput.value = '';
-          
-          const currentUrl = new URL(window.location.href);
-          currentUrl.searchParams.delete('query');
-          currentUrl.searchParams.delete('page'); // Reset to first page
-          
-          window.location.href = currentUrl.toString();
-        }
+            
 
 
-        function addToCartHandler(event, productId) {
-            event.preventDefault();
 
-            fetch('/addToCart', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    productId: productId,
-                    quantity: 1
-                })
-            })
-            .then(response => {
-                console.log(response)
-                if (!response.ok) {
-                    return response.json().then(data => {
-                        throw new Error(data.message || 'Failed to add product to cart');
-                    });
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.success) {
-                    Swal.fire({
-                        title: 'Success!',
-                        text: data.message || 'Product added to cart successfully!',
-                        icon: 'success',
-                        showConfirmButton: false,
-                        timer: 1500
-                    }).then(() => {
-                        if (data.cartCount !== undefined) {
-                            updateCartCount(data.cartCount);
+            <div class="filter-section">
+              <!-- <div class="filter-title" style="color: black;">Availability</div> -->
+              <label>
+                <!-- <input type="checkbox" name="inStock" value="true" <%= query.inStock === 'true' ? 'checked' : '' %>> In Stock Only -->
+              </label>
+            </div>
+        </aside>
+
+        <main class="product-content">
+          <div class="sort-options">
+            <form id="sortForm" action="/shop" method="GET">
+              <% for (const [key, value] of Object.entries(query)) { %>
+                <% if (key !=='sort' && key !=='page' ) { %>
+                  <input type="hidden" name="<%= key %>" value="<%= value %>">
+                  <% } %>
+                    <% } %>
+
+
+
+                      <div class="sorting">
+                        <form method="GET" action="/shop" class="sort-form">
+                          <label for="sort">Sort By:</label>
+                          <select name="sort" id="sort" onchange="this.form.submit()">
+                            <option value="newest" >Default
+                            </option>
+                            <option value="popularity" <%=query.sort==='popularity' ? 'selected' : '' %>>Popularity
+                            </option>
+                            <option value="price_asc" <%=query.sort==='price_asc' ? 'selected' : '' %>>Price: Low to
+                              High</option>
+                            <option value="price_desc" <%=query.sort==='price_desc' ? 'selected' : '' %>>Price: High to
+                              Low</option>
+                            <option value="name_asc" <%=query.sort==='name_asc' ? 'selected' : '' %>>Name: A to Z
+                            </option>
+                            <option value="name_desc" <%=query.sort==='name_desc' ? 'selected' : '' %>>Name: Z to A
+                            </option>
+                          </select>
+
+
+                        </form>
+                      </div>
+
+                      <!-- In your product grid section -->
+                      <div class="product-grid">
+                        <% products.forEach(function(product) { %>
+                          <div class="product-card">
+                            <span class="wishlist-btn" onclick="addToWishlist('<%= product._id %>')">❤️</span>
+                            <button class="btn btn-link p-0" style="border: none; background: none; color: white;"
+                              onclick="window.location.href='/productDetails?id=<%= product._id %>'">
+                              👁‍🗨
+                            </button>
+
+                            <img src="/uploads/re-image/<%= product.productImage[0] %>"
+                              alt="<%= product.productName %>" />
+                            <h4>
+                              <%= product.productName %>
+                            </h4>
+                            <p>Brand: <%= product.brand %>
+                            </p>
+                            <span>
+                              <%= product.category.name %>
+                            </span>
+                            <p>Price: ₹
+                              <% if (product.salePrice && product.salePrice < product.regularPrice) { %>
+                                <%= product.salePrice.toLocaleString('en-IN') %>
+                                  <span class="text-muted">
+                                    <strike>₹<%= product.regularPrice.toLocaleString('en-IN') %></strike>
+                                  </span>
+                                  <% } else { %>
+                                    <%= product.regularPrice.toLocaleString('en-IN') %>
+                                      <% } %>
+                            </p>
+                            <p>Rating: <%= product.averageRating ? product.averageRating.toFixed(1) : 'N/A' %> / 5</p>
+                            <p>In Stock: <%= product.quantity %>
+                            </p>
+                            <button class="add-to-cart-btn" onclick="addToCartHandler(event, '<%= product._id %>')"
+                              <%=product.quantity> 0 ? '' : 'disabled' %>>
+                              <%= product.quantity> 0 ? 'Add to Cart' : 'Out of Stock' %>
+                            </button>
+                          </div>
+                          <% }); %>
+                      </div>
+
+                      <!-- Pagination section -->
+                      <div class="pagination">
+                        <% if (totalPages> 1) { %>
+                          <% const pageRange=2; const startPage=Math.max(1, currentPage - pageRange); const
+                            endPage=Math.min(totalPages, currentPage + pageRange); %>
+
+                            <% if (currentPage> 1) { %>
+                              <button onclick="changePage(`<%= currentPage - 1 %>`)">Previous</button>
+                              <% } %>
+
+                                <% if (startPage> 1) { %>
+                                  <button onclick="changePage(1)">1</button>
+                                  <% if (startPage> 2) { %>
+                                    <span>...</span>
+                                    <% } %>
+                                      <% } %>
+
+                                        <% for(let i=startPage; i <=endPage; i++) { %>
+                                          <button onclick="changePage(`<%= i %>`)"
+                                            class="<%= currentPage === i ? 'active' : '' %>">
+                                            <%= i %>
+                                          </button>
+                                          <% } %>
+
+                                            <% if (endPage < totalPages) { %>
+                                              <% if (endPage < totalPages - 1) { %>
+                                                <span>...</span>
+                                                <% } %>
+                                                  <button onclick="changePage(`<%= totalPages %>`)">
+                                                    <%= totalPages %>
+                                                  </button>
+                                                  <% } %>
+
+                                                    <% if (currentPage < totalPages) { %>
+                                                      <button
+                                                        onclick="changePage(`<%= currentPage + 1 %>`)">Next</button>
+                                                      <% } %>
+                                                        <% } %>
+                      </div>
+
+
+                      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+                      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+                      <script>
+                        function changePage(page) {
+                          const currentUrl = new URL(window.location.href);
+                          currentUrl.searchParams.set('page', page);
+
+                          window.location.href = currentUrl.toString();
                         }
+
+                        function clearSearch() {
+                          const searchInput = document.getElementById('searchInput');
+                          searchInput.value = '';
+
+                          const currentUrl = new URL(window.location.href);
+                          currentUrl.searchParams.delete('query');
+                          currentUrl.searchParams.delete('page'); // Reset to first page
+
+                          window.location.href = currentUrl.toString();
+                        }
+
+
+                        function addToCartHandler(event, productId) {
+                          event.preventDefault();
+
+                          fetch('/addToCart', {
+                            method: 'POST',
+                            headers: {
+                              'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                              productId: productId,
+                              quantity: 1
+                            })
+                          })
+                            .then(response => {
+                              console.log(response)
+                              if (!response.ok) {
+                                return response.json().then(data => {
+                                  throw new Error(data.message || 'Failed to add product to cart');
+                                });
+                              }
+                              return response.json();
+                            })
+                            .then(data => {
+                              if (data.success) {
+                                Swal.fire({
+                                  title: 'Success!',
+                                  text: data.message || 'Product added to cart successfully!',
+                                  icon: 'success',
+                                  showConfirmButton: false,
+                                  timer: 1500
+                                }).then(() => {
+                                  if (data.cartCount !== undefined) {
+                                    updateCartCount(data.cartCount);
+                                  }
+
+                                  if (data.redirect) {
+                                    window.location.href = data.redirect;
+                                  }
+                                });
+                              } else {
+                                throw new Error(data.message || 'Failed to add product to cart');
+                              }
+                            })
+                            .catch(error => {
+                              console.error('Error:', error);
+
+                              if (error.message.includes('Please login')) {
+                                Swal.fire({
+                                  title: 'Login Required',
+                                  text: 'Please login to add items to your cart',
+                                  icon: 'info',
+                                  showCancelButton: true,
+                                  confirmButtonText: 'Login',
+                                  cancelButtonText: 'Cancel'
+                                }).then((result) => {
+                                  if (result.isConfirmed) {
+                                    window.location.href = '/login';
+                                  }
+                                });
+                              }
+                              else if (error.message.includes('Maximum quantity')) {
+                                Swal.fire({
+                                  title: 'Quantity Limit Reached',
+                                  text: error.message,
+                                  icon: 'warning',
+                                  confirmButtonText: 'OK'
+                                });
+                              }
+                              else if (error.message.includes('out of stock') || error.message.includes('available in stock')) {
+                                Swal.fire({
+                                  title: 'Stock Limited',
+                                  text: error.message,
+                                  icon: 'warning',
+                                  confirmButtonText: 'OK'
+                                });
+                              }
+                              else {
+                                Swal.fire({
+                                  title: 'Error!',
+                                  text: error.message || 'Something went wrong. Please try again.',
+                                  icon: 'error',
+                                  confirmButtonText: 'OK'
+                                });
+                              }
+                            });
+                        }
+
+                        function addToWishlist(productId) {
+                          $.ajax({
+                            url: "/addToWishlist",
+                            method: "POST",
+                            data: { productId: productId },
+                            success: (response) => {
+                              if (response.status) {
+                                Swal.fire({
+                                  title: "Added to wishlist",
+                                  text: "The product has been added to your wishlist.",
+                                  icon: "success",
+                                  timer: 2000,
+                                });
+                              } else {
+                                Swal.fire({
+                                  title: "Already in wishlist",
+                                  text: response.message || "This product is already in your wishlist.",
+                                  icon: "info",
+                                  timer: 2000,
+                                });
+                              }
+                            },
+                            error: (xhr, status, error) => {
+                              console.error("AJAX Error: ", error, xhr.responseText);
+                              Swal.fire({
+                                title: "Error",
+                                text: "There was an error adding the product to your wishlist. Please try again.",
+                                icon: "error",
+                                timer: 2000,
+                              });
+                            },
+                          });
+                        }
+
+                        document.getElementById('sort').addEventListener('change', function () {
+                          const currentUrl = new URL(window.location.href);
+                          currentUrl.searchParams.set('sort', this.value);
+                          window.location.href = currentUrl.toString();
+                        });
+
+                        document.querySelector('input[name="inStock"]').addEventListener('change', function () {
+                          const currentUrl = new URL(window.location.href);
+                          if (this.checked) {
+                            currentUrl.searchParams.set('inStock', 'true');
+                          } else {
+                            currentUrl.searchParams.delete('inStock');
+                          }
+                          window.location.href = currentUrl.toString();
+                        });
+
+                        function toggleDropdown(id) {
+                          const dropdown = document.getElementById(id);
+                          dropdown.classList.toggle('show');
+
+                          const arrow = dropdown.previousElementSibling.querySelector('.dropdown-arrow');
+                          if (dropdown.classList.contains('show')) {
+                            arrow.style.transform = 'rotate(180deg)';
+                          } else {
+                            arrow.style.transform = 'rotate(0deg)';
+                          }
+                        }
+                        function toggleDropdown(dropdownId) {
+                          var dropdown = document.getElementById(dropdownId);
+                          dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+                        }
+
+
                         
-                        if (data.redirect) {
-                            window.location.href = data.redirect;
-                        }
-                    });
-                } else {
-                    throw new Error(data.message || 'Failed to add product to cart');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                
-                if (error.message.includes('Please login')) {
-                    Swal.fire({
-                        title: 'Login Required',
-                        text: 'Please login to add items to your cart',
-                        icon: 'info',
-                        showCancelButton: true,
-                        confirmButtonText: 'Login',
-                        cancelButtonText: 'Cancel'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            window.location.href = '/login';
-                        }
-                    });
-                } 
-                else if (error.message.includes('Maximum quantity')) {
-                    Swal.fire({
-                        title: 'Quantity Limit Reached',
-                        text: error.message,
-                        icon: 'warning',
-                        confirmButtonText: 'OK'
-                    });
-                }
-                else if (error.message.includes('out of stock') || error.message.includes('available in stock')) {
-                    Swal.fire({
-                        title: 'Stock Limited',
-                        text: error.message,
-                        icon: 'warning',
-                        confirmButtonText: 'OK'
-                    });
-                }
-                else {
-                    Swal.fire({
-                        title: 'Error!',
-                        text: error.message || 'Something went wrong. Please try again.',
-                        icon: 'error',
-                        confirmButtonText: 'OK'
-                    });
-                }
-            });
-        }
+                      </script>
+        </main>
+      </div>
+    </section>
+  </div>
 
-        function addToWishlist(productId) {
-          $.ajax({
-            url: "/addToWishlist", 
-            method: "POST",
-            data: { productId: productId },
-            success: (response) => {
-              if (response.status) {
-                Swal.fire({
-                  title: "Added to wishlist",
-                  text: "The product has been added to your wishlist.",
-                  icon: "success",
-                  timer: 2000,
-                });
-              } else {
-                Swal.fire({
-                  title: "Already in wishlist",
-                  text: response.message || "This product is already in your wishlist.",
-                  icon: "info",
-                  timer: 2000,
-                });
-              }
-            },
-            error: (xhr, status, error) => {
-              console.error("AJAX Error: ", error, xhr.responseText);
-              Swal.fire({
-                title: "Error",
-                text: "There was an error adding the product to your wishlist. Please try again.",
-                icon: "error",
-                timer: 2000,
-              });
-            },
-          });
-        }
-
-        document.getElementById('sort').addEventListener('change', function() {
-          const currentUrl = new URL(window.location.href);
-          currentUrl.searchParams.set('sort', this.value);
-          window.location.href = currentUrl.toString();
-        });
-
-        document.querySelector('input[name="inStock"]').addEventListener('change', function() {
-          const currentUrl = new URL(window.location.href);
-          if (this.checked) {
-            currentUrl.searchParams.set('inStock', 'true');
-          } else {
-            currentUrl.searchParams.delete('inStock');
-          }
-          window.location.href = currentUrl.toString();
-        });
-
-        function toggleDropdown(id) {
-          const dropdown = document.getElementById(id);
-          dropdown.classList.toggle('show');
-
-          const arrow = dropdown.previousElementSibling.querySelector('.dropdown-arrow');
-          if (dropdown.classList.contains('show')) {
-            arrow.style.transform = 'rotate(180deg)';
-          } else {
-            arrow.style.transform = 'rotate(0deg)';
-          }
-        }
-        function toggleDropdown(dropdownId) {
-  var dropdown = document.getElementById(dropdownId);
-  dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-}
-
-        </script>
-      </main>
-    </div>
-  </section>
-</div>
-
-<%- include("../../views/partials/user/footer.ejs") %>
+  <%- include("../../views/partials/user/footer.ejs") %>

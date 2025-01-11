@@ -164,20 +164,46 @@ const userProfile = async (req, res) => {
             return res.redirect("/login");
         }
 
-        // const orders = await Order.find({ userId: user._id }).populate('address').sort({ createdOn: -1 });
-        const orders = await Order.find({ userId: user._id }).sort({ createdOn: -1 });
+        const page = parseInt(req.query.page) || 1;
+        const walletPage = parseInt(req.query.walletPage) || 1;
+        const itemsPerPage = 10;
 
-   
-
-
+        // Calculate pagination for orders
+        const totalOrders = await Order.countDocuments({ userId: user._id });
+        const totalPages = Math.ceil(totalOrders / itemsPerPage);
+        const orders = await Order.find({ userId: user._id })
+            .sort({ createdOn: -1 })
+            .skip((page - 1) * itemsPerPage)
+            .limit(itemsPerPage);
 
         const address = await Address.findOne({ userId: user._id });
         const userWallet = await Wallet.findOne({ userId: user._id });
+
+        // Calculate pagination for wallet transactions
+        let walletTransactions = [];
+        let totalWalletPages = 0;
+        if (userWallet && userWallet.transactions) {
+            const startIndex = (walletPage - 1) * itemsPerPage;
+            walletTransactions = userWallet.transactions
+                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                .slice(startIndex, startIndex + itemsPerPage);
+            totalWalletPages = Math.ceil(userWallet.transactions.length / itemsPerPage);
+        }
+
         res.render("profile", {
             user: user,
             orders: orders,
             userAddress: address || {},
-            wallet: userWallet || { totalBalance: 0 },
+            wallet: {
+                ...userWallet?._doc || { totalBalance: 0 },
+                transactions: walletTransactions
+            },
+            pagination: {
+                currentPage: page,
+                totalPages: totalPages,
+                currentWalletPage: walletPage,
+                totalWalletPages: totalWalletPages
+            }
         });
     } catch (error) {
         console.error("Error fetching user profile:", error.message);

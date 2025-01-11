@@ -342,156 +342,169 @@
 
 <script>
 
-    let selectedFiles = [];
-    let currentFile = null;
-    let cropper = null;
-    let isProcessing = false;
+let selectedFiles = [];
+let currentFile = null;
+let cropper = null;
+let isProcessing = false;
 
-    function handleImageUpload(event) {
-        const files = Array.from(event.target.files);
-        
-        if (selectedFiles.length + files.length > 4) {
-            document.getElementById('images-error').textContent = 'Maximum 4 images allowed';
+function handleImageUpload(event) {
+    const files = Array.from(event.target.files);
+    const errorElement = document.getElementById('images-error');
+    errorElement.textContent = ''; // Clear previous errors
+
+    if (selectedFiles.length + files.length > 4) {
+        errorElement.textContent = 'Maximum 4 images allowed.';
+        event.target.value = '';
+        return;
+    }
+
+    files.forEach((file) => {
+        if (selectedFiles.length >= 4) return;
+
+        if (file.size > 5 * 1024 * 1024) {
+            errorElement.textContent = 'Each image must be less than 5MB.';
             return;
         }
 
-        files.forEach(file => {
-            if (selectedFiles.length >= 4) return;
-            
-            if (file.size > 5 * 1024 * 1024) {
-                document.getElementById('images-error').textContent = 'Each image must be less than 5MB';
-                return;
-            }
+        if (!['image/jpeg', 'image/jpg', 'image/png', 'image/avif'].includes(file.type)) {
+            errorElement.textContent = 'Only JPG, JPEG, PNG, and AVIF files are allowed.';
+            return;
+        }
 
-            if (!['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)) {
-                document.getElementById('images-error').textContent = 'Only JPG, JPEG, and PNG files are allowed';
-                return;
-            }
+        currentFile = file;
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const image = document.getElementById('cropImage');
+            image.src = e.target.result;
 
-            currentFile = file;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const image = document.getElementById('cropImage');
-                image.src = e.target.result;
-                
-                if (cropper) {
-                    cropper.destroy();
-                }
+            if (cropper) cropper.destroy();
 
-                const cropModal = new bootstrap.Modal(document.getElementById('cropModal'), {
-                    backdrop: 'static',
-                    keyboard: false
-                });
-                cropModal.show();
+            const cropModal = new bootstrap.Modal(document.getElementById('cropModal'), {
+                backdrop: 'static',
+                keyboard: false,
+            });
+            cropModal.show();
 
-                cropper = new Cropper(image, {
-                    aspectRatio: 1,
-                    viewMode: 1,
-                    dragMode: 'move',
-                    autoCropArea: 1,
-                    restore: false,
-                    guides: true,
-                    center: true,
-                    highlight: false,
-                    cropBoxMovable: true,
-                    cropBoxResizable: true,
-                    toggleDragModeOnDblclick: false,
-                    minContainerWidth: 500,
-                    minContainerHeight: 500,
-                    minCropBoxWidth: 400,
-                    minCropBoxHeight: 400,
-                    ready: function() {
-                        const containerData = this.cropper.getContainerData();
-                        const cropBoxData = this.cropper.getCropBoxData();
-                        const containerWidth = containerData.width;
-                        const containerHeight = containerData.height;
-                        
-                        // Center and size the crop box
-                        this.cropper.setCropBoxData({
-                            left: (containerWidth - 400) / 2,
-                            top: (containerHeight - 400) / 2,
-                            width: 400,
-                            height: 400
-                        });
-                    }
-                });
-            };
-            reader.readAsDataURL(file);
+            cropper = new Cropper(image, {
+                aspectRatio: 16 / 3,
+                viewMode: 2,
+                dragMode: 'move',
+                autoCropArea: 1,
+                restore: false,
+                guides: true,
+                center: true,
+                highlight: false,
+                cropBoxMovable: true,
+                cropBoxResizable: true,
+                toggleDragModeOnDblclick: false,
+                ready: function () {
+                    const containerData = cropper.getContainerData();
+                    const cropBoxData = cropper.getCropBoxData();
+
+                    // Dynamically adjust crop box size and center it
+                    const cropBoxSize = Math.min(
+                        containerData.width,
+                        containerData.height,
+                        cropBoxData.width,
+                        cropBoxData.height
+                    );
+
+                    cropper.setCropBoxData({
+                        left: (containerData.width - cropBoxSize) / 2,
+                        top: (containerData.height - cropBoxSize) / 2,
+                        width: cropBoxSize,
+                        height: cropBoxSize,
+                    });
+                },
+            });
+        };
+        reader.readAsDataURL(file);
+    });
+
+    event.target.value = ''; // Reset input
+}
+
+function cleanupCropper() {
+    if (cropper) {
+        cropper.destroy();
+        cropper = null;
+    }
+    const image = document.getElementById('cropImage');
+    image.src = '';
+    currentFile = null;
+    isProcessing = false;
+}
+
+document.getElementById('cropButton').addEventListener('click', async function () {
+    if (!cropper || !currentFile || isProcessing) return;
+
+    isProcessing = true;
+    const button = this;
+    const text = document.getElementById('cropButtonText');
+    const spinner = document.getElementById('cropButtonSpinner');
+
+    button.disabled = true;
+    text.classList.add('d-none');
+    spinner.classList.remove('d-none');
+
+    try {
+        const canvas = cropper.getCroppedCanvas({
+            width: 800,
+            height: 800,
+            imageSmoothingEnabled: true,
+            imageSmoothingQuality: 'high',
         });
 
-        event.target.value = '';
-    }
+        const blob = await new Promise((resolve) =>
+            canvas.toBlob(resolve, currentFile.type, 1.0)
+        );
 
-    function cleanupCropper() {
-        if (cropper) {
-            cropper.destroy();
-            cropper = null;
+        if (!blob) {
+            throw new Error('Failed to create blob.');
         }
-        const image = document.getElementById('cropImage');
-        image.src = '';
-        currentFile = null;
+
+        const croppedFile = new File([blob], currentFile.name, {
+            type: currentFile.type,
+            lastModified: Date.now(),
+        });
+
+        selectedFiles.push({
+            file: croppedFile,
+            preview: canvas.toDataURL(currentFile.type),
+        });
+
+        updateThumbnails(); // Update thumbnails with the cropped image
+
+        // Close modal and cleanup
+        const modalElement = document.getElementById('cropModal');
+        bootstrap.Modal.getInstance(modalElement).hide();
+        cleanupCropper();
+    } catch (error) {
+        console.error('Error cropping image:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Failed to crop image. Please try again.',
+        });
+    } finally {
+        button.disabled = false;
+        text.classList.remove('d-none');
+        spinner.classList.add('d-none');
         isProcessing = false;
     }
+});
 
-    document.getElementById('cropButton').addEventListener('click', async function() {
-        if (!cropper || !currentFile || isProcessing) return;
-
-        isProcessing = true;
-        const button = this;
-        const text = document.getElementById('cropButtonText');
-        const spinner = document.getElementById('cropButtonSpinner');
-
-        button.disabled = true;
-        text.classList.add('d-none');
-        spinner.classList.remove('d-none');
-
-        try {
-            const canvas = cropper.getCroppedCanvas({
-                width: 800,
-                height: 800,
-                imageSmoothingEnabled: true,
-                imageSmoothingQuality: 'high'
-            });
-
-            const blob = await new Promise(resolve => {
-                canvas.toBlob(resolve, currentFile.type, 1.0);
-            });
-
-            if (!blob) {
-                throw new Error('Failed to create blob');
-            }
-
-            const croppedFile = new File([blob], currentFile.name, {
-                type: currentFile.type,
-                lastModified: Date.now()
-            });
-
-            selectedFiles.push({
-                file: croppedFile,
-                preview: canvas.toDataURL(currentFile.type)
-            });
-
-            updateThumbnails();
-            
-            // Close modal
-            const modalElement = document.getElementById('cropModal');
-            bootstrap.Modal.getInstance(modalElement).hide();
-            cleanupCropper();
-
-        } catch (error) {
-            console.error('Error cropping image:', error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Failed to crop image. Please try again.'
-            });
-        } finally {
-            button.disabled = false;
-            text.classList.remove('d-none');
-            spinner.classList.add('d-none');
-            isProcessing = false;
-        }
+// Dummy updateThumbnails function (replace with your implementation)
+function updateThumbnails() {
+    const thumbnailsContainer = document.getElementById('thumbnails');
+    thumbnailsContainer.innerHTML = ''; // Clear existing thumbnails
+    selectedFiles.forEach(({ preview }) => {
+        const img = document.createElement('img');
+        img.src = preview;
+        img.className = 'thumbnail';
+        thumbnailsContainer.appendChild(img);
     });
+}
 
     document.getElementById('cropModal').addEventListener('hidden.bs.modal', cleanupCropper);
 

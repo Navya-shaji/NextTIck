@@ -99,21 +99,36 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-
         document.addEventListener('DOMContentLoaded', function () {
+            // Define the ordered statuses
+            const statusOrder = ["Pending", "Processing", "Shipped", "Delivered", "Cancelled", "Return Request", "Returned"];
+    
             document.querySelectorAll('.status-select').forEach(select => {
                 const currentStatus = select.value;
-
-                if (currentStatus === 'Delivered' || currentStatus === 'Cancelled' || currentStatus === 'Returned') {
+    
+                if (["Delivered", "Cancelled", "Returned"].includes(currentStatus)) {
                     select.disabled = true;
                     return;
                 }
-
+    
                 select.addEventListener('change', async function () {
                     const orderId = this.dataset.orderId;
                     const newStatus = this.value;
-
+    
+                    // Check if the new status is a valid forward transition
+                    if (statusOrder.indexOf(newStatus) < statusOrder.indexOf(currentStatus)) {
+                        Swal.fire({
+                            title: 'Invalid Transition',
+                            text: 'You cannot revert to a previous status.',
+                            icon: 'warning',
+                            confirmButtonText: 'OK',
+                        });
+                        this.value = currentStatus;
+                        return;
+                    }
+    
                     try {
+                        // Send the update request to the server
                         const response = await fetch('/admin/orders/update-status', {
                             method: 'POST',
                             headers: {
@@ -121,13 +136,13 @@
                             },
                             body: JSON.stringify({ orderId, status: newStatus }),
                         });
-
+    
                         const data = await response.json();
-
+    
                         if (data.success) {
                             Swal.fire({
                                 title: 'Success!',
-                                text: 'Status updated successfully',
+                                text: 'Status updated successfully.',
                                 icon: 'success',
                                 confirmButtonText: 'OK',
                             });
@@ -138,22 +153,22 @@
                                 icon: 'error',
                                 confirmButtonText: 'OK',
                             });
-                            this.value = currentStatus;
+                            this.value = currentStatus; 
                         }
                     } catch (error) {
                         console.error('Error updating status:', error);
                         Swal.fire({
                             title: 'Error!',
-                            text: 'Failed to update status',
+                            text: 'Failed to update status. Please try again later.',
                             icon: 'error',
                             confirmButtonText: 'OK',
                         });
-                        this.value = currentStatus;
+                        this.value = currentStatus; 
                     }
                 });
             });
         });
-
     </script>
+    
 
     <%- include("../../views/partials/admin/footer") %>

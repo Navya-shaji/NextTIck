@@ -167,18 +167,29 @@
   position: relative;
   background-color: #ffffff;
   transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .product-card img {
   width: 100%;
-  height: 400px;
+  height: 250px;
   object-fit: cover;
-  background-color: #f7fafc;
   transition: all 0.3s ease;
 }
 
 .product-card:hover img {
-  transform: scale(0.95);
+  transform: scale(1.05);
+}
+
+.product-card:hover {
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
 }
 
 .product-card h4 {
@@ -194,10 +205,10 @@
   font-size: 15px;
 }
 
-.wishlist-btn {
+.wishlist-btn,
+.btn-link {
   position: absolute;
   top: 20px;
-  right: 20px;
   background-color: #ffffff;
   width: 40px;
   height: 40px;
@@ -206,12 +217,32 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(10px);
   opacity: 0;
   transition: all 0.3s ease;
+  z-index: 2;
 }
 
-.product-card:hover .wishlist-btn {
+.wishlist-btn {
+  right: 20px;
+}
+
+.btn-link:last-child {
+  right: 70px;
+}
+
+.product-card:hover .wishlist-btn,
+.product-card:hover .btn-link {
   opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.wishlist-btn:hover,
+.btn-link:hover {
+  background-color: #000000;
+  color: #ffffff;
+  transform: translateY(0) scale(1.1);
 }
 
 .add-to-cart-btn {
@@ -229,6 +260,13 @@
 .add-to-cart-btn:hover {
   background-color: #ffffff;
   color: #000000;
+  animation: pulse 0.5s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }
 
 .add-to-cart-btn:disabled {
@@ -236,6 +274,70 @@
   border-color: #e2e8f0;
   color: #a0aec0;
   cursor: not-allowed;
+}
+
+/* Product Card Image Container */
+.product-card-image {
+  position: relative;
+  overflow: hidden;
+  background-color: #f7fafc;
+}
+
+/* Product Info Section */
+.product-info {
+  padding: 20px 0;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Price Styling */
+.price-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 8px 0;
+}
+
+.sale-price {
+  color: #000000;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.regular-price {
+  color: #a0aec0;
+  text-decoration: line-through;
+  font-size: 14px;
+}
+
+/* Stock Status */
+.stock-status {
+  font-size: 14px;
+  color: #4a5568;
+  margin-bottom: 12px;
+}
+
+/* Rating Display */
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 8px 0;
+}
+
+.rating span {
+  color: #4a5568;
+  font-size: 14px;
+}
+
+/* Quick View Icon */
+.quick-view {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-size: 14px;
 }
 
 /* Pagination */
@@ -317,215 +419,7 @@
   }
 
   .product-card img {
-    height: 300px;
-  }
-}
-
-@media (max-width: 480px) {
-  .product-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .sort-form select {
-    width: 100%;
-  }
-}
-/* Previous styles remain the same until wishlist button... */
-
-/* Updated Wishlist Button Styling */
-.wishlist-btn {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  background-color: #ffffff;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transform: translateY(10px);
-  opacity: 0;
-  transition: all 0.3s ease;
-  z-index: 2;
-}
-
-/* Show wishlist button on hover */
-.product-card:hover .wishlist-btn {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Wishlist button hover effect */
-.wishlist-btn:hover {
-  background-color: #000000;
-  color: #ffffff;
-  transform: translateY(0) scale(1.1);
-}
-
-/* Style for both wishlist and quick view buttons */
-.btn-link {
-  position: absolute;
-  top: 20px;
-  background-color: #ffffff;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transform: translateY(10px);
-  opacity: 0;
-  transition: all 0.3s ease;
-  z-index: 2;
-}
-
-/* Position quick view button */
-.btn-link:last-child {
-  right: 70px; /* Space it apart from wishlist button */
-}
-
-/* Show buttons on hover */
-.product-card:hover .btn-link {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Button hover effects */
-.btn-link:hover {
-  background-color: #000000;
-  color: #ffffff;
-  transform: translateY(0) scale(1.1);
-}
-
-/* Product Card Image Container */
-.product-card-image {
-  position: relative;
-  overflow: hidden;
-  background-color: #f7fafc;
-}
-
-/* Product Card Updates */
-.product-card {
-  position: relative;
-  background-color: #ffffff;
-  transition: all 0.3s ease;
-  display: flex;
-  flex-direction: column;
-}
-
-.product-card img {
-  width: 100%;
-  height: 400px;
-  object-fit: cover;
-  transition: all 0.3s ease;
-}
-
-/* Product Info Section */
-.product-info {
-  padding: 20px 0;
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Price Styling */
-.price-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 8px 0;
-}
-
-.sale-price {
-  color: #000000;
-  font-weight: 600;
-  font-size: 18px;
-}
-
-.regular-price {
-  color: #a0aec0;
-  text-decoration: line-through;
-  font-size: 14px;
-}
-
-/* Stock Status */
-.stock-status {
-  font-size: 14px;
-  color: #4a5568;
-  margin-bottom: 12px;
-}
-
-/* Rating Display */
-.rating {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  margin: 8px 0;
-}
-
-.rating span {
-  color: #4a5568;
-  font-size: 14px;
-}
-
-/* Add to Cart Button Update */
-.add-to-cart-btn {
-  width: 100%;
-  padding: 16px;
-  border: 2px solid #000000;
-  background-color: #000000;
-  color: #ffffff;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  margin-top: auto; /* Pushes button to bottom */
-}
-
-.add-to-cart-btn:hover {
-  background-color: #ffffff;
-  color: #000000;
-}
-
-.add-to-cart-btn:disabled {
-  background-color: #e2e8f0;
-  border-color: #e2e8f0;
-  color: #a0aec0;
-  cursor: not-allowed;
-}
-
-/* Add smooth hover transition for product image */
-.product-card:hover img {
-  transform: scale(1.05);
-}
-
-/* Product Card Container Update */
-.product-card {
-  border: 1px solid transparent;
-  transition: all 0.3s ease;
-}
-
-.product-card:hover {
-  border-color: #e2e8f0;
-}
-
-/* Quick View Icon */
-.quick-view {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  font-size: 14px;
-}
-
-/* Responsive updates */
-@media (max-width: 768px) {
-  .product-card img {
-    height: 300px;
+    height: 200px;
   }
   
   .btn-link {
@@ -539,6 +433,14 @@
 }
 
 @media (max-width: 480px) {
+  .product-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sort-form select {
+    width: 100%;
+  }
+  
   .btn-link {
     width: 35px;
     height: 35px;
@@ -546,5 +448,61 @@
   
   .btn-link:last-child {
     right: 60px;
+  }
+}
+.sorting {
+  display: flex;
+  justify-content: flex-end; /* Align to the right */
+  align-items: center;
+  margin: 20px 0; /* Add spacing above and below */
+  font-family: Arial, sans-serif; /* Clean font */
+}
+
+/* Label Styling */
+.sorting label {
+  font-size: 16px;
+  font-weight: 600;
+  color: #37474f; /* Dark text color */
+  margin-right: 10px; /* Space between label and select box */
+}
+
+/* Select Box Styling */
+.sorting select {
+  font-size: 14px;
+  color: #37474f; /* Text color */
+  padding: 8px 12px; /* Inner padding */
+  border: 1px solid #cfd8dc; /* Light border */
+  border-radius: 6px; /* Smooth corners */
+  background-color: #f9f9f9; /* Light background */
+  cursor: pointer; /* Pointer cursor */
+  transition: all 0.3s ease; /* Smooth transitions */
+}
+
+/* Select Box Focus */
+.sorting select:focus {
+  border-color: #1e88e5; /* Blue border on focus */
+  outline: none; /* Remove default outline */
+  background-color: #ffffff; /* Highlight background */
+  box-shadow: 0 0 4px rgba(30, 136, 229, 0.5); /* Glow effect */
+}
+
+/* Select Box Hover */
+.sorting select:hover {
+  border-color: #1e88e5; /* Blue border on hover */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .sorting {
+      justify-content: center; /* Center align on smaller screens */
+  }
+
+  .sorting label {
+      font-size: 14px;
+  }
+
+  .sorting select {
+      font-size: 13px;
+      padding: 6px 10px;
   }
 }

@@ -1,104 +1,193 @@
 <%- include("../../views/partials/user/header.ejs") %>
-
 <style>
     /* General Page Styling */
     .breadcrumb-wrap {
-        background-color: #f7f7f7;
+        background-color: #eceff1;
         padding: 20px 0;
         margin-bottom: 30px;
-        border-bottom: 1px solid #ddd;
+        border-bottom: 2px solid #cfd8dc;
     }
 
     .breadcrumb a {
-        color: #007bff;
+        color: #1e88e5;
         text-decoration: none;
+        font-weight: bold;
+    }
+
+    .breadcrumb a:hover {
+        text-decoration: underline;
     }
 
     .breadcrumb span {
-        color: #6c757d;
+        color: #546e7a;
+        font-weight: normal;
     }
 
     /* Wishlist Table Styling */
     .wishlist-table {
-        border: 1px solid #eaeaea;
-        border-radius: 8px;
-        overflow: hidden;
+        border: 1px solid #dce3e8;
+        border-radius: 10px;
         margin-top: 20px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
     }
 
     .shopping-summery th {
-        background-color: #f9f9f9;
-        color: #333;
-        padding: 15px;
+        background-color: #f5f7fa;
+        color: #37474f;
+        padding: 18px;
         font-size: 16px;
         text-transform: uppercase;
-        font-weight: bold;
+        font-weight: 700;
         text-align: center;
     }
 
     .shopping-summery td {
-        padding: 15px;
+        padding: 20px;
         font-size: 14px;
         text-align: center;
         vertical-align: middle;
-        border-bottom: 1px solid #eaeaea;
+        border-bottom: 1px solid #eceff1;
     }
 
     .product-thumbnail img {
-        max-width: 80px;
+        max-width: 90px;
         height: auto;
-        border-radius: 5px;
+        border-radius: 8px;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .product-thumbnail img:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
 
     .product-name a {
-        color: #333;
+        color: #37474f;
         font-weight: bold;
+        font-size: 15px;
         text-decoration: none;
+        transition: color 0.3s;
     }
 
     .product-name a:hover {
-        color: #007bff;
+        color: #1e88e5;
     }
 
     .font-xs {
-        font-size: 12px;
-        color: #999;
+        font-size: 13px;
+        color: #78909c;
         margin-top: 5px;
     }
 
+    .price {
+        color: #ff5722;
+        font-size: 18px;
+        font-weight: 600;
+    }
+
     .btn-add-cart {
-        background-color: #28a745;
+        background-color: #4caf50;
         color: white;
         border: none;
-        padding: 8px 12px;
+        padding: 10px 15px;
         border-radius: 5px;
         font-size: 14px;
-        font-weight: bold;
+        font-weight: 700;
         cursor: pointer;
-        transition: background-color 0.3s ease;
+        transition: background-color 0.3s, transform 0.2s;
     }
 
     .btn-add-cart:hover {
-        background-color: #218838;
+        background-color: #388e3c;
+        transform: scale(1.05);
+    }
+
+    .btn-add-cart:disabled {
+        background-color: #b0bec5;
+        cursor: not-allowed;
     }
 
     .btn-remove {
-        background-color: #dc3545;
+        background-color: #f44336;
         color: white;
         border: none;
-        padding: 8px 12px;
+        padding: 10px 15px;
         border-radius: 5px;
         font-size: 14px;
-        font-weight: bold;
+        font-weight: 700;
         cursor: pointer;
-        transition: background-color 0.3s ease;
+        transition: background-color 0.3s, transform 0.2s;
     }
 
     .btn-remove:hover {
-        background-color: #c82333;
+        background-color: #d32f2f;
+        transform: scale(1.05);
+    }
+
+    .empty-wishlist {
+        font-size: 18px;
+        color: #546e7a;
+        font-weight: 600;
+        text-align: center;
+        padding: 25px 15px;
+        background-color: #f5f7fa;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .shopping-summery th, .shopping-summery td {
+            font-size: 12px;
+            padding: 12px;
+        }
+
+        .product-thumbnail img {
+            max-width: 70px;
+        }
+
+        .btn-add-cart, .btn-remove {
+            font-size: 12px;
+            padding: 8px 10px;
+        }
+    }
+    .add-to-cart-btn {
+        background-color: #4caf50; /* Green for action */
+        color: white; /* Text color */
+        border: none; /* Remove border */
+        padding: 10px 20px; /* Space around text */
+        border-radius: 6px; /* Smooth corners */
+        font-size: 15px; /* Text size */
+        font-weight: bold; /* Emphasize text */
+        cursor: pointer; /* Pointer cursor */
+        transition: all 0.3s ease; /* Smooth animations */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    }
+
+    /* Hover effect */
+    .add-to-cart-btn:hover {
+        background-color: #388e3c; /* Darker green on hover */
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); /* Slightly deeper shadow */
+        transform: scale(1.05); /* Slight zoom effect */
+    }
+
+    /* Disabled state */
+    .add-to-cart-btn:disabled {
+        background-color: #cfd8dc; /* Muted gray for disabled */
+        color: #9e9e9e; /* Light gray text */
+        cursor: not-allowed; /* Show not-allowed cursor */
+        box-shadow: none; /* Remove shadow for disabled state */
+        transform: none; /* No scale effect */
+    }
+
+    /* Focus state for accessibility */
+    .add-to-cart-btn:focus {
+        outline: 3px solid #81c784; /* Green focus outline */
+        outline-offset: 2px;
     }
 </style>
+
 
 <main class="main">
     <div class="page-header breadcrumb-wrap">
@@ -128,57 +217,77 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <% if (wishlist.length > 0) { %>
-                                    <% wishlist.forEach(item => { 
-                                        const product = item.productId;
-                                    %>
+                              
+                                    <% if (wishlist.length > 0) { %>
+                                        <% wishlist.forEach(item => { 
+                                            const product = item.productId;
+                                        %>
+                                            <tr>
+                                                <td class="image product-thumbnail">
+                                                    <% if (product && product.productImage && product.productImage.length > 0) { %>
+                                                        <img src="/uploads/re-image/<%= product.productImage[0] %>" alt="<%= product.productName %>" />
+                                                    <% } else { %>
+                                                        <img src="/uploads/re-image/default.png" alt="No Image Available" />
+                                                    <% } %>
+                                                </td>
+                                    
+                                                <!-- Product Name -->
+                                                <td class="product-des product-name">
+                                                    <% if (product) { %>
+                                                        <a href="#"><%= product.productName %></a>
+                                                    <% } else { %>
+                                                        <span>N/A</span>
+                                                    <% } %>
+                                                </td>
+                                    
+                                                <!-- Category and Brand -->
+                                                <td>
+                                                    <% if (product) { %>
+                                                        <p class="font-xs">
+                                                            <strong>Category:</strong> <%= product.category?.name || 'N/A' %><br />
+                                                            <strong>Brand:</strong> <%= product.brand || 'N/A' %>
+                                                        </p>
+                                                    <% } else { %>
+                                                        <p class="font-xs">N/A</p>
+                                                    <% } %>
+                                                </td>
+                                    
+                                                <!-- Product Price -->
+                                                <td class="price" data-title="Price">
+                                                    <% if (product) { %>
+                                                        ₹<%= product.salesPrice || '0.00' %>
+                                                    <% } else { %>
+                                                        ₹0.00
+                                                    <% } %>
+                                                </td>
+                                    
+                                                <!-- Add to Cart -->
+                                                <td>
+                                                    <% if (product && product.quantity > 0) { %>
+                                                        <button class="add-to-cart-btn" onclick="addToCartHandler(event, '<%= product._id %>')">Add to Cart</button>
+                                                    <% } else { %>
+                                                        <button class="add-to-cart-btn" disabled>Out of Stock</button>
+                                                    <% } %>
+                                                </td>
+                                    
+                                                <!-- Remove from Wishlist -->
+                                                <td>
+                                                    <% if (product) { %>
+                                                        <button class="btn btn-sm btn-remove" onclick="removeFromWishlist('<%= product._id %>')">Remove</button>
+                                                    <% } else { %>
+                                                        <button class="btn btn-sm btn-remove" disabled>Remove</button>
+                                                    <% } %>
+                                                </td>
+                                            </tr>
+                                        <% }); %>
+                                    <% } else { %>
                                         <tr>
-                                            <!-- Product Image -->
-                                            <td class="image product-thumbnail">
-                                                <% if (product.productImage && product.productImage.length > 0) { %>
-                                                    <img src="/uploads/re-image/<%= product.productImage[0] %>" alt="<%= product.productName %>" />
-                                                <% } else { %>
-                                                    <img src="/uploads/re-image/default.png" alt="No Image Available" />
-                                                <% } %>
-                                            </td>
-                                            
-                                            <!-- Product Name -->
-                                            <td class="product-des product-name">
-                                                <a href="#"><%= product.productName %></a>
-                                            </td>
-                                            
-                                            <!-- Category and Brand -->
-                                            <td>
-                                                <p class="font-xs">
-                                                    <strong>Category:</strong> <%= product.category?.name || 'N/A' %><br />
-                                                    <strong>Brand:</strong> <%= product.brand || 'N/A' %>
-                                                </p>
-                                            </td>
-                                            
-                                            <!-- Product Price -->
-                                            <td class="price" data-title="Price">
-                                                ₹<%= product.salesPrice || '0.00' %>
-                                            </td>
-                                            
-                                            <!-- Add to Cart -->
-                                            <td>
-                                                <button class="add-to-cart-btn" onclick=" addToCartHandler (event, '<%= product._id %>')" <%= product.quantity > 0 ? '' : 'disabled' %>>
-                <%= product.quantity > 0 ? 'Add to Cart' : 'Out of Stock' %>
-              </button>                                            </td>
-                                            
-                                            <!-- Remove from Wishlist -->
-                                            <td>
-                                                <button class="btn btn-sm btn-remove" onclick="removeFromWishlist('<%= product._id %>')">Remove</button>
+                                            <td colspan="6" class="text-center">
+                                                <p class="lead mb-4">No items found in your wishlist.</p>
                                             </td>
                                         </tr>
-                                    <% }); %>
-                                <% } else { %>
-                                    <tr>
-                                        <td colspan="6" class="text-center">
-                                            <p class="lead mb-4">No items found in your wishlist.</p>
-                                        </td>
-                                    </tr>
-                                <% } %>
+                                    <% } %>
+                                    
                             </tbody>
                             
                         </table>

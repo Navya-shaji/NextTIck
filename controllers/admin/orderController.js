@@ -163,11 +163,10 @@ const getAdminOrderDetails = async (req, res) => {
 
 
 const processReturn = async (req, res) => {
-    const { orderId, returnReason } = req.body;  // Accept returnReason in the request body
-    const userId = req.user._id;  // Get logged-in user's ID
+    const { orderId, returnReason } = req.body;  
+    const userId = req.user._id; 
 
     try {
-        // Find the order and user
         const order = await Order.findById(orderId);
         const user = await User.findById(userId);
 
@@ -185,7 +184,6 @@ const processReturn = async (req, res) => {
             });
         }
 
-        // Validate order status
         if (order.status !== 'Delivered') {
             return res.status(400).json({ 
                 success: false, 
@@ -197,7 +195,6 @@ const processReturn = async (req, res) => {
         session.startTransaction();
 
         try {
-            // Find or create wallet
             let wallet = await Wallet.findOne({ user: userId }).session(session);
 
             if (!wallet) {
@@ -206,14 +203,12 @@ const processReturn = async (req, res) => {
                     balance: 0,
                     history: []
                 });
-                // Link wallet to user
                 user.wallet = wallet._id;
                 await user.save({ session });
             }
 
             const refundAmount = order.finalAmount;
 
-            // Update wallet
             wallet.balance += refundAmount;
             wallet.history.push({
                 status: 'refund',
