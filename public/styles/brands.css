@@ -131,6 +131,57 @@
   padding: 10px 40px;
   color: #ffffff;
   border: none;
-  background-color: #ba96f2;
+  background-color: #050505;
   border-radius: 4px;
+}
+/* Pagination Container */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+/* Pagination Links */
+.pagination-container a {
+  display: inline-block;
+  padding: 8px 14px;
+  margin: 0 5px;
+  text-decoration: none;
+  color: #ffffff; /* White text */
+  background-color: #007bff; /* Blue background for buttons */
+  border: 1px solid #0056b3; /* Darker blue border */
+  border-radius: 5px;
+  font-size: 14px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.pagination-container a:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+  color: #ffffff; /* Keep white text */
+  border-color: #003f7f; /* Slightly darker border on hover */
+}
+
+/* Current Page */
+.pagination-container .current-page {
+  display: inline-block;
+  padding: 8px 14px;
+  margin: 0 5px;
+  background-color: #0056b3; /* Highlighted blue for the current page */
+  color: #ffffff; /* White text */
+  font-weight: bold;
+  border-radius: 5px;
+  border: 1px solid #003f7f; /* Slightly darker border */
+}
+
+/* Disabled Links (Optional) */
+.pagination-container .disabled {
+  display: inline-block;
+  padding: 8px 14px;
+  margin: 0 5px;
+  background-color: #cce5ff; /* Light blue for disabled links */
+  color: #6c757d; /* Gray text for disabled links */
+  pointer-events: none;
+  border-radius: 5px;
+  border: 1px solid #b8daff; /* Subtle light border */
 }

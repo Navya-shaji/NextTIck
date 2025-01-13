@@ -51,6 +51,7 @@ const login = async (req, res) => {
 
 //loading dashboard................................................................................................
 
+// finding the top 10 products, categories and brands using the aggregation..............................................................
 
 const getTopSellingData = async () => {
     try {
@@ -137,10 +138,15 @@ const getTopSellingData = async () => {
     }
 };
 
+// Formats a numeric value to 2 decimal places....................................
 
 const formatCurrency = (amount) => {
     return parseFloat(amount).toFixed(2);
 };
+
+
+
+// Fetch sales data based on the report type and date range................................................
 
 const getDateRanges = () => {
     const today = new Date();
@@ -165,6 +171,9 @@ const getDateRanges = () => {
     };
 };
 
+
+//loading Dashboard................................................................................................
+
 const loadDashboard = async (req, res) => {
     try {
         if (!req.session.admin) {
@@ -179,12 +188,13 @@ const loadDashboard = async (req, res) => {
                  topTenCategory = await Category.find({}).sort({ totalSalesCount: -1 }).limit(10)
                  topTenBrand = await Brand.find({}).sort({ totalSalesCount: -1 }).limit(10)
             } catch (error) {
-        res.redirect("/admin/pageerror")
+        res.redirect("/admin/admin-error")
             }
         }
         trendingDetails()
 
-        // Get date ranges for filtering
+// Get date ranges for filtering....................................................
+     
         const dateRanges = getDateRanges();
 
         const orders = await Order.find({})
@@ -208,7 +218,8 @@ const loadDashboard = async (req, res) => {
 
         const { totalSalesCount = 0, totalOrderAmount = 0, totalDiscount = 0 } = stats[0] || {};
 
-        // Weekly Sales Data
+ // Weekly Sales Data..........................................................
+
         const dailySales = await Order.aggregate([
             {
                 $match: {
@@ -229,7 +240,8 @@ const loadDashboard = async (req, res) => {
             { $sort: { "_id": 1 } }
         ]);
 
-        // Monthly Sales Data
+// Monthly Sales Data...........................................................................................
+
         const monthlySales = await Order.aggregate([
             {
                 $match: {
@@ -247,7 +259,9 @@ const loadDashboard = async (req, res) => {
             { $sort: { "_id.month": 1 } }
         ]);
 
-        // Yearly Sales Data
+
+ // Yearly Sales Data.............................................................................
+
         const yearlySales = await Order.aggregate([
             {
                 $match: { status: { $ne: "Cancelled" } }
@@ -263,6 +277,10 @@ const loadDashboard = async (req, res) => {
             { $limit: 5 }
         ]);
 
+
+
+//Weekly Data Preparation.......................................................................
+
         const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
         const weeklyData = {
             labels: daysOfWeek,
@@ -275,6 +293,10 @@ const loadDashboard = async (req, res) => {
             weeklyData.data[dayIndex] = formatCurrency(item.sales);
             weeklyData.orderCounts[dayIndex] = item.orderCount;
         });
+
+
+
+// Monthly Data Preparation.........................................................................
 
         const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         const monthlyData = {
@@ -289,13 +311,18 @@ const loadDashboard = async (req, res) => {
             monthlyData.orderCounts[monthIndex] = item.orderCount;
         });
 
+
+// Yearly Data Preparation...........................................................................
+
         const yearlyData = {
             labels: yearlySales.map(item => item._id.toString()),
             data: yearlySales.map(item => formatCurrency(item.sales)),
             orderCounts: yearlySales.map(item => item.orderCount)
         };
 
-        // Payment Method Stats
+
+ // Payment Method Stats..................................................................
+
         const paymentStats = await Order.aggregate([
             {
                 $group: {
@@ -306,9 +333,10 @@ const loadDashboard = async (req, res) => {
             }
         ]);
 
+
         const { topProducts, topCategories, topBrands } = await getTopSellingData();
 
-        const orderStatusStats = await Order.aggregate([
+        const orderStatusStarts = await Order.aggregate([
             {
                 $group: {
                     _id: "$status",
@@ -317,11 +345,12 @@ const loadDashboard = async (req, res) => {
             }
         ]);
 
-        const totalOrders = orderStatusStats.reduce((acc, curr) => acc + curr.count, 0);
-        const successfulOrders = orderStatusStats.find(stat => stat._id === "Delivered")?.count || 0;
+        const totalOrders = orderStatusStarts.reduce((acc, curr) => acc + curr.count, 0);
+        const successfulOrders = orderStatusStarts.find(stat => stat._id === "Delivered")?.count || 0;
         const orderSuccessRate = totalOrders ? ((successfulOrders / totalOrders) * 100).toFixed(2) : 0;
         
-        // Render Dashboard
+// Render Dashboard................................
+
         return res.render("dashboard", {
             orders,
             totalSalesCount,
@@ -336,9 +365,11 @@ const loadDashboard = async (req, res) => {
             yearly: yearlyData,
             paymentStats
         });
+
+
     } catch (error) {
         console.error("Dashboard error:", error.message);
-        return res.redirect("/admin/pageNotFound");
+        return res.redirect("/admin/admin-error");
     }
 };
 
@@ -452,6 +483,8 @@ const calculateTotals = (orders) => {
 
 // loading the salereport page.........................................................
 // Backend modifications (in the loadSalesReport function)
+
+
 const loadSalesReport = async (req, res) => {
     try {
         const { period = 'monthly', startDate, endDate } = req.query;
@@ -533,56 +566,127 @@ const downloadSalesReport = async (req, res) => {
         const totals = calculateTotals(orders);
 
         if (format === 'pdf') {
-            const doc = new PDFDocument();
+            const doc = new PDFDocument({ margin: 50 });
             res.setHeader('Content-Type', 'application/pdf');
             res.setHeader('Content-Disposition', 'attachment; filename=sales-report.pdf');
 
             doc.pipe(res);
 
-            doc.fontSize(20).text('Sales Report', { align: 'center' });
-            doc.moveDown();
+            // Header
+            doc.font('Helvetica-Bold')
+               .fontSize(24)
+               .text('Sales Report', { align: 'center' });
+            doc.moveDown(1);
 
-            doc.fontSize(14).text('Summary', { underline: true });
+            // Report Period
             doc.fontSize(12)
-                .text(`Report Period: ${period.charAt(0).toUpperCase() + period.slice(1)}`)
-                .text(`Total Orders: ${totals.count}`)
-                .text(`Total Amount: ₹${totals.orderAmount.toFixed(2)}`)
-                .text(`Final Amount: ₹${totals.finalAmount.toFixed(2)}`)
-                .text(`Cancelled Orders: ${totals.cancelledCount}`)
-                .text(`Returned Orders: ${totals.returnedCount}`);
+               .font('Helvetica')
+               .text(`Report Period: ${period.charAt(0).toUpperCase() + period.slice(1)}`, { align: 'left' });
+            doc.moveDown(1);
 
-            doc.moveDown();
+            // Summary Section
+            doc.font('Helvetica-Bold')
+               .fontSize(16)
+               .text('Summary', { underline: true });
+            doc.moveDown(0.5);
 
-            doc.fontSize(14).text('Order Details', { underline: true });
-            doc.moveDown();
+            // Summary Table
+            const summaryData = [
+                ['Total Orders:', totals.count],
+                ['Total Amount:', `₹${totals.orderAmount.toFixed(2)}`],
+                ['Final Amount:', `₹${totals.finalAmount.toFixed(2)}`],
+                ['Cancelled Orders:', totals.cancelledCount],
+                ['Returned Orders:', totals.returnedCount]
+            ];
 
-            const startX = 50;
-            const columnWidth = 120;
-            doc.fontSize(10);
-
-            ['Order ID', 'Date', 'Customer', 'Amount', 'Final', 'Status'].forEach((header, i) => {
-                doc.text(header, startX + (i * columnWidth), doc.y, { width: columnWidth, align: 'left' });
+            summaryData.forEach(([label, value]) => {
+                doc.font('Helvetica')
+                   .fontSize(12)
+                   .text(label, { continued: true, width: 150 })
+                   .text(value.toString(), { align: 'left' });
             });
 
-            doc.moveDown();
+            doc.moveDown(2);
 
-            orders.forEach(order => {
-                const y = doc.y;
-                if (y > 700) {
+            // Order Details Section
+            doc.font('Helvetica-Bold')
+               .fontSize(16)
+               .text('Order Details', { underline: true });
+            doc.moveDown(1);
+
+            // Table Headers
+            const headers = ['Order ID', 'Date', 'Customer', 'Amount', 'Final', 'Status'];
+            const colWidths = [80, 80, 120, 80, 80, 80];
+            let startX = 50;
+            let currentX = startX;
+
+            // Draw table headers with background
+            const headerY = doc.y;
+            doc.rect(startX - 5, headerY - 5, 520, 20).fill('#f0f0f0');
+            
+            headers.forEach((header, i) => {
+                doc.font('Helvetica-Bold')
+                   .fontSize(10)
+                   .fillColor('black')
+                   .text(header, currentX, headerY, { width: colWidths[i] });
+                currentX += colWidths[i];
+            });
+
+            doc.moveDown(0.5);
+
+            // Table Rows
+            orders.forEach((order, index) => {
+                // Check if we need a new page
+                if (doc.y > 700) {
                     doc.addPage();
-                    doc.fontSize(10);
+                    doc.font('Helvetica-Bold')
+                       .fontSize(16)
+                       .text('Order Details (continued)', { underline: true });
+                    doc.moveDown(1);
+                    
+                    // Repeat headers on new page
+                    currentX = startX;
+                    const headerY = doc.y;
+                    doc.rect(startX - 5, headerY - 5, 520, 20).fill('#f0f0f0');
+                    
+                    headers.forEach((header, i) => {
+                        doc.font('Helvetica-Bold')
+                           .fontSize(10)
+                           .fillColor('black')
+                           .text(header, currentX, headerY, { width: colWidths[i] });
+                        currentX += colWidths[i];
+                    });
+                    doc.moveDown(0.5);
                 }
 
+                // Add zebra striping
+                if (index % 2 === 0) {
+                    doc.rect(startX - 5, doc.y - 2, 520, 15).fill('#f9f9f9');
+                }
+
+                currentX = startX;
+                const rowY = doc.y;
+                
+                // Order data
                 const date = new Date(order.createdOn).toLocaleDateString();
+                const rowData = [
+                    order.orderId.substring(0, 8),
+                    date,
+                    order.userId?.name || 'N/A',
+                    `₹${order.totalPrice.toFixed(2)}`,
+                    `₹${order.finalAmount.toFixed(2)}`,
+                    order.status
+                ];
 
-                doc.text(order.orderId.substring(0, 8), startX, doc.y, { width: columnWidth })
-                    .text(date, startX + columnWidth, doc.y - 12, { width: columnWidth })
-                    .text(order.userId?.name || 'N/A', startX + (columnWidth * 2), doc.y - 12, { width: columnWidth })
-                    .text(`₹${order.totalPrice.toFixed(2)}`, startX + (columnWidth * 3), doc.y - 12, { width: columnWidth })
-                    .text(`₹${order.finalAmount.toFixed(2)}`, startX + (columnWidth * 4), doc.y - 12, { width: columnWidth })
-                    .text(order.status, startX + (columnWidth * 5), doc.y - 12, { width: columnWidth });
+                rowData.forEach((text, i) => {
+                    doc.font('Helvetica')
+                       .fontSize(10)
+                       .fillColor('black')
+                       .text(text, currentX, rowY, { width: colWidths[i] });
+                    currentX += colWidths[i];
+                });
 
-                doc.moveDown();
+                doc.moveDown(0.5);
             });
 
             doc.end();

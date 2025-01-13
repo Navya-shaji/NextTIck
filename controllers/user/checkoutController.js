@@ -381,7 +381,7 @@ const retryPayment = async (req, res) => {
             });
         }
 
-        const order = await Order.findById(orderId).populate('userId').populate('orderItems.product');
+        const order = await Order.findById(orderId).populate('userId');
         if (!order) {
             return res.status(404).json({
                 success: false,
@@ -389,27 +389,27 @@ const retryPayment = async (req, res) => {
             });
         }
 
-        const razorpayOrderId = order.paymentId;
-        const user = order.userId;
+        // Create new Razorpay order
+        const razorpayOrder = await createRazorpayOrder(order.finalAmount);
 
         const orderDetails = {
-            order_id: razorpayOrderId,
+            order_id: razorpayOrder.id,
             key_id: process.env.RAZORPAY_KEY_ID,
             amount: order.finalAmount * 100,
             currency: "INR",
-            name: "Your Store Name",
-            description: "Purchase Description",
+            name: "NextTick",
+            description: `Order Payment - ${orderId}`,
             prefill: {
-                name: user.name,
-                email: user.email,
-                contact: user.phone
+                name: order.userId.name || '',
+                email: order.userId.email || '',
+                contact: order.userId.phone || ''
             }
         };
 
         res.status(200).json({
             success: true,
             message: "Retry payment initiated",
-            data:orderDetails
+            data: orderDetails
         });
 
     } catch (error) {

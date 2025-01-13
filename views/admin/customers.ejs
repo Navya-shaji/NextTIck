@@ -1,163 +1,290 @@
 <%- include("../../views/partials/admin/header") %>
 <style>
+    /* Main Layout */
+    .content-wrapper {
+        padding: 2rem;
+        background-color: #f8f9fa;
+        min-height: 100vh;
+    }
+
+    /* Header Styling */
+    .content-header {
+        margin-bottom: 2rem;
+    }
+
     .content-title {
-      font-size: 24px; /* Adjust the font size */
-      color: #333; /* Set text color */
-      margin-bottom: 10px; /* Add space below */
-      font-family: 'Roboto', sans-serif; /* Set font family */
+        font-size: 1.75rem;
+        color: #333;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        position: relative;
+        padding-bottom: 0.5rem;
     }
-  
-    .card-title {
-      text-align: center; /* Center the text */
-      font-weight: bold; /* Make the text bold */
-      background-color: #f8f9fa; /* Add a light background */
-      padding: 10px; /* Add padding */
-      border-radius: 8px; /* Round the corners */
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+
+    .content-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 60px;
+        height: 3px;
+        background: #666;
+        border-radius: 2px;
     }
-    .card-header {
-    background-color: #ffffff; /* White background for the header */
-    border-bottom: 1px solid #ddd; /* Light border at the bottom */
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    margin-bottom: 20px; /* Space below the header */
-  }
 
-  .text-center {
-    text-align: center; /* Center align content */
-  }
+    /* Search Bar */
+    .search-section {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+        margin-bottom: 2rem;
+    }
 
-  /* Search Bar Styling */
-  .search-bar {
-    max-width: 400px; /* Restrict the width for a cleaner look */
-    margin: 0 auto; /* Center align the search bar */
-    display: flex; /* Align elements inline */
-  }
+    .search-bar {
+        max-width: 600px;
+        margin: 0 auto;
+        display: flex;
+        gap: 0.5rem;
+    }
 
-  .search-bar input {
-    flex: 1; /* Make input take up available space */
-    border: 1px solid #ddd; /* Light border for input */
-    border-right: none; /* Remove right border */
-    border-radius: 5px 0 0 5px; /* Rounded left corners */
-    padding: 10px; /* Add padding inside the input */
-    font-size: 14px; /* Adjust text size */
-  }
+    .search-bar input {
+        flex: 2;
+        padding: 0.75rem 1rem;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
 
-  .search-bar input:focus {
-    outline: none;
-    border-color: #007BFF; /* Highlight border on focus */
-  }
+    .search-bar input:focus {
+        border-color: #666;
+        box-shadow: 0 0 0 3px rgba(102, 102, 102, 0.1);
+        outline: none;
+    }
 
-  .search-bar button {
-    border: 1px solid #ddd; /* Light border for button */
-    border-left: none; /* Remove left border */
-    background-color: #007BFF; /* Blue background for button */
-    color: white; /* White text for contrast */
-    border-radius: 0 5px 5px 0; /* Rounded right corners */
-    padding: 10px 15px; /* Button padding */
-    font-size: 14px; /* Adjust text size */
-    cursor: pointer; /* Pointer cursor on hover */
-    transition: background-color 0.3s ease;
-  }
+    .search-bar button {
+        flex: 1;
+        padding: 0.75rem 1.5rem;
+        background: black;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
 
-  .search-bar button:hover {
-    background-color: #0056b3; /* Darker blue on hover */
-  }
+    .search-bar button:hover {
+        background: #333;
+        transform: translateY(-1px);
+    }
 
-  .search-bar button:focus {
-    outline: none;
-  }
-  </style>
-  
-<div class="content-header row">
-    <div class="d-flex justify-content-between align-items-center">
-        <h2 class="content-title card-title">Customers</h2>
+    .clear-btn {
+        padding: 0.75rem 1.5rem;
+        background: #666;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .clear-btn:hover {
+        background: #555;
+        transform: translateY(-1px);
+    }
+
+    /* Table Styling */
+    .table-container {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+    }
+
+    .table thead th {
+        background-color: #f8f9fa;
+        color: #333;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+        padding: 1rem;
+        border-bottom: 2px solid #e9ecef;
+    }
+
+    .table tbody td {
+        padding: 1rem;
+        vertical-align: middle;
+        color: #444;
+        border-bottom: 1px solid #e9ecef;
+        font-size: 0.95rem;
+    }
+
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: #f8f9fa;
+    }
+
+    /* Action Buttons */
+    .btn {
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        font-weight: 500;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-success {
+        background-color: #4CAF50;
+        border-color: #4CAF50;
+        color: white;
+    }
+
+    .btn-success:hover {
+        background-color: #45a049;
+        border-color: #45a049;
+        transform: translateY(-1px);
+    }
+
+    .btn-danger {
+        background-color: #666;
+        border-color: #666;
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background-color: #555;
+        border-color: #555;
+        transform: translateY(-1px);
+    }
+
+    /* Pagination */
+    .pagination {
+        margin-top: 2rem;
+        gap: 0.25rem;
+    }
+
+    .page-link {
+        padding: 0.5rem 1rem;
+        color: #666;
+        background-color: white;
+        border: 1px solid #e9ecef;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+    }
+
+    .page-link:hover {
+        background-color: #666;
+        color: white;
+        border-color: #666;
+    }
+
+    .page-item.active .page-link {
+        background-color: #666;
+        border-color: #666;
+        color: white;
+    }
+
+    .page-item.disabled .page-link {
+        color: #999;
+        pointer-events: none;
+        background-color: #f8f9fa;
+        border-color: #e9ecef;
+    }
+
+    /* Empty State */
+    .empty-state {
+        padding: 3rem;
+        text-align: center;
+        color: #666;
+        font-style: italic;
+    }
+</style>
+<div class="content-wrapper">
+    <div class="content-header">
+        <h2 class="content-title">Customer Management</h2>
     </div>
-</div>
 
-<header class="card-header text-center mb-20">
-    <form action="/admin/users" method="get" class="d-inline">
-        <div class="input-group input-group-sm search-bar">
-            <input
-                type="text"
-                class="form-control"
-                placeholder="Search customers..."
-                name="search"
-                value="<%= search %>"
-                aria-label="Search customers"
-            />
-            <button class="btn btn-outline-primary" type="submit" aria-label="Search">Search</button>
-        </div>
-    </form>
-</header>
+    <div class="search-section">
+        <form action="/admin/users" method="get">
+            <div class="search-bar">
+                <input
+                    type="text"
+                    placeholder="Search customers by name or email..."
+                    name="search"
+                    value="<%= search %>"
+                    aria-label="Search customers"
+                />
+                <button type="submit" aria-label="Search">
+                    Search
+                </button>
+                <a href="/admin/users" class="clear-btn" aria-label="Clear search">
+                    Clear
+                </a>
+            </div>
+        </form>
+    </div>
 
-<div class="table-responsive mt-5">
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th scope="col"><b>Name</b></th>
-                <th scope="col"><b>Email</b></th>
-                <th scope="col"><b>Phone No</b></th>
-                <th scope="col"><b>Action</b></th>
-            </tr>
-        </thead>
-        <tbody>
-            <% if (customers && customers.length > 0) { %>
-                <% customers.forEach((customer) => { %>
+    <div class="table-container">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
                     <tr>
-                        <td><%= customer.name || "N/A" %></td>
-                        <td><%= customer.email || "N/A" %></td>
-                        <td><%= customer.phone || "N/A" %></td>
-                        <td>
-                            <% if (customer.isBlocked) { %>
-                                <a href="/admin/unblock/<%= customer._id %>" class="btn btn-success btn-sm text-white text-decoration-none" aria-label="Unblock customer">Unblock</a>
-                            <% } else { %>
-                                <a href="/admin/block/<%= customer._id %>" class="btn btn-danger btn-sm text-white text-decoration-none" aria-label="Block customer">Block</a>
-                            <% } %>
-                        </td>
+                        <th scope="col">Name</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Phone No</th>
+                        <th scope="col">Action</th>
                     </tr>
-                <% }); %>
-            <% } else { %>
-                <tr>
-                    <td colspan="4" class="text-center">No customers found</td>
-                </tr>
-            <% } %>
-        </tbody>
-    </table>
-</div>
+                </thead>
+                <tbody>
+                    <% if (customers && customers.length > 0) { %>
+                        <% customers.forEach((customer) => { %>
+                            <tr>
+                                <td><%= customer.name || "N/A" %></td>
+                                <td><%= customer.email || "N/A" %></td>
+                                <td><%= customer.phone || "N/A" %></td>
+                                <td>
+                                    <% if (customer.isBlocked) { %>
+                                        <a href="/admin/unblock/<%= customer._id %>" class="btn btn-success" aria-label="Unblock customer">Unblock</a>
+                                    <% } else { %>
+                                        <a href="/admin/block/<%= customer._id %>" class="btn btn-danger" aria-label="Block customer">Block</a>
+                                    <% } %>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="4" class="empty-state">No customers found</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-<div class="container mt-3">
-    <nav aria-label="Page navigation">
-        <ul class="pagination justify-content-center">
-            <% if (pagination && pagination.totalPages > 1) { %>
-                <!-- Previous Button -->
+    <% if (pagination && pagination.totalPages > 1) { %>
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
                 <li class="page-item <%= pagination.currentPage === 1 ? 'disabled' : '' %>">
                     <a class="page-link" href="?page=<%= pagination.currentPage - 1 %>&search=<%= search %>" aria-label="Previous">
                         <span aria-hidden="true">&laquo;</span>
                     </a>
                 </li>
 
-                <!-- Page Numbers -->
                 <% for (let i = 1; i <= pagination.totalPages; i++) { %>
                     <li class="page-item <%= i === pagination.currentPage ? 'active' : '' %>">
                         <a class="page-link" href="?page=<%= i %>&search=<%= search %>"><%= i %></a>
                     </li>
                 <% } %>
 
-                <!-- Next Button -->
                 <li class="page-item <%= pagination.currentPage === pagination.totalPages ? 'disabled' : '' %>">
                     <a class="page-link" href="?page=<%= pagination.currentPage + 1 %>&search=<%= search %>" aria-label="Next">
                         <span aria-hidden="true">&raquo;</span>
                     </a>
                 </li>
-            <% } else { %>
-                <li class="page-item disabled">
-                    <span class="page-link">No pages available</span>
-                </li>
-            <% } %>
-        </ul>
-    </nav>
+            </ul>
+        </nav>
+    <% } %>
 </div>
 
 <%- include("../../views/partials/admin/footer") %>

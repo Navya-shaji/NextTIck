@@ -1,21 +1,35 @@
 <%- include("../../views/partials/user/header.ejs") %>
+
 <style>
     /* General Styles */
     .cart-table {
         width: 100%;
         border-collapse: collapse;
         margin-bottom: 30px;
-        border-radius: 8px;
+        border-radius: 12px;
         background-color: #fff;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
     }
 
-    .cart-table th,
+    .cart-table thead {
+        background-color: #424874;
+        color: white;
+    }
+
+    .cart-table th {
+        padding: 15px;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 14px;
+        letter-spacing: 0.5px;
+    }
+
     .cart-table td {
-        padding: 12px;
-        border: 1px solid #ddd;
+        padding: 15px;
+        border: 1px solid #eee;
         text-align: center;
-        font-size: 16px;
+        font-size: 15px;
         vertical-align: middle;
     }
 
@@ -23,110 +37,186 @@
         width: 80px;
         height: 80px;
         object-fit: cover;
-        border-radius: 5px;
+        border-radius: 8px;
+        border: 1px solid #eee;
     }
 
     .cart-table .product-des {
         text-align: left;
-        padding-left: 10px;
+        padding-left: 15px;
+    }
+
+    .cart-table .product-name span {
+        color: #424874;
+        font-weight: 600;
+        font-size: 15px;
     }
 
     .cart-table .qty-val {
         width: 50px;
         text-align: center;
-        font-size: 16px;
-        border: none;
-        outline: none;
-        background-color: transparent;
-        pointer-events: none;
+        font-size: 15px;
+        border: 1px solid #eee;
+        border-radius: 4px;
+        padding: 5px;
+        background-color: #f8f9fa;
     }
 
     .cart-table .qty-up,
     .cart-table .qty-down {
         background-color: #424874;
-        border: 1px solid #ddd;
-        border-radius: 50%;
-        width: 35px;
-        height: 35px;
-        font-size: 18px;
+        border: none;
+        border-radius: 6px;
+        width: 32px;
+        height: 32px;
+        font-size: 16px;
         font-weight: bold;
         cursor: pointer;
         color: white;
-        transition: background-color 0.3s ease;
+        transition: all 0.3s ease;
+        margin: 0 5px;
     }
 
     .cart-table .qty-up:hover,
     .cart-table .qty-down:hover {
-        background-color: #333;
+        background-color: #313866;
+        transform: translateY(-1px);
     }
 
-    .cart-table .btn-black {
-        background-color: black;
-        color: white;
-        padding: 12px 20px;
-        border-radius: 5px;
-        font-size: 16px;
-        font-weight: bold;
-        border: none;
-    }
-
-    .cart-table .btn-black:disabled {
+    .cart-table .qty-up:disabled,
+    .cart-table .qty-down:disabled {
         background-color: #A6B1E1;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .btn-black {
+        background-color: #424874;
         color: white;
-        border-color: darkgray;
+        padding: 12px 25px;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: 600;
+        border: none;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-black:hover {
+        background-color: #313866;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(66, 72, 116, 0.2);
+    }
+
+    .btn-black:disabled {
+        background-color: #A6B1E1;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-size: 14px;
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-danger:hover {
+        background-color: #c82333;
+        transform: translateY(-1px);
     }
 
     /* Cart Totals Section */
     .cart-total-section {
-        background-color: #f5f5f5;
-        padding: 20px;
-        font-size: 18px;
-        font-weight: bold;
-        text-align: center;
-        border-radius: 8px;
+        background-color: #f8f9fa;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     }
 
     .cart-total-section .total-label {
-        font-size: 22px;
+        font-size: 18px;
         color: #424874;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 10px;
     }
 
     .cart-total-section .total-amount {
-        font-size: 26px;
+        font-size: 24px;
         font-weight: 700;
-        color: #28a745;
+        color: #424874;
+    }
+
+    /* Empty Cart Styles */
+    .text-center h1 {
+        color: #424874;
+        font-size: 28px;
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+
+    .text-center p {
+        color: #666;
+        font-size: 16px;
+        line-height: 1.6;
     }
 
     /* Responsive Design */
     @media (max-width: 768px) {
         .cart-table th,
         .cart-table td {
-            padding: 8px;
+            padding: 12px;
             font-size: 14px;
         }
 
         .cart-table .qty-val {
             width: 40px;
+            font-size: 14px;
         }
 
         .cart-table .qty-up,
         .cart-table .qty-down {
-            width: 30px;
-            height: 30px;
-        }
-
-        .cart-total-section {
-            font-size: 16px;
-        }
-    }
-
-    @media (max-width: 576px) {
-        .cart-total-section {
+            width: 28px;
+            height: 28px;
             font-size: 14px;
+        }
+
+        .btn-black {
+            padding: 10px 20px;
+            font-size: 14px;
+        }
+
+        .cart-total-section .total-label {
+            font-size: 16px;
         }
 
         .cart-total-section .total-amount {
             font-size: 20px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .cart-table {
+            font-size: 13px;
+        }
+
+        .cart-table .image.product-thumbnail img {
+            width: 60px;
+            height: 60px;
+        }
+
+        .btn-black {
+            padding: 8px 16px;
+            font-size: 13px;
         }
     }
 </style>
@@ -241,7 +331,6 @@
         </div>
     </section>
 </main>
-
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>

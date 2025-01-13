@@ -49,33 +49,60 @@ const getOrderDetails = async (req, res) => {
 
 
 //for cancelling orders.......................................
-
 const cancelOrder = async (req, res) => {
     try {
         const { orderId } = req.body;
-        console.log("cancelling order")
-        const order = await Order.findOneAndUpdate(
-            { _id: orderId, status: 'Pending' },
-            { status: 'Cancelled' },
-            { new: true }
-        );
-
-        if (!order) {
+        console.log("cancelling order");
+        
+        // First find the order
+        const order = await Order.findById(orderId);
+        
+        if (!order || order.status !== 'Pending') {
             return res.status(400).json({ success: false, message: 'Order cannot be cancelled' });
         }
 
+        // Update order status
+        order.status = 'Cancelled';
+        await order.save();
+
+        console.log('Order structure:', JSON.stringify(order, null, 2));
+
+       
+        const orderItems = order.products || order.items || order.orderItems;
+        
+        if (Array.isArray(orderItems)) {
+            for (const item of orderItems) {
+                try {
+                    const productId = item.product?.toString() || item.productId?.toString() || item.product_id?.toString();
+                    if (productId) {
+                        const product = await Product.findById(productId);
+                        if (product) {
+                            const oldQuantity = product.quantity;
+                            product.quantity = oldQuantity + item.quantity;
+                            await product.save();
+                            console.log(`Product ${product._id}: Quantity updated from ${oldQuantity} to ${product.quantity}`);
+                        }
+                    }
+                } catch (stockError) {
+                    console.error('Error updating product quantity:', stockError);
+                    return res.status(500).json({ success: false, message: 'Order cancelled but stock update failed' });
+                }
+            }
+        }
+
+        // Handle refund if payment was completed
         if (order.paymentStatus === 'Completed') {
             const userId = order.userId;
             const amount = order.finalAmount;
-
+            
             try {
-                console.log("refunding")
+                console.log("refunding");
                 await addRefundToWallet(userId, amount, orderId);
             } catch (refundError) {
                 console.error('Error processing refund:', refundError);
                 return res.status(500).json({ success: false, message: 'Order cancelled but refund failed' });
             }
-
+            
             return res.status(200).json({ success: true, message: 'Order cancelled successfully, amount refunded to wallet' });
         }
 
@@ -84,9 +111,7 @@ const cancelOrder = async (req, res) => {
         console.error('Error cancelling order:', error);
         res.status(500).json({ success: false, message: 'Failed to cancel order' });
     }
-};
-
-//Refund adding...................................
+};//Refund adding...................................
 const addRefundToWallet = async (userId, amount, orderId) => {
     try {
         let wallet = await Wallet.findOne({ userId });
@@ -320,32 +345,56 @@ const updateOrderStatus = async (req, res) => {
 
 
 //returning...................................
-
 const processReturn = async (req, res) => {
     const { orderId, userId } = req.body;
 
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
     try {
-        const order = await Order.findById(orderId);
+        const order = await Order.findById(orderId).session(session);
 
         if (!order || order.status !== 'Delivered') {
             return res.status(400).json({ success: false, message: 'Invalid return request' });
         }
 
+        if (order.userId.toString() !== userId) {
+            return res.status(403).json({ success: false, message: 'Unauthorized return request' });
+        }
+
+        const returnDeadline = new Date(order.deliveryDate);
+        returnDeadline.setDate(returnDeadline.getDate() + 30); // 30-day return policy
+        if (new Date() > returnDeadline) {
+            return res.status(400).json({ success: false, message: 'Return period has expired' });
+        }
+
+        if (order.status === 'Returned') {
+            return res.status(400).json({ success: false, message: 'Order has already been returned' });
+        }
+
         order.status = 'Returned';
-        await order.save();
+        await order.save({ session });
 
         const refundAmount = order.finalAmount;
-        const user = await User.findById(userId);
+        const user = await User.findById(userId).session(session);
         user.walletBalance += refundAmount;
-        await user.save();
+        await user.save({ session });
 
-        res.status(200).json({ success: true, message: 'Order returned successfully and wallet updated.' });
+        await session.commitTransaction();
+        session.endSession();
+
+        res.status(200).json({ 
+            success: true, 
+            message: 'Order returned successfully and wallet updated.', 
+            data: { walletBalance: user.walletBalance } 
+        });
     } catch (error) {
-        console.error('Error processing return:', error);
+        await session.abortTransaction();
+        session.endSession();
+        console.error('Error processing return:', { orderId, userId, error });
         res.status(500).json({ success: false, message: 'Failed to process return' });
     }
 };
-
 
 
 module.exports = {

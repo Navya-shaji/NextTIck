@@ -132,10 +132,10 @@ const updateWalletAfterPayment = async (req, res) => {
 
 const handleReturnRefund = async (orderId, userId, refundAmount) => {
     try {
-        const wallet = await wallet.findOne({ user: userId });
+        const wallet = await Wallet.findOne({ user: userId });
         
         if (!wallet) {
-            const newWallet = new wallet({
+            const newWallet = new Wallet({
                 user: userId,
                 balance: refundAmount,
                 history: [{
@@ -171,6 +171,15 @@ const handleReturnRefund = async (orderId, userId, refundAmount) => {
 const processReturn = async (req, res) => {
   try {
     const { orderId } = req.params;
+    const { returnReason, comments, selectedProducts } = req.body;
+    
+    if (!selectedProducts || selectedProducts.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please select at least one product to return'
+      });
+    }
+
     const order = await Order.findById(orderId);
 
     if (!order) {
@@ -196,56 +205,75 @@ const processReturn = async (req, res) => {
       });
     }
 
-    // Update both Wallet and User documents
-    const [wallet, user] = await Promise.all([
-      Wallet.findOne({ user: userId }),
-      User.findById(userId)
-    ]);
-
-    if (!wallet) {
-      const newWallet = new Wallet({
-        user: userId,
-        balance: 0,
-        history: []
+    // Get user
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
       });
-      await newWallet.save();
     }
 
-    const refundAmount = order.finalAmount;
+    // Calculate refund amount for selected products
+    let refundAmount = 0;
+    const returnedProducts = [];
+    const remainingProducts = [];
 
-    // Update wallet
-    const previousBalance = wallet.balance;
-    wallet.balance += refundAmount;
-    wallet.history.push({
-      status: 'refund',
-      payment: refundAmount,
-      date: new Date(),
-      description: `Refund for order ${order.orderId}`,
-      orderId: order._id
+    order.products.forEach(product => {
+      const selectedProduct = selectedProducts.find(sp => sp.productId === product.productId.toString());
+      if (selectedProduct) {
+        refundAmount += product.price * selectedProduct.quantity;
+        returnedProducts.push({
+          ...product.toObject(),
+          returnReason,
+          returnDate: new Date(),
+          returnComments: comments
+        });
+      } else {
+        remainingProducts.push(product);
+      }
     });
 
     // Update user's wallet balance
-    if (user) {
-      user.walletBalance = wallet.balance;
+    const previousBalance = user.walletBalance || 0;
+    user.walletBalance = previousBalance + refundAmount;
+
+    // Add transaction to wallet history
+    user.walletHistory = user.walletHistory || [];
+    user.walletHistory.push({
+      amount: refundAmount,
+      type: 'credit',
+      description: `Refund for Order #${order.orderId} - Partial Return`,
+      date: new Date()
+    });
+
+    // Update order status and details
+    if (remainingProducts.length === 0) {
+      // All products returned
+      order.status = 'Returned';
+      order.returnReason = returnReason;
+      order.returnComments = comments;
+      order.returnDate = new Date();
+    } else {
+      // Partial return
+      order.status = 'Partially Returned';
+      order.products = remainingProducts;
+      order.returnedProducts = order.returnedProducts || [];
+      order.returnedProducts.push(...returnedProducts);
     }
 
-    // Update order status
-    order.status = 'Returned';
-    order.returnedByUser = true;
-
-    // Save all changes atomically
+    // Save all changes
     await Promise.all([
-      wallet.save(),
       user.save(),
       order.save()
     ]);
 
     return res.status(200).json({
       success: true,
-      message: 'Return processed successfully',
+      message: remainingProducts.length === 0 ? 'Return processed successfully' : 'Partial return processed successfully',
       refundAmount,
       previousBalance,
-      newBalance: wallet.balance,
+      newBalance: user.walletBalance,
       orderId: order.orderId
     });
 

@@ -20,7 +20,8 @@ const loadshoppingPage = async (req, res) => {
       isBlocked: false,
       category: { $in: categoryIds },
     };
-
+    
+   
     let sort = { createdOn: -1 };
 
     const sortOption = req.query.sort;
@@ -54,9 +55,11 @@ const loadshoppingPage = async (req, res) => {
 
     if (req.query.category) {
       query.category = req.query.category;
+      console.log("Category query:", query.category);
     }
     if (req.query.brand) {
       query.brand = req.query.brand;
+      console.log("Brand query:", query.brand);
     }
     if (req.query.minPrice) {
       query.regularPrice = query.regularPrice || {};

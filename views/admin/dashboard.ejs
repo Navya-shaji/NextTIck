@@ -176,7 +176,7 @@ a{
     });
 
  // Example for Sales Chart
-function initializeSalesChart(timeRange) {
+ function initializeSalesChart(timeRange) {
     const ctx = document.getElementById('salesChart').getContext('2d');
     let data, labels;
 
@@ -199,20 +199,20 @@ function initializeSalesChart(timeRange) {
     }
 
     const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-    gradient.addColorStop(0, 'rgba(12, 151, 127, 0.4)');
-    gradient.addColorStop(1, 'rgba(12, 151, 127, 0)');
+    gradient.addColorStop(0, 'rgba(75, 192, 192, 0.4)');
+    gradient.addColorStop(1, 'rgba(75, 192, 192, 0)');
 
     window.salesChart = new Chart(ctx, {
-        type: 'bar',
+        type: 'line', // Changed to 'line'
         data: {
             labels: labels,
             datasets: [{
                 label: 'Sales Amount',
                 data: data,
                 fill: true,
-                borderColor: '#92C5F9',
+                borderColor: '#4BC0C0',
                 backgroundColor: gradient,
-                tension: 0.4
+                tension: 0.4 // Added for smooth curves
             }]
         },
         options: {
@@ -246,62 +246,140 @@ function initializeSalesChart(timeRange) {
         }
     });
 }
+function initializeBestSellingProductsChart() {
+    const ctx = document.getElementById('bestSellingProductsChart').getContext('2d');
 
-    function initializeBestSellingProductsChart() {
-        const ctx = document.getElementById('bestSellingProductsChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: bestSellingProducts.map(p => p.productName),
-                datasets: [{
-                    label: 'Units Sold',
-                    data: bestSellingProducts.map(p => p.totalSalesCount),
-                    backgroundColor: [
-                        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
-                        '#FF9F40', '#FF6B81', '#45AAF2', '#2ED573', '#FFA502'
-                    ]
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
+    // Destroy any existing chart instance to avoid duplication
+    if (window.bestSellingProductsChart instanceof Chart) {
+        window.bestSellingProductsChart.destroy();
     }
-    function initializeBestSellingCategoriesChart() {
-    const ctx = document.getElementById('bestSellingCategoriesChart').getContext('2d');
-    new Chart(ctx, {
+
+    // Generate a gradient for the bar chart background
+    const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+    gradient.addColorStop(0, 'rgba(255, 99, 132, 0.6)');
+    gradient.addColorStop(1, 'rgba(255, 99, 132, 0)');
+
+    // Create the chart
+    window.bestSellingProductsChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: bestSellingCategories.map(c => c.name), // Category names
+            labels: bestSellingProducts.map(product => product.productName), // Product names
             datasets: [{
-                label: 'Total Sales',
-                data: bestSellingCategories.map(c => c.totalQuantity), // Sales count
-                backgroundColor: [
-                    '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'
-                ],
-                borderColor: [
-                    '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'
-                ],
-                borderWidth: 1
+                label: 'Units Sold',
+                data: bestSellingProducts.map(product => product.totalSalesCount), // Units sold
+                backgroundColor: gradient,
+                borderColor: '#FF6384',
+                borderWidth: 2,
+                borderRadius: 5, // Rounded corners for bars
             }]
         },
         options: {
-            indexAxis: 'y', // Horizontal bar
+            responsive: true,
+            maintainAspectRatio: false,
             plugins: {
                 legend: {
-                    display: false,
+                    display: false, // Hide legend for simplicity
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.raw} Units Sold`;
+                        }
+                    }
                 }
             },
-            responsive: true,
             scales: {
                 x: {
-                    beginAtZero: true
+                    grid: {
+                        drawBorder: false,
+                        display: false // Remove grid lines for x-axis
+                    },
+                    ticks: {
+                        autoSkip: false, // Display all labels
+                        maxRotation: 45, // Rotate labels if too long
+                        minRotation: 0
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return value + ' Units'; // Format y-axis values
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)',
+                        drawBorder: false,
+                    }
+                }
+            }
+        }
+    });
+}
+function initializeBestSellingCategoriesChart() {
+    const ctx = document.getElementById('bestSellingCategoriesChart').getContext('2d');
+
+    // Destroy any existing chart instance to avoid duplication
+    if (window.bestSellingCategoriesChart instanceof Chart) {
+        window.bestSellingCategoriesChart.destroy();
+    }
+
+    // Generate a gradient for the horizontal bar chart
+    const gradient = ctx.createLinearGradient(0, 0, 300, 0);
+    gradient.addColorStop(0, 'rgba(54, 162, 235, 0.6)');
+    gradient.addColorStop(1, 'rgba(54, 162, 235, 0)');
+
+    // Create the chart
+    window.bestSellingCategoriesChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: bestSellingCategories.map(category => category.name), // Category names
+            datasets: [{
+                label: 'Total Sales',
+                data: bestSellingCategories.map(category => category.totalQuantity), // Sales count
+                backgroundColor: gradient,
+                borderColor: '#36A2EB',
+                borderWidth: 2,
+                borderRadius: 5, // Rounded corners for bars
+            }]
+        },
+        options: {
+            indexAxis: 'y', // Horizontal bar chart
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false, // Hide legend for simplicity
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.raw} Units Sold`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return value + ' Units'; // Format x-axis values
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)',
+                        drawBorder: false,
+                    }
+                },
+                y: {
+                    grid: {
+                        drawBorder: false,
+                        display: false // Remove grid lines for y-axis
+                    },
+                    ticks: {
+                        autoSkip: false, // Show all category labels
+                    }
                 }
             }
         }
@@ -309,12 +387,25 @@ function initializeSalesChart(timeRange) {
 }
 function initializeBestSellingBrandsChart() {
     const ctx = document.getElementById('bestSellingBrandsChart').getContext('2d');
-    new Chart(ctx, {
+
+    // Check if data exists and is valid
+    if (!Array.isArray(bestSellingBrands) || bestSellingBrands.length === 0) {
+        console.error('No brand data available for the chart.');
+        return;
+    }
+
+    // Destroy any existing chart instance to avoid duplication
+    if (window.bestSellingBrandsChart instanceof Chart) {
+        window.bestSellingBrandsChart.destroy();
+    }
+
+    // Create the chart
+    window.bestSellingBrandsChart = new Chart(ctx, {
         type: 'doughnut',
         data: {
-            labels: bestSellingBrands.map(b => b.brandName), // Brand names
+            labels: bestSellingBrands.map(brand => brand.brandName), // Ensure 'brandName' matches your data property
             datasets: [{
-                data: bestSellingBrands.map(b => b.totalQuantity), // Sales count
+                data: bestSellingBrands.map(brand => brand.totalQuantity), // Ensure 'totalQuantity' matches your data property
                 backgroundColor: [
                     '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
                     '#FF9F40', '#FF6B81', '#45AAF2', '#2ED573', '#FFA502'
@@ -326,6 +417,13 @@ function initializeBestSellingBrandsChart() {
             plugins: {
                 legend: {
                     position: 'right',
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.label}: ${context.raw} Units`;
+                        }
+                    }
                 }
             },
             responsive: true,
