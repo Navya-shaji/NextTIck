@@ -92,7 +92,6 @@
             submitBtn.addEventListener('click', function() {
                 const otp = Array.from(inputs).map(input => input.value).join('');
                 if (otp.length === 4) {
-                    console.log('OTP Submitted:', otp);
                 }
             });
         });
@@ -125,11 +124,9 @@
         body: JSON.stringify({ otp: otpString })
     })
     .then(response => {
-        console.log("Response status:", response.status); 
         return response.json();
     })
     .then(data => {
-        console.log("Response data:", data); 
         if (data.success) {
             Swal.fire({
                 icon: 'success',

@@ -10,11 +10,9 @@ const signform = document.getElementById('signForm')
 
 
 function emailvalidateChecking(e){
-  // console.log("email validateChecking");
   const emailval=emailid.value
   const emailpattern = /^([a-zA-Z0-9._-]+)@([a-zA-Z.-]+)\.([a-zA-Z]{2,4})$/;
   if(!emailpattern.test(emailval)){
-    // console.log("no format");
     error2.style.display="block"
     error2.innerHTML="Invalid Format"
   }else{
@@ -24,17 +22,14 @@ function emailvalidateChecking(e){
 }
 
 function passvalidateChecking(e){
-  // console.log("pass word validateChecking");
   const passval=passid.value
   const alpha = /[a-zA-Z]/
   const digit = /\d/
   if(passval.length<8){
-    // console.log("no lemngth");
     error4.style.display="block"
     error4.innerHTML="Should contain atleast 8 characters"
 
   }else if(!alpha.test(passval)||!digit.test(passval)){
-    // console.log("passss");
     error4.style.display="block"
     error4.innerHTML="Should contain numbers and alphabets"
   }else if(passval.trim()===""){
@@ -66,7 +61,6 @@ if(nameval.trim()===""){
 }
 
 function mobvalidateChecking(){
-  // console.log("mobile ahdjashda");
   const mobval=mobileid.value
   if(mobval.trim()===""){
     error3.style.display="block"
@@ -81,16 +75,13 @@ function mobvalidateChecking(){
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  // console.log("loadeddddddd");
   signform.addEventListener('submit', function(e) {
-    // console.log("submissssssss");
     emailvalidateChecking();
     namevalidateChecking();
     mobvalidateChecking();
     passvalidateChecking();
 
    
-  // console.log(emailid, nameid, mobileid, passid, error1, error2, error3, error4, signform);
 
   // lines to check for null elements
   if (!emailid || !nameid || !mobileid || !passid || !error1 || !error2 || !error3 || !error4 || !signform) {

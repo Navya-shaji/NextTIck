@@ -371,8 +371,7 @@ function addToCartHandler(event, productId) {
         })
     })
     .then(response => {
-      // alert(response)
-      console.log(response)
+     
         if (!response.ok) {
             return response.json().then(data => {
                 throw new Error(data.message || 'Failed to add product to cart');

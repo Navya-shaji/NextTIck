@@ -16,120 +16,275 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             line-height: 1.6;
-            background-color: #f5f5f5;
-            color: #333;
+            background-color: #f8fafc;
+            color: #334155;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
         }
 
         .form-container {
+            width: 100%;
             max-width: 600px;
             margin: 2rem auto;
-            padding: 2rem;
+            padding: 2.5rem;
             background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid #e2e8f0;
         }
 
         h1 {
-            color: #2c3e50;
-            margin-bottom: 1.5rem;
-            font-size: 1.8rem;
-            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.75rem;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: #64748b;
+            font-size: 0.95rem;
         }
 
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.75rem;
         }
 
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: #4a5568;
+        .order-info {
+            background-color: #f8fafc;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .order-info p {
+            margin: 0;
+            font-size: 0.95rem;
+            color: #64748b;
         }
 
         #displayOrderId {
             font-weight: 600;
-            color: #2c3e50;
+            color: #0f172a;
+            font-size: 1.1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.75rem;
+            font-weight: 500;
+            color: #334155;
+            font-size: 0.95rem;
+        }
+
+        .input-group {
+            position: relative;
         }
 
         textarea {
             width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            font-size: 1rem;
-            transition: border-color 0.2s ease;
+            padding: 1rem;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
             resize: vertical;
-            min-height: 120px;
+            min-height: 150px;
             font-family: inherit;
+            background-color: #fff;
         }
 
         textarea:focus {
             outline: none;
-            border-color: #4299e1;
-            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+
+        .char-count {
+            position: absolute;
+            bottom: -1.5rem;
+            right: 0;
+            font-size: 0.8rem;
+            color: #64748b;
         }
 
         button {
             width: 100%;
-            padding: 0.75rem 1.5rem;
-            background-color: #4299e1;
+            padding: 1rem 1.5rem;
+            background-color: #3b82f6;
             color: white;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 1rem;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.2s ease;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
         }
 
         button:hover {
-            background-color: #3182ce;
+            background-color: #2563eb;
+            transform: translateY(-1px);
         }
 
         button:active {
-            background-color: #2b6cb0;
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            background-color: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
         }
 
         .error-text {
-            color: #e53e3e;
+            color: #ef4444;
             display: none;
             margin-top: 0.5rem;
             font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .return-policy {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid #e2e8f0;
+        }
+
+        .return-policy h3 {
+            color: #1e293b;
+            font-size: 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .return-policy ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .return-policy li {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            padding-left: 1.25rem;
+            position: relative;
+        }
+
+        .return-policy li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #3b82f6;
         }
 
         @media (max-width: 640px) {
+            body {
+                padding: 0.5rem;
+            }
+
             .form-container {
                 margin: 1rem;
                 padding: 1.5rem;
+            }
+
+            h1 {
+                font-size: 1.75rem;
+            }
+
+            textarea {
+                min-height: 120px;
+            }
+        }
+
+        /* Loading state */
+        button.loading {
+            position: relative;
+            color: transparent;
+        }
+
+        button.loading::after {
+            content: "";
+            position: absolute;
+            width: 1.25rem;
+            height: 1.25rem;
+            border: 2px solid white;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
             }
         }
     </style>
 </head>
 <body>
     <div class="form-container">
-        <h1>Return Order</h1>
+        <div class="header">
+            <h1>Return Order</h1>
+            <p class="subtitle">Please provide details about your return request</p>
+        </div>
         <form id="returnForm">
-            <div class="form-group">
+            <div class="order-info">
                 <p>Order ID: <span id="displayOrderId"></span></p>
             </div>
             <div class="form-group">
                 <label for="reason">Reason for Return:</label>
-                <textarea 
-                    name="reason" 
-                    id="reason" 
-                    required 
-                    placeholder="Please provide a detailed reason for your return request..."></textarea>
-                <div id="reasonError" class="error-text">Please provide a reason for return</div>
+                <div class="input-group">
+                    <textarea 
+                        name="reason" 
+                        id="reason" 
+                        required 
+                        maxlength="500"
+                        placeholder="Please provide a detailed reason for your return request..."></textarea>
+                    <div class="char-count"><span id="charCount">0</span>/500 characters</div>
+                </div>
+                <div id="reasonError" class="error-text">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    Please provide a reason for return
+                </div>
             </div>
             <button type="submit">Submit Return Request</button>
         </form>
+
+        <div class="return-policy">
+            <h3>Return Policy Highlights</h3>
+            <ul>
+                <li>Returns must be initiated within 7 days of delivery</li>
+                <li>Item must be unused and in original packaging</li>
+                <li>Refund will be processed within 5-7 business days</li>
+                <li>Shipping costs may apply for returns</li>
+            </ul>
+        </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const urlParams = new URLSearchParams(window.location.search);
             const orderId = urlParams.get('orderId');
+            const submitButton = document.querySelector('button[type="submit"]');
+            const reasonTextarea = document.getElementById('reason');
+            const charCountSpan = document.getElementById('charCount');
             
             const displayOrderId = document.getElementById('displayOrderId');
             if (orderId) {
@@ -145,15 +300,38 @@
                 });
             }
 
+            // Character count functionality
+            reasonTextarea.addEventListener('input', function() {
+                const count = this.value.length;
+                charCountSpan.textContent = count;
+                
+                // Visual feedback as user approaches limit
+                if (count >= 450) {
+                    charCountSpan.style.color = '#ef4444';
+                } else if (count >= 400) {
+                    charCountSpan.style.color = '#f59e0b';
+                } else {
+                    charCountSpan.style.color = '#64748b';
+                }
+            });
+
             document.getElementById('returnForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
 
-                const reason = document.getElementById('reason').value.trim();
+                const reason = reasonTextarea.value.trim();
                 
                 if (!reason) {
-                    document.getElementById('reasonError').style.display = 'block';
+                    document.getElementById('reasonError').style.display = 'flex';
+                    reasonTextarea.focus();
                     return;
                 }
+
+                // Hide error if exists
+                document.getElementById('reasonError').style.display = 'none';
+
+                // Show loading state
+                submitButton.disabled = true;
+                submitButton.classList.add('loading');
 
                 try {
                     const response = await fetch('process-return', {
@@ -171,10 +349,10 @@
 
                     if (response.ok) {
                         await Swal.fire({
-                            title: 'Success!',
-                            text: 'Your return request has been submitted successfully',
+                            title: 'Return Request Submitted!',
+                            text: 'We will process your request and get back to you soon.',
                             icon: 'success',
-                            confirmButtonText: 'OK'
+                            confirmButtonText: 'Back to Profile'
                         });
                         window.location.href = '/profile';
                     } else {
@@ -187,6 +365,10 @@
                         icon: 'error',
                         confirmButtonText: 'OK'
                     });
+                } finally {
+                    // Remove loading state
+                    submitButton.disabled = false;
+                    submitButton.classList.remove('loading');
                 }
             });
         });

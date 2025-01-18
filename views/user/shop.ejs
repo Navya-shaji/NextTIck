@@ -10,9 +10,15 @@
     <section class="shop-page">
       <div class="shop-topbar">
         <div class="search-bar">
-          <form action="/search" method="GET" class="search-form" id="searchForm">
+          <form action="/shop" method="GET" class="search-form" id="searchForm">
             <input type="text" name="query" placeholder="Search items..." class="search-input" id="searchInput"
               value="<%= query.query || '' %>" />
+            <% if (query.sort) { %>
+              <input type="hidden" name="sort" value="<%= query.sort %>">
+            <% } %>
+            <% if (query.category) { %>
+              <input type="hidden" name="category" value="<%= query.category %>">
+            <% } %>
             <button type="submit" class="search-button">Search</button>
             <button type="button" class="clear-button" onclick="clearSearch()">Clear</button>
           </form>
@@ -24,7 +30,7 @@
           <div class="filter-section">
             <div class="filter-title" onclick="toggleDropdown('categoryDropdown')">
               Categories
-              <span class="dropdown-arrow">⬇️</span>
+              <span class="dropdown-arrow">⬇</span>
             </div>
 
 
@@ -43,7 +49,7 @@
               <% if (query.category) { %>
                 <div class="clear-category">
                   <a href="/shop" class="clear-category-link">
-                    Clear <span class="clear-arrow">⬅️</span> <!-- You can replace the arrow with any icon you like -->
+                    Clear <span class="clear-arrow">⬅</span> <!-- You can replace the arrow with any icon you like -->
                   </a>
                 </div>
                 <% } %>
@@ -53,7 +59,7 @@
           <div class="filter-section">
             <div class="filter-title" onclick="toggleDropdown('brandDropdown')">
               Brands
-              <span class="dropdown-arrow">⬇️</span>
+              <span class="dropdown-arrow">⬇</span>
             </div>
           
             <div id="brandDropdown" class="category-brand-container dropdown-content">
@@ -70,7 +76,7 @@
               <% if (query.brand) { %>
                 <div class="clear-category">
                   <a href="/shop" class="clear-category-link">
-                    Clear <span class="clear-arrow">⬅️</span>
+                    Clear <span class="clear-arrow">⬅</span>
                   </a>
                 </div>
               <% } %>
@@ -91,47 +97,38 @@
 
         <main class="product-content">
           <div class="sort-options">
-            <form id="sortForm" action="/shop" method="GET">
-              <% for (const [key, value] of Object.entries(query)) { %>
-                <% if (key !=='sort' && key !=='page' ) { %>
-                  <input type="hidden" name="<%= key %>" value="<%= value %>">
-                  <% } %>
-                    <% } %>
-
-
-
-                      <div class="sorting">
-                        <form method="GET" action="/shop" class="sort-form">
-                          <label for="sort">Sort By:</label>
-                          <select name="sort" id="sort" onchange="this.form.submit()">
-                            <option value="newest" >Default
-                            </option>
-                            <option value="popularity" <%=query.sort==='popularity' ? 'selected' : '' %>>Popularity
-                            </option>
-                            <option value="price_asc" <%=query.sort==='price_asc' ? 'selected' : '' %>>Price: Low to
-                              High</option>
-                            <option value="price_desc" <%=query.sort==='price_desc' ? 'selected' : '' %>>Price: High to
-                              Low</option>
-                            <option value="name_asc" <%=query.sort==='name_asc' ? 'selected' : '' %>>Name: A to Z
-                            </option>
-                            <option value="name_desc" <%=query.sort==='name_desc' ? 'selected' : '' %>>Name: Z to A
-                            </option>
-                          </select>
-
-
-                        </form>
-                      </div>
+            <div class="sorting">
+              <form method="GET" action="/shop" class="sort-form" id="sortForm">
+                <% if (query.query) { %>
+                  <input type="hidden" name="query" value="<%= query.query %>">
+                <% } %>
+                <% if (query.category) { %>
+                  <input type="hidden" name="category" value="<%= query.category %>">
+                <% } %>
+                
+                <label for="sort">Sort By:</label>
+                <select name="sort" id="sort" onchange="document.getElementById('sortForm').submit()">
+                  <option value="newest" <%=!query.sort || query.sort==='newest' ? 'selected' : '' %>>Default</option>
+                  <option value="popularity" <%=query.sort==='popularity' ? 'selected' : '' %>>Popularity</option>
+                  <option value="price_asc" <%=query.sort==='price_asc' ? 'selected' : '' %>>Price: Low to High</option>
+                  <option value="price_desc" <%=query.sort==='price_desc' ? 'selected' : '' %>>Price: High to Low</option>
+                  <option value="name_asc" <%=query.sort==='name_asc' ? 'selected' : '' %>>Name: A to Z</option>
+                  <option value="name_desc" <%=query.sort==='name_desc' ? 'selected' : '' %>>Name: Z to A</option>
+                </select>
+              </form>
+            </div>
 
                       <!-- In your product grid section -->
                       <div class="product-grid">
                         <% products.forEach(function(product) { %>
                           <div class="product-card">
-                            <span class="wishlist-btn" onclick="addToWishlist('<%= product._id %>')">❤️</span>
-                            <button class="btn btn-link p-0" style="border: none; background: none; color: white;"
-                              onclick="window.location.href='/productDetails?id=<%= product._id %>'">
-                              👁‍🗨
-                            </button>
-
+                            <div class="quick-view-btn" onclick="window.location.href='/productDetails?id=<%= product._id %>'">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                              </svg>
+                            </div>
+                            <span class="wishlist-btn" onclick="addToWishlist('<%= product._id %>')">❤</span>
                             <img src="/uploads/re-image/<%= product.productImage[0] %>"
                               alt="<%= product.productName %>" />
                             <h4>
@@ -170,7 +167,7 @@
                             endPage=Math.min(totalPages, currentPage + pageRange); %>
 
                             <% if (currentPage> 1) { %>
-                              <button onclick="changePage(`<%= currentPage - 1 %>`)">Previous</button>
+                              <button onclick="changePage(<%= currentPage - 1 %>)">Previous</button>
                               <% } %>
 
                                 <% if (startPage> 1) { %>
@@ -181,7 +178,7 @@
                                       <% } %>
 
                                         <% for(let i=startPage; i <=endPage; i++) { %>
-                                          <button onclick="changePage(`<%= i %>`)"
+                                          <button onclick="changePage(<%= i %>)"
                                             class="<%= currentPage === i ? 'active' : '' %>">
                                             <%= i %>
                                           </button>
@@ -191,14 +188,14 @@
                                               <% if (endPage < totalPages - 1) { %>
                                                 <span>...</span>
                                                 <% } %>
-                                                  <button onclick="changePage(`<%= totalPages %>`)">
+                                                  <button onclick="changePage(<%= totalPages %>)">
                                                     <%= totalPages %>
                                                   </button>
                                                   <% } %>
 
                                                     <% if (currentPage < totalPages) { %>
                                                       <button
-                                                        onclick="changePage(`<%= currentPage + 1 %>`)">Next</button>
+                                                        onclick="changePage(<%= currentPage + 1 %>)">Next</button>
                                                       <% } %>
                                                         <% } %>
                       </div>
@@ -387,5 +384,32 @@
       </div>
     </section>
   </div>
+
+  <script>
+    function clearSearch() {
+      // Preserve sort and category parameters
+      const urlParams = new URLSearchParams(window.location.search);
+      const sort = urlParams.get('sort');
+      const category = urlParams.get('category');
+      
+      let newUrl = '/shop?';
+      if (sort) newUrl += sort=${sort}&;
+      if (category) newUrl += category=${category};
+      
+      window.location.href = newUrl.endsWith('?') ? newUrl.slice(0, -1) : newUrl;
+    }
+
+    function changePage(page) {
+      // Preserve all current parameters and just update the page
+      const urlParams = new URLSearchParams(window.location.search);
+      urlParams.set('page', page);
+      window.location.href = /shop?${urlParams.toString()};
+    }
+
+    function toggleDropdown(id) {
+      const dropdown = document.getElementById(id);
+      dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+    }
+  </script>
 
   <%- include("../../views/partials/user/footer.ejs") %>

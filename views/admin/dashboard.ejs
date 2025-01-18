@@ -1,437 +1,461 @@
-<!-- views/admin/dashboard.ejs -->
+<%- include("../partials/admin/header") %>
 
-<%- include("../../views/partials/admin/header") %>
 <style>
-    body {
-        font-family: 'Roboto', sans-serif;
-        background-color: #f7f9fc;
-        color: #333;
+    .dashboard-card {
+        border-radius: 15px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        transition: transform 0.2s;
     }
-
-    h1, h5 {
-        color: #0000;
-        font-weight: 600;
+    .dashboard-card:hover {
+        transform: translateY(-5px);
     }
-
-    .nav-link {
-        color: #555;
-        font-weight: 500;
-        transition: color 0.3s ease;
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 15px;
     }
-
-    .nav-link:hover {
-        color: #0000;
+    .bg-primary-light { background-color: rgba(12, 151, 127, 0.1); }
+    .bg-success-light { background-color: rgba(40, 167, 69, 0.1); }
+    .bg-warning-light { background-color: rgba(255, 193, 7, 0.1); }
+    .bg-info-light { background-color: rgba(23, 162, 184, 0.1); }
+    .chart-container {
+        position: relative;
+        height: 300px;
     }
-
-    .card {
-        border: none;
-        border-radius: 12px;
-        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .card:hover {
-        transform: scale(1.02);
-        box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.15);
-    }
-
-    .card-title {
-        font-weight: 500;
-    }
-
-    .form-select {
-        border-radius: 8px;
-        background-color: #ffffff;
-        box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.05);
-        transition: border-color 0.3s ease;
-    }
-
-    .form-select:focus {
-        border-color: #0000;
-        box-shadow: #0000;
-    }
-
-    canvas {
-        background: linear-gradient(to top, #ffffff, #f7f9fc);
+    .filter-container {
+        background: #f8f9fa;
+        padding: 15px;
         border-radius: 10px;
+        margin-bottom: 20px;
     }
-a{
-       font-size: 25px; 
-       color:black;
-        font-weight:  500;
-       font-family: monospace;
+    .content-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding: 0.5rem 1rem;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    }
+    .content-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #2c3e50;
+        margin: 0;
+    }
+    .btn-primary {
+        background-color: #0C977F;
+        border-color: #0C977F;
+    }
+    .btn-primary:hover {
+        background-color: #0a7d6a;
+        border-color: #0a7d6a;
     }
 </style>
 
-<div class="container-fluid mt-4">
-    <h1  style="font-size: 32px; color:black; font-weight: 600; font-family: Verdana, Geneva, Tahoma, sans-serif;" class="mb-4">Admin Dashboard</h1>
-    <ul class="nav flex-column">
-       
-        <li class="nav-item">
-            <a href="/admin/sales-report">Sales Report</a>
-        </li>
-        <!-- Add other admin navigation items here -->
-    </ul>
-    <div class="row">
-        <div class="col-lg-4">
-            <div class="card card-body mb-4" style="border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
-                <article class="icontext">
-                    <div class="text">
-                        <h6 class="mb-1" style="color: #666">Total Revenue</h6>
-                        <span style="font-size: 28px; color:black; font-weight: 600">₹<%= totalOrderAmount %></span>
-                    </div>
-                </article>
-            </div>
+<div class="container-fluid p-4">
+    <div class="content-header">
+        <h2 class="content-title">Dashboard</h2>
+        <div>
+            <a href="/admin/sales-report" class="btn btn-primary">
+                <i class="fas fa-download me-2"></i>Generate Report
+            </a>
         </div>
-        <div class="col-lg-4">
-            <div class="card card-body mb-4" style="border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
-                <article class="icontext">
-                    <div class="text">
-                        <h6 class="mb-1" style="color: #666">Total Orders</h6>
-                        <span style="font-size: 28px;  color:black; font-weight: 600"><%= totalSalesCount %></span>
-                    </div>
-                </article>
-            </div>
-        </div>
-       
     </div>
 
-    <div class="card mb-4" style="border-radius: 10px; box-shadow: black">
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card dashboard-card h-100">
+                <div class="card-body">
+                    <div class="stat-icon bg-primary-light">
+                        <i class="fas fa-rupee-sign text-primary"></i>
+                    </div>
+                    <h6 class="card-title mb-2">Total Revenue</h6>
+                    <h3 class="mb-0">₹<%= totalRevenue?.toLocaleString('en-IN') || '0' %></h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card dashboard-card h-100">
+                <div class="card-body">
+                    <div class="stat-icon bg-success-light">
+                        <i class="fas fa-shopping-cart text-success"></i>
+                    </div>
+                    <h6 class="card-title mb-2">Total Orders</h6>
+                    <h3 class="mb-0"><%= totalOrders?.toLocaleString('en-IN') || '0' %></h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card dashboard-card h-100">
+                <div class="card-body">
+                    <div class="stat-icon bg-warning-light">
+                        <i class="fas fa-users text-warning"></i>
+                    </div>
+                    <h6 class="card-title mb-2">Total Users</h6>
+                    <h3 class="mb-0"><%= totalUsers?.toLocaleString('en-IN') || '0' %></h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card dashboard-card h-100">
+                <div class="card-body">
+                    <div class="stat-icon bg-info-light">
+                        <i class="fas fa-box text-info"></i>
+                    </div>
+                    <h6 class="card-title mb-2">Total Products</h6>
+                    <h3 class="mb-0"><%= totalProducts?.toLocaleString('en-IN') || '0' %></h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sales Chart -->
+    <div class="card dashboard-card mb-4">
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h5 class="card-title mb-0" style="color: black">Sales Statistics</h5>
-                <select class="form-select" id="timeRange" style="width: auto; border-color:black; color:black; max-width: 200px">
-                    <option value="monthly">Monthly</option>
-                    <option value="weekly">Weekly</option>
-                    <option value="yearly">Yearly</option>
-                </select>
+                <h5 class="card-title">Sales Overview</h5>
+                <div class="filter-container d-flex gap-3">
+                    <select id="chartFilter" class="form-select">
+                        <option value="yearly">Yearly</option>
+                        <option value="monthly" selected>Monthly</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="daily">Daily</option>
+                    </select>
+                    <select id="yearFilter" class="form-select">
+                        <!-- Will be populated dynamically -->
+                    </select>
+                </div>
             </div>
-            <div style="height: 400px;">
+            <div class="chart-container">
                 <canvas id="salesChart"></canvas>
             </div>
         </div>
     </div>
 
-    <!-- Best-Selling Products, Categories, Brands Charts -->
+    <!-- Top Products, Categories, and Brands -->
     <div class="row">
-        <div class="col-lg-12">
-            <div class="card" style="border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
+        <!-- Top Products -->
+        <div class="col-lg-4 mb-4">
+            <div class="card dashboard-card h-100">
                 <div class="card-body">
-                    <h5 class="card-title" style="color: black">Best-Selling Products</h5>
-                    <div style="height: 300px;">
-                        <canvas id="bestSellingProductsChart"></canvas>
+                    <h5 class="card-title mb-4">Top Selling Products</h5>
+                    <div class="chart-container mb-3">
+                        <canvas id="topProductsChart"></canvas>
+                    </div>
+                    <div id="topProductsList" class="list-group list-group-flush">
+                        <!-- Will be populated dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Categories -->
+        <div class="col-lg-4 mb-4">
+            <div class="card dashboard-card h-100">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Top Categories</h5>
+                    <div class="chart-container mb-3">
+                        <canvas id="topCategoriesChart"></canvas>
+                    </div>
+                    <div id="topCategoriesList" class="list-group list-group-flush">
+                        <!-- Will be populated dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Brands -->
+        <div class="col-lg-4 mb-4">
+            <div class="card dashboard-card h-100">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">
+                        <i class="fas fa-trademark me-2"></i>Top Brands
+                    </h5>
+                    <div class="chart-container mb-3">
+                        <canvas id="topBrandsChart"></canvas>
+                    </div>
+                    <div id="topBrandsList" class="list-group list-group-flush">
+                        <!-- Will be populated dynamically -->
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-lg-6">
-            <div class="card" style="border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
-                <div class="card-body">
-                    <h5 class="card-title" style="color:black">Best-Selling Categories</h5>
-                    <div style="height: 300px;">
-                        <canvas id="bestSellingCategoriesChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-6">
-            <div class="card" style="border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
-                <div class="card-body">
-                    <h5 class="card-title" style="color:black">Best-Selling Brands</h5>
-                    <div style="height: 300px;">
-                        <canvas id="bestSellingBrandsChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-<!-- Scripts -->
-<script src="/js/vendors/jquery-3.6.0.min.js"></script>
-<script src="/js/vendors/bootstrap.bundle.min.js"></script>
-<script src="/js/vendors/select2.min.js"></script>
-<script src="/js/vendors/chart.js"></script>
-<script src="/js/main.js"></script>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-    const orders = <%- JSON.stringify(orders) %>;
-    const bestSellingProducts = <%- JSON.stringify(bestSellingProducts) %>;
-    const bestSellingCategories = <%- JSON.stringify(bestSellingCategories) %>;
-    const bestSellingBrands = <%- JSON.stringify(bestSellingBrands) %>;
-    const weeklyData = <%- JSON.stringify(weekly) %>;
-    const monthlyData = <%- JSON.stringify(monthly) %>;
-    const yearlyData = <%- JSON.stringify(yearly) %>;
+let salesChart, topProductsChart, topCategoriesChart, topBrandsChart;
 
-    document.addEventListener('DOMContentLoaded', function() {
-        initializeSalesChart('monthly');
-        initializeBestSellingProductsChart();
-        initializeBestSellingCategoriesChart();
-        initializeBestSellingBrandsChart();
-
-        document.getElementById('timeRange').addEventListener('change', function(e) {
-            initializeSalesChart(e.target.value);
-        });
-    });
-
- // Example for Sales Chart
- function initializeSalesChart(timeRange) {
-    const ctx = document.getElementById('salesChart').getContext('2d');
-    let data, labels;
-
-    switch (timeRange) {
-        case 'weekly':
-            data = weeklyData.data;
-            labels = weeklyData.labels;
-            break;
-        case 'yearly':
-            data = yearlyData.data;
-            labels = yearlyData.labels;
-            break;
-        default:
-            data = monthlyData.data;
-            labels = monthlyData.labels;
-    }
-
-    if (window.salesChart instanceof Chart) {
-        window.salesChart.destroy();
-    }
-
-    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-    gradient.addColorStop(0, 'rgba(75, 192, 192, 0.4)');
-    gradient.addColorStop(1, 'rgba(75, 192, 192, 0)');
-
-    window.salesChart = new Chart(ctx, {
-        type: 'line', // Changed to 'line'
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Sales Amount',
-                data: data,
-                fill: true,
-                borderColor: '#4BC0C0',
-                backgroundColor: gradient,
-                tension: 0.4 // Added for smooth curves
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                }
+// Initialize all charts
+function initializeCharts() {
+    const chartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: true,
+                position: 'bottom'
             },
-            scales: {
-                x: {
-                    grid: {
-                        drawBorder: false,
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        let label = context.label || '';
+                        if (label) {
+                            label += ': ';
+                        }
+                        label += '₹' + context.raw.toLocaleString('en-IN');
+                        return label;
+                    }
+                }
+            }
+        }
+    };
+
+    // Initialize chart data
+    const chartData = {
+        products: <%- JSON.stringify(topProducts || []) %>,
+        categories: <%- JSON.stringify(topCategories || []) %>,
+        brands: <%- JSON.stringify(topBrands || []) %>
+    };
+
+    console.log('Chart Data:', chartData);
+
+    const colors = [
+        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+        '#FF9F40', '#FF6B81', '#45AAF2', '#2ED573', '#FFA502'
+    ];
+
+    // Top Brands Chart
+    const brandsCtx = document.getElementById('topBrandsChart');
+    if (brandsCtx && chartData.brands && chartData.brands.length > 0) {
+        topBrandsChart = new Chart(brandsCtx, {
+            type: 'doughnut',
+            data: {
+                labels: chartData.brands.map(item => item.name),
+                datasets: [{
+                    data: chartData.brands.map(item => item.revenue),
+                    backgroundColor: colors.slice(0, chartData.brands.length)
+                }]
+            },
+            options: {
+                ...chartOptions,
+                plugins: {
+                    ...chartOptions.plugins,
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const brand = chartData.brands[context.dataIndex];
+                                return [
+                                    `${brand.name}: ₹${brand.revenue.toLocaleString('en-IN')}`,
+                                    `Orders: ${brand.totalOrderCount}`,
+                                    `Products: ${brand.uniqueProductCount}`
+                                ];
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Update brand list
+        updateTopList('topBrandsList', chartData.brands);
+    } else if (brandsCtx) {
+        brandsCtx.parentElement.innerHTML = '<div class="text-center text-muted">No data available</div>';
+    }
+
+    // Initialize other charts...
+    // Sales Chart
+    const salesCtx = document.getElementById('salesChart');
+    if (salesCtx) {
+        salesChart = new Chart(salesCtx, {
+            type: 'line',
+            data: {
+                labels: <%- JSON.stringify(initialSalesData.labels) %>,
+                datasets: [{
+                    label: 'Sales',
+                    data: <%- JSON.stringify(initialSalesData.data) %>,
+                    borderColor: '#0C977F',
+                    backgroundColor: 'rgba(12, 151, 127, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                ...chartOptions,
+                plugins: {
+                    ...chartOptions.plugins,
+                    legend: {
                         display: false
                     }
                 },
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        callback: function (value) {
-                            return '₹' + value.toLocaleString('en-IN');
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: value => '₹' + value.toLocaleString('en-IN')
                         }
-                    },
-                    grid: {
-                        drawBorder: false,
-                        color: 'rgba(0, 0, 0, 0.05)'
                     }
                 }
             }
-        }
-    });
-}
-function initializeBestSellingProductsChart() {
-    const ctx = document.getElementById('bestSellingProductsChart').getContext('2d');
-
-    // Destroy any existing chart instance to avoid duplication
-    if (window.bestSellingProductsChart instanceof Chart) {
-        window.bestSellingProductsChart.destroy();
+        });
     }
 
-    // Generate a gradient for the bar chart background
-    const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-    gradient.addColorStop(0, 'rgba(255, 99, 132, 0.6)');
-    gradient.addColorStop(1, 'rgba(255, 99, 132, 0)');
-
-    // Create the chart
-    window.bestSellingProductsChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: bestSellingProducts.map(product => product.productName), // Product names
-            datasets: [{
-                label: 'Units Sold',
-                data: bestSellingProducts.map(product => product.totalSalesCount), // Units sold
-                backgroundColor: gradient,
-                borderColor: '#FF6384',
-                borderWidth: 2,
-                borderRadius: 5, // Rounded corners for bars
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false, // Hide legend for simplicity
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return `${context.raw} Units Sold`;
-                        }
-                    }
-                }
+    // Top Products Chart
+    const productsCtx = document.getElementById('topProductsChart');
+    if (productsCtx && chartData.products && chartData.products.length > 0) {
+        topProductsChart = new Chart(productsCtx, {
+            type: 'doughnut',
+            data: {
+                labels: chartData.products.map(item => item.name),
+                datasets: [{
+                    data: chartData.products.map(item => item.revenue),
+                    backgroundColor: colors.slice(0, chartData.products.length)
+                }]
             },
-            scales: {
-                x: {
-                    grid: {
-                        drawBorder: false,
-                        display: false // Remove grid lines for x-axis
-                    },
-                    ticks: {
-                        autoSkip: false, // Display all labels
-                        maxRotation: 45, // Rotate labels if too long
-                        minRotation: 0
-                    }
-                },
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        callback: function(value) {
-                            return value + ' Units'; // Format y-axis values
-                        }
-                    },
-                    grid: {
-                        color: 'rgba(0, 0, 0, 0.1)',
-                        drawBorder: false,
-                    }
-                }
-            }
-        }
-    });
-}
-function initializeBestSellingCategoriesChart() {
-    const ctx = document.getElementById('bestSellingCategoriesChart').getContext('2d');
-
-    // Destroy any existing chart instance to avoid duplication
-    if (window.bestSellingCategoriesChart instanceof Chart) {
-        window.bestSellingCategoriesChart.destroy();
+            options: chartOptions
+        });
+        updateTopList('topProductsList', chartData.products);
+    } else if (productsCtx) {
+        productsCtx.parentElement.innerHTML = '<div class="text-center text-muted">No data available</div>';
     }
 
-    // Generate a gradient for the horizontal bar chart
-    const gradient = ctx.createLinearGradient(0, 0, 300, 0);
-    gradient.addColorStop(0, 'rgba(54, 162, 235, 0.6)');
-    gradient.addColorStop(1, 'rgba(54, 162, 235, 0)');
-
-    // Create the chart
-    window.bestSellingCategoriesChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: bestSellingCategories.map(category => category.name), // Category names
-            datasets: [{
-                label: 'Total Sales',
-                data: bestSellingCategories.map(category => category.totalQuantity), // Sales count
-                backgroundColor: gradient,
-                borderColor: '#36A2EB',
-                borderWidth: 2,
-                borderRadius: 5, // Rounded corners for bars
-            }]
-        },
-        options: {
-            indexAxis: 'y', // Horizontal bar chart
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false, // Hide legend for simplicity
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return `${context.raw} Units Sold`;
-                        }
-                    }
-                }
+    // Top Categories Chart
+    const categoriesCtx = document.getElementById('topCategoriesChart');
+    if (categoriesCtx && chartData.categories && chartData.categories.length > 0) {
+        topCategoriesChart = new Chart(categoriesCtx, {
+            type: 'doughnut',
+            data: {
+                labels: chartData.categories.map(item => item.name),
+                datasets: [{
+                    data: chartData.categories.map(item => item.revenue),
+                    backgroundColor: colors.slice(0, chartData.categories.length)
+                }]
             },
-            scales: {
-                x: {
-                    beginAtZero: true,
-                    ticks: {
-                        callback: function(value) {
-                            return value + ' Units'; // Format x-axis values
-                        }
-                    },
-                    grid: {
-                        color: 'rgba(0, 0, 0, 0.1)',
-                        drawBorder: false,
-                    }
-                },
-                y: {
-                    grid: {
-                        drawBorder: false,
-                        display: false // Remove grid lines for y-axis
-                    },
-                    ticks: {
-                        autoSkip: false, // Show all category labels
-                    }
-                }
-            }
-        }
-    });
+            options: chartOptions
+        });
+        updateTopList('topCategoriesList', chartData.categories);
+    } else if (categoriesCtx) {
+        categoriesCtx.parentElement.innerHTML = '<div class="text-center text-muted">No data available</div>';
+    }
 }
-function initializeBestSellingBrandsChart() {
-    const ctx = document.getElementById('bestSellingBrandsChart').getContext('2d');
 
-    // Check if data exists and is valid
-    if (!Array.isArray(bestSellingBrands) || bestSellingBrands.length === 0) {
-        console.error('No brand data available for the chart.');
+// Update top items list
+function updateTopList(listId, data) {
+    const list = document.getElementById(listId);
+    if (!list || !data || data.length === 0) {
+        if (list) {
+            list.innerHTML = '<div class="text-center text-muted">No data available</div>';
+        }
         return;
     }
 
-    // Destroy any existing chart instance to avoid duplication
-    if (window.bestSellingBrandsChart instanceof Chart) {
-        window.bestSellingBrandsChart.destroy();
+    if (listId === 'topBrandsList') {
+        list.innerHTML = data.map((item, index) => `
+            <div class="list-group-item">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div>
+                        <span class="badge bg-primary rounded-pill me-2">#${index + 1}</span>
+                        <strong>${item.name || 'Unknown'}</strong>
+                    </div>
+                    <div class="text-end">
+                        <div>₹${(item.revenue || 0).toLocaleString('en-IN')}</div>
+                    </div>
+                </div>
+                <div class="row g-2 small text-muted">
+                    <div class="col-6">
+                        <i class="fas fa-box me-1"></i> Products: ${item.uniqueProductCount || 0}
+                    </div>
+                    <div class="col-6 text-end">
+                        <i class="fas fa-shopping-cart me-1"></i> Orders: ${item.totalOrderCount || 0}
+                    </div>
+                    <div class="col-6">
+                        <i class="fas fa-chart-line me-1"></i> Avg Order: ₹${(item.averageOrderValue || 0).toLocaleString('en-IN')}
+                    </div>
+                    <div class="col-6 text-end">
+                        <i class="fas fa-tag me-1"></i> Avg/Product: ₹${(item.averageRevenuePerProduct || 0).toLocaleString('en-IN')}
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    } else {
+        list.innerHTML = data.map((item, index) => `
+            <div class="list-group-item">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="badge bg-primary rounded-pill me-2">#${index + 1}</span>
+                        <strong>${item.name || 'Unknown'}</strong>
+                    </div>
+                    <div class="text-end">
+                        <div class="small text-muted">Sales: ${item.count || 0}</div>
+                        <div>₹${(item.revenue || 0).toLocaleString('en-IN')}</div>
+                    </div>
+                </div>
+            </div>
+        `).join('');
     }
-
-    // Create the chart
-    window.bestSellingBrandsChart = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: bestSellingBrands.map(brand => brand.brandName), // Ensure 'brandName' matches your data property
-            datasets: [{
-                data: bestSellingBrands.map(brand => brand.totalQuantity), // Ensure 'totalQuantity' matches your data property
-                backgroundColor: [
-                    '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
-                    '#FF9F40', '#FF6B81', '#45AAF2', '#2ED573', '#FFA502'
-                ],
-                hoverOffset: 4
-            }]
-        },
-        options: {
-            plugins: {
-                legend: {
-                    position: 'right',
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return `${context.label}: ${context.raw} Units`;
-                        }
-                    }
-                }
-            },
-            responsive: true,
-            maintainAspectRatio: false
-        }
-    });
 }
 
+// Update charts with new data
+async function updateCharts() {
+    const chartFilter = document.getElementById('chartFilter').value;
+    const yearFilter = document.getElementById('yearFilter').value;
+
+    try {
+        const response = await fetch(`/admin/dashboard/sales-data?filter=${chartFilter}&year=${yearFilter}`);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        
+        if (salesChart && data.labels && data.data) {
+            salesChart.data.labels = data.labels;
+            salesChart.data.datasets[0].data = data.data;
+            salesChart.update();
+        }
+    } catch (error) {
+        console.error('Error updating charts:', error);
+    }
+}
+
+// Initialize year filter
+function initializeYearFilter() {
+    const yearFilter = document.getElementById('yearFilter');
+    if (!yearFilter) return;
+
+    const currentYear = new Date().getFullYear();
+    for (let year = currentYear; year >= currentYear - 4; year--) {
+        const option = document.createElement('option');
+        option.value = year;
+        option.textContent = year;
+        yearFilter.appendChild(option);
+    }
+}
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', () => {
+    initializeCharts();
+    initializeYearFilter();
+
+    const chartFilter = document.getElementById('chartFilter');
+    const yearFilter = document.getElementById('yearFilter');
+
+    if (chartFilter) {
+        chartFilter.addEventListener('change', updateCharts);
+    }
+    if (yearFilter) {
+        yearFilter.addEventListener('change', updateCharts);
+    }
+});
 </script>
 
-<%- include("../../views/partials/admin/footer") %>     
+<%- include("../partials/admin/footer") %>

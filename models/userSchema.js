@@ -28,6 +28,10 @@ const userSchema = new Schema({
     type: String,
     required: false,
   },
+  profileImage: {
+    type: String,
+    default: null
+  },
   isBlocked: {
     type: Boolean,
     default: false,
@@ -99,4 +103,3 @@ const userSchema = new Schema({
 
 const User = mongoose.model("User", userSchema);
 module.exports = User;
-

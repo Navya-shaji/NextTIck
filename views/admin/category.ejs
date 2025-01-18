@@ -148,7 +148,6 @@
     const name = document.getElementsByName('name')[0].value;
     const description = document.getElementById('descriptionId').value;
 
-    console.log('About to send fetch request');
 
     return fetch('/admin/addCategory', {
         method: 'post',
@@ -158,12 +157,9 @@
         body: JSON.stringify({ name, description })
     })
     .then(response => {
-        console.log('Fetch response received');
         
         if (!response.ok) {
-            console.log('!response.ok worked');
             return response.json().then(err => {
-                console.log('Parsing error response');
                 throw new Error(err.error);
             });
         }
@@ -171,7 +167,6 @@
         return response.json();
     })
     .then(data => {
-        console.log('Category added successfully');
 
         Swal.fire({
             icon: 'success',
@@ -184,7 +179,6 @@
         });
     })
     .catch(error => {
-        console.log('Error occurred:', error.message);
 
         if (error.message === 'Category already exists') {
             Swal.fire({
@@ -325,7 +319,6 @@ if (confirm.isConfirmed) {
 //validation...............................................................................
 
     function validateForm() {
-        console.log('1')
         clearErrorMessages();
         const name = document.getElementsByName('name')[0].value.trim();
         const description = document.getElementById('descriptionId').value.trim();
@@ -346,14 +339,12 @@ if (confirm.isConfirmed) {
     }
 
     function displayErrorMessage(elementId, message) {
-        console.log('displayErrorMessag');
         var errorElement = document.getElementById(elementId); 
         errorElement.innerText = message;
         errorElement.style.display = 'block';
     }
 
     function clearErrorMessages() {
-        console.log('clearErrorMessages');
         const errorElements = document.querySelectorAll('.error-message'); 
         errorElements.forEach((element) => {
             element.innerText = '';

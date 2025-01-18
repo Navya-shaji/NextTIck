@@ -592,7 +592,6 @@ body, h2, p, span {
     })
     .then(response => {
      
-      console.log(response)
         if (!response.ok) {
             return response.json().then(data => {
                 throw new Error(data.message || 'Failed to add product to cart');
@@ -751,7 +750,6 @@ $.ajax({
 }
 
 function addToCart(productId) {
-console.log('Add to cart:', productId);
 }
 
 document.getElementById('sort').addEventListener('change', function() {

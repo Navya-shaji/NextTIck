@@ -47,69 +47,85 @@ const getOrderDetails = async (req, res) => {
 };
 
 
-
 //for cancelling orders.......................................
 const cancelOrder = async (req, res) => {
     try {
-        const { orderId } = req.body;
-        console.log("cancelling order");
+        const { orderId, cancellationReason } = req.body;
         
-        // First find the order
-        const order = await Order.findById(orderId);
-        
-        if (!order || order.status !== 'Pending') {
-            return res.status(400).json({ success: false, message: 'Order cannot be cancelled' });
+        if (!orderId || !cancellationReason) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Order ID and cancellation reason are required' 
+            });
         }
 
-        // Update order status
+        // Find the order
+        const order = await Order.findById(orderId);
+        
+        if (!order) {
+            return res.status(404).json({ 
+                success: false, 
+                message: 'Order not found' 
+            });
+        }
+
+        if (order.status !== 'Pending') {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Only pending orders can be cancelled' 
+            });
+        }
+
+        // Update order status and reason
         order.status = 'Cancelled';
+        order.cancellationReason = cancellationReason;
+        
+        // Save the order
         await order.save();
 
-        console.log('Order structure:', JSON.stringify(order, null, 2));
-
-       
-        const orderItems = order.products || order.items || order.orderItems;
-        
-        if (Array.isArray(orderItems)) {
-            for (const item of orderItems) {
+        // Restore product stock for each item in the order
+        if (order.orderItems && Array.isArray(order.orderItems)) {
+            for (const item of order.orderItems) {
                 try {
-                    const productId = item.product?.toString() || item.productId?.toString() || item.product_id?.toString();
-                    if (productId) {
-                        const product = await Product.findById(productId);
-                        if (product) {
-                            const oldQuantity = product.quantity;
-                            product.quantity = oldQuantity + item.quantity;
-                            await product.save();
-                            console.log(`Product ${product._id}: Quantity updated from ${oldQuantity} to ${product.quantity}`);
-                        }
+                    const product = await Product.findById(item.product);
+                    if (product) {
+                        product.quantity += item.quantity;
+                        await product.save();
                     }
                 } catch (stockError) {
-                    console.error('Error updating product quantity:', stockError);
-                    return res.status(500).json({ success: false, message: 'Order cancelled but stock update failed' });
+                    console.error('Error updating product stock:', stockError);
                 }
             }
         }
 
         // Handle refund if payment was completed
         if (order.paymentStatus === 'Completed') {
-            const userId = order.userId;
-            const amount = order.finalAmount;
-            
             try {
-                console.log("refunding");
-                await addRefundToWallet(userId, amount, orderId);
+                await addRefundToWallet(order.userId, order.finalAmount, orderId);
+                return res.status(200).json({ 
+                    success: true, 
+                    message: 'Order cancelled successfully and amount refunded to wallet' 
+                });
             } catch (refundError) {
                 console.error('Error processing refund:', refundError);
-                return res.status(500).json({ success: false, message: 'Order cancelled but refund failed' });
+                return res.status(200).json({ 
+                    success: true, 
+                    message: 'Order cancelled successfully but refund failed. Our team will process it manually.' 
+                });
             }
-            
-            return res.status(200).json({ success: true, message: 'Order cancelled successfully, amount refunded to wallet' });
         }
 
-        res.status(200).json({ success: true, message: 'Order cancelled successfully (no payment was made, no refund issued)' });
+        return res.status(200).json({ 
+            success: true, 
+            message: 'Order cancelled successfully' 
+        });
+
     } catch (error) {
         console.error('Error cancelling order:', error);
-        res.status(500).json({ success: false, message: 'Failed to cancel order' });
+        return res.status(500).json({ 
+            success: false, 
+            message: 'Failed to cancel order. Please try again.' 
+        });
     }
 };//Refund adding...................................
 const addRefundToWallet = async (userId, amount, orderId) => {
@@ -187,7 +203,6 @@ const viewOrderDetails = async (req, res) => {
         if (!order) {
             return res.status(404).send('Order not found');
         }
-        console.log(order)
         res.render('order-details-full', { order, address });
     } catch (error) {
         console.error('Error fetching order details:', error);
@@ -396,6 +411,148 @@ const processReturn = async (req, res) => {
     }
 };
 
+// New controller methods for handling product-specific order actions
+
+const getOrderProducts = async (req, res) => {
+    try {
+        const orderId = req.params.orderId;
+        const order = await Order.findById(orderId)
+            .populate('products.product');
+
+        if (!order) {
+            return res.status(404).json({
+                success: false,
+                message: 'Order not found'
+            });
+        }
+
+        // Format products for frontend
+        const products = order.products.map(item => ({
+            _id: item.product._id,
+            name: item.product.name,
+            price: item.price,
+            quantity: item.quantity,
+            image: item.product.images[0] // Assuming first image is main image
+        }));
+
+        res.json({
+            success: true,
+            products
+        });
+    } catch (error) {
+        console.error('Error fetching order products:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to fetch order products'
+        });
+    }
+};
+
+const cancelOrderProducts = async (req, res) => {
+    try {
+        const orderId = req.params.orderId;
+        const { products } = req.body;
+
+        if (!products || products.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'No products selected for cancellation'
+            });
+        }
+
+        const order = await Order.findById(orderId);
+        if (!order) {
+            return res.status(404).json({
+                success: false,
+                message: 'Order not found'
+            });
+        }
+
+        // Update order status for selected products
+        products.forEach(({ productId, reason }) => {
+            const orderProduct = order.products.find(p => p.product.toString() === productId);
+            if (orderProduct) {
+                orderProduct.status = 'Cancelled';
+                orderProduct.cancellationReason = reason;
+            }
+        });
+
+        // Check if all products are cancelled
+        const allCancelled = order.products.every(p => p.status === 'Cancelled');
+        if (allCancelled) {
+            order.status = 'Cancelled';
+        }
+
+        await order.save();
+
+        // If payment was made, initiate refund process
+        if (order.paymentStatus === 'Paid') {
+            // Add refund logic here
+            // You might want to create a wallet transaction or initiate payment gateway refund
+        }
+
+        res.json({
+            success: true,
+            message: 'Products cancelled successfully'
+        });
+    } catch (error) {
+        console.error('Error cancelling products:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to cancel products'
+        });
+    }
+};
+
+const returnOrderProducts = async (req, res) => {
+    try {
+        const orderId = req.params.orderId;
+        const { products } = req.body;
+
+        if (!products || products.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'No products selected for return'
+            });
+        }
+
+        const order = await Order.findById(orderId);
+        if (!order) {
+            return res.status(404).json({
+                success: false,
+                message: 'Order not found'
+            });
+        }
+
+        // Update order status for selected products
+        products.forEach(({ productId, reason }) => {
+            const orderProduct = order.products.find(p => p.product.toString() === productId);
+            if (orderProduct) {
+                orderProduct.status = 'Return Requested';
+                orderProduct.returnReason = reason;
+            }
+        });
+
+        // Check if all products are returned
+        const allReturned = order.products.every(p => p.status === 'Return Requested');
+        if (allReturned) {
+            order.status = 'Return Requested';
+        }
+
+        await order.save();
+
+        res.json({
+            success: true,
+            message: 'Return request submitted successfully'
+        });
+    } catch (error) {
+        console.error('Error processing return:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to process return request'
+        });
+    }
+};
 
 module.exports = {
     getOrderHistory,
@@ -407,6 +564,8 @@ module.exports = {
     updateOrderStatus,
     showReturnReasonPage,
     submitReturnReason,
-    processReturn
-
+    processReturn,
+    getOrderProducts,
+    cancelOrderProducts,
+    returnOrderProducts
 };

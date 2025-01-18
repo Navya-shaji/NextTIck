@@ -20,7 +20,6 @@ const loadSignup =async(req,res)=>{
         return res.render("signup",{message:error})
 
         } catch (error) {
-        console.log("Signup Page Not Loading",error);
         res.status(500).send("Server Error")
         
     }

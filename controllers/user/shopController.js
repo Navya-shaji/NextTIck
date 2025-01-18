@@ -3,7 +3,6 @@ const Category = require("../../models/categorySchema");
 const Brand = require("../../models/brandSchema");
 const User = require("../../models/userSchema");
 
-
 //for loading the shopping page.........................................................................................................
 
 const loadshoppingPage = async (req, res) => {
@@ -20,9 +19,8 @@ const loadshoppingPage = async (req, res) => {
       isBlocked: false,
       category: { $in: categoryIds },
     };
-    
-   
-    let sort = { createdOn: -1 };
+
+    let sort = { createdOn: -1 }; 
 
     const sortOption = req.query.sort;
     if (sortOption) {
@@ -31,23 +29,15 @@ const loadshoppingPage = async (req, res) => {
           sort = { quantity: -1 }; 
           break;
         case 'price_asc':
-          sort = {salesPrice: 1 };
+          sort = { regularPrice: 1 }; 
           break;
         case 'price_desc':
-          sort = { salesPrice: -1 };
+          sort = { regularPrice: -1 }; 
           break;
         case 'rating':
           sort = { averageRating: -1 };
           break;
         case 'newest':
-          sort = { createdOn: -1 };
-          break;
-        case 'name_asc':
-          sort = { productName: 1 };
-          break;
-        case 'name_desc':
-          sort = { productName: -1 };
-          break;
         default:
           sort = { createdOn: -1 };
       }
@@ -55,11 +45,9 @@ const loadshoppingPage = async (req, res) => {
 
     if (req.query.category) {
       query.category = req.query.category;
-      console.log("Category query:", query.category);
     }
     if (req.query.brand) {
       query.brand = req.query.brand;
-      console.log("Brand query:", query.brand);
     }
     if (req.query.minPrice) {
       query.regularPrice = query.regularPrice || {};
@@ -76,8 +64,12 @@ const loadshoppingPage = async (req, res) => {
     if (req.query.query) {
       query.$or = [
         { productName: { $regex: req.query.query, $options: "i" } },
+        { 'category.name': { $regex: req.query.query, $options: "i" } }
       ];
     }
+
+    const totalProducts = await Product.countDocuments(query);
+    const totalPages = Math.ceil(totalProducts / limit);
 
     const products = await Product.find(query)
       .collation({ locale: "en", strength: 2 })
@@ -87,11 +79,7 @@ const loadshoppingPage = async (req, res) => {
       .populate('category')
       .populate('brand');
 
-    const totalProducts = await Product.countDocuments(query);
-    const totalPages = Math.ceil(totalProducts / limit);
-
     const brands = await Brand.find({ isBlocked: false });
-    console.log("Fetched brands:", brands);
     
     res.render("shop", {
       user: userData,
@@ -104,8 +92,7 @@ const loadshoppingPage = async (req, res) => {
       query: req.query,
     });
   } catch (error) {
-    console.error("Error loading shopping page:", error);
-    res.status(500).render("error", { message: "An error occurred while loading the shopping page." });
+    res.status(500).send("Internal Server Error");
   }
 };
 

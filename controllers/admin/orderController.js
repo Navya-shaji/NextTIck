@@ -33,7 +33,6 @@ const listOrders = async (req, res) => {
             
             offerDetails: order.offerApplied ? order.offerDetails : 'No offer applied.'
         }));
-        console.log(processedOrders);
         
 
         if (req.headers.accept === 'application/json') {
@@ -56,58 +55,8 @@ const listOrders = async (req, res) => {
     }
 };
 
-//updating the order status................................................................................................................
-
-// const updateOrderStatus = async (req, res) => {
-//     try {
-//         const { orderId, status } = req.body;
-
-//         const order = await Order.findById(orderId);
-//         if (!order) {
-//             return res.status(404).json({
-//                 success: false,
-//                 message: 'Order not found'
-//             });
-//         }
-
-//         if (order.status === 'Delivered' && order.returnedByUser) {
-//             return res.status(400).json({
-//                 success: false,
-//                 message: 'Cannot change status for an order that is delivered and cancelled by the user'
-//             });
-//         }
-
-//         const validStatuses = ["Pending", "Processing", "Shipped", "Delivered", "Cancelled", "Return Request", "Returned"];
-//         if (!validStatuses.includes(status)) {
-//             return res.status(400).json({
-//                 success: false,
-//                 message: 'Invalid status'
-//             });
-//         }
-//         if(status === "Returned"){
-            
-//         }
-// console.log("order status",status,'--------------------------------------------------------------------');
-//         order.status = status;
-//         await order.save();
-
-//         res.json({
-//             success: true,
-//             message: 'Order status updated successfully'
-//         });
-//     } catch (error) {
-//         console.error('Error updating order status:', error);
-//         res.status(500).json({
-//             success: false,
-//             message: 'Failed to update order status'
-//         });
-//     }
-// };
-
-
 //Refund adding...................................
 const addRefundToWallet = async (userId, amount, orderId) => {
-    console.log("adding refund", userId, amount, orderId)
     try {
         let wallet = await Wallet.findOne({ userId });
 
@@ -176,7 +125,6 @@ const updateOrderStatus = async (req, res) => {
  
         // Update product quantities
         const orderItems = order.orderItems;
-        console.log("order items", orderItems);
         if (Array.isArray(orderItems)) {
             for (const item of orderItems) {
                 try {
@@ -185,7 +133,6 @@ const updateOrderStatus = async (req, res) => {
                         const oldQuantity = product.quantity;
                         product.quantity = oldQuantity + item.quantity;
                         await product.save();
-                        console.log(`Product ${product._id}: Quantity updated from ${oldQuantity} to ${product.quantity}`);
                     }
                 } catch (error) {
                     console.error('Error updating product quantity:', error);
@@ -199,7 +146,6 @@ const updateOrderStatus = async (req, res) => {
                 const amount = order.finalAmount;
 
                 try {
-                    console.log("Processing refund...");
                     await addRefundToWallet(userId, amount, orderId);
                 } catch (refundError) {
                     console.error('Error processing refund:', refundError);
@@ -216,7 +162,6 @@ const updateOrderStatus = async (req, res) => {
             }
         }
 
-        console.log("Order status:", status, '--------------------------------------------------------------------');
         order.status = status;
         await order.save();
 
@@ -294,7 +239,6 @@ const getAdminOrderDetails = async (req, res) => {
 };
 
 const processReturn = async (req, res) => {
-    console.log("returning order", req.body);
     const { orderId, returnReason } = req.body;  
 
     try {
@@ -311,7 +255,6 @@ const processReturn = async (req, res) => {
         
         // Update product quantities
         const orderItems = order.orderItems;
-        console.log("order items", orderItems);
         if (Array.isArray(orderItems)) {
             for (const item of orderItems) {
                 try {
@@ -320,7 +263,6 @@ const processReturn = async (req, res) => {
                         const oldQuantity = product.quantity;
                         product.quantity = oldQuantity + item.quantity;
                         await product.save();
-                        console.log(`Product ${product._id}: Quantity updated from ${oldQuantity} to ${product.quantity}`);
                     }
                 } catch (error) {
                     console.error('Error updating product quantity:', error);

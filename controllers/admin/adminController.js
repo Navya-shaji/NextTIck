@@ -508,8 +508,8 @@ const loadSalesReport = async (req, res) => {
             .sort({ createdOn: -1 })
             .skip(skip)
             .limit(limit);
-
-        const totals = calculateTotals(orders);
+        const allOrders = await Order.find(baseFilter)
+        const totals = calculateTotals(allOrders);
 
         const ordersByStatus = orders.reduce((acc, order) => {
             acc[order.status] = (acc[order.status] || 0) + 1;

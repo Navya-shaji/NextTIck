@@ -322,7 +322,6 @@ const refundToWallet = async (req, res) => {
       user.walletBalance = wallet.balance;
       await user.save();
     } else {
-      // console.log(`User not found for ID: ${userId}`);
     }
       res.json({ success: true, message: `₹${amount} has been added to your wallet.`,      balance: wallet.balance
       });

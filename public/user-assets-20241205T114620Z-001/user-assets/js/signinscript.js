@@ -10,11 +10,9 @@ const signform = document.getElementById('signForm')
 
 
 function emailvalidateChecking(e){
-  console.log("email validateChecking");
   const emailval=emailid.value
   const emailpattern = /^([a-zA-Z0-9._-]+)@([a-zA-Z.-]+)\.([a-zA-Z]{2,4})$/;
   if(!emailpattern.test(emailval)){
-    console.log("no format");
     error2.style.display="block"
     error2.innerHTML="Invalid Format"
   }else{

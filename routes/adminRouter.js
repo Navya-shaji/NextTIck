@@ -7,6 +7,7 @@ const brandController=require("../controllers/admin/brandControllers")
 const productController=require("../controllers/admin/productController")
 const orderController = require('../controllers/admin/orderController')
 const couponController = require("../controllers/admin/couponController")
+const dashboardController = require('../controllers/admin/dashboardController');
 const {userAuth,adminAuth}=require("../middlewares/auth")
 const multer=require("multer");
 const storage=require("../helpers/multer");
@@ -20,11 +21,17 @@ router.get("/pageerror",adminController.pageerror)
 //login Management...................
 router.get("/login",adminController.loadLogin)
 router.post("/login",adminController.login)
-router.get("/",adminAuth,adminController.loadDashboard)
+router.get("/",adminAuth,dashboardController.loadDashboard)
 router.get("/logout",adminController.logout);
 
+//Dashboard Management.......................
+router.get("/dashboard", adminAuth, dashboardController.loadDashboard)
+router.get("/dashboard/sales-data", adminAuth, dashboardController.getSalesData)
+router.get("/dashboard/top-products", adminAuth, dashboardController.getTopProducts)
+router.get("/dashboard/top-categories", adminAuth, dashboardController.getTopCategories)
+router.get("/dashboard/top-brands", adminAuth, dashboardController.getTopBrands)
+
 //Customer Management.......................
-router.get("/dashboard", adminAuth, adminController.loadDashboard)
 router.get("/users", adminAuth, customerController.customerInfo);
 router.get("/block/:id", adminAuth, customerController.customerBlocked);
 router.get("/unblock/:id", adminAuth, customerController.customerunBlocked);
@@ -82,7 +89,6 @@ router.delete("/deleteCoupon/:id", adminAuth, couponController.deleteCoupon);
 
 
 //Admin DashBoard & Sales Report................................
-router.get('/dashboard', adminAuth, adminController.loadDashboard);
 router.get('/sales-report', adminAuth, adminController.loadSalesReport);
 router.post('/sales-report/generate', adminAuth, adminController.generateSalesReport);
 router.get('/sales-report/download', adminAuth, adminController.downloadSalesReport);

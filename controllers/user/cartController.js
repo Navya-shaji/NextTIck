@@ -39,7 +39,6 @@ const getCart = async (req, res) => {
           (sum, item) => (item.status === "placed" ? sum + item.totalPrice : sum),
           0
       );
-      console.log("cartItems", cartItems);
 
       res.render("cart", {
           cart: cartItems,
@@ -47,7 +46,6 @@ const getCart = async (req, res) => {
           totalAmount,
           user: user,
       });
-      console.log("totalAmount", totalAmount);
   } catch (error) {
       console.error("Get cart error:", error);
       res.status(500).render("error", {
@@ -120,7 +118,6 @@ const updateQuantity = async (req, res) => {
         return total;
     }, 0);
     
-console.log("cartTotal", cartTotal);
       await cart.save();
 
 
@@ -154,7 +151,6 @@ const addToCart = async (req, res) => {
       });
     }
     
-  
     const product = await Product.findById(productId);
     if (!product) {
       return res.status(404).json({
@@ -176,44 +172,40 @@ const addToCart = async (req, res) => {
     }
 
     const existingItem = cart.items.find(
-      (item) => item.productId.toString() === productId
+      (item) => item.productId.toString() === productId && item.status === "placed"
     );
 
     if (existingItem) {
-      const newQuantity = parseInt(existingItem.quantity) + parseInt(quantity);
-
-      if (newQuantity > 5) {
-        return res.status(400).json({
-          success: false,
-          message: "Maximum 5 items allowed per product",
-        });
-      }
-
-      if (newQuantity > product.quantity) {
-        return res.status(400).json({
-          success: false,
-          message: `Only ${product.quantity} items available in stock`,
-        });
-      }
-
-      existingItem.quantity = newQuantity;
-      existingItem.totalPrice = newQuantity * parseFloat(product.salesPrice);
-    } else {
-      if (quantity > product.quantity) {
-        return res.status(400).json({
-          success: false,
-          message: `Only ${product.quantity} items available in stock`,
-        });
-      }
-
-      cart.items.push({
-        productId,
-        quantity,
-        price: product.salesPrice.toString(),
-        totalPrice: quantity * parseFloat(product.salesPrice),
-        status: "placed", 
+      return res.status(200).json({
+        success: true,
+        status: 'already_in_cart',
+        message: "Item is already in your cart"
       });
     }
+
+    // Validate quantity
+    if (quantity > 5) {
+      return res.status(400).json({
+        success: false,
+        message: "Maximum 5 items allowed per product",
+      });
+    }
+
+    if (quantity > product.quantity) {
+      return res.status(400).json({
+        success: false,
+        message: `Only ${product.quantity} items available in stock`,
+      });
+    }
+
+    // Add new item
+    cart.items.push({
+      productId,
+      quantity,
+      price: product.salesPrice.toString(),
+      totalPrice: quantity * parseFloat(product.salesPrice),
+      status: "placed", 
+    });
 
     await cart.save();
 

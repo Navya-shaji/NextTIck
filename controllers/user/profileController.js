@@ -7,7 +7,42 @@ const bcrypt = require("bcrypt");
 const env = require("dotenv").config();
 const session = require("express-session");
 const { securePassword } = require("./userController");
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 
+// Configure multer for profile image uploads...................................................
+const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'profile-images');
+
+// Create upload directory if it doesn't exist
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, uploadDir);
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, 'profile-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const fileFilter = (req, file, cb) => {
+  if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+    return cb(new Error('Only image files are allowed!'), false);
+  }
+  cb(null, true);
+};
+
+const uploadMiddleware = multer({
+  storage: storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024 // 5MB limit
+  },
+  fileFilter: fileFilter
+}).single('profileImage');
 
 function generateOtp() {
     const digits = "1234567890";
@@ -17,7 +52,6 @@ function generateOtp() {
     }
     return otp;
 }
-
 
 const sendVerificationEmail = async (email, otp) => {
     try {
@@ -30,35 +64,30 @@ const sendVerificationEmail = async (email, otp) => {
                 user: process.env.NODEMAILER_EMAIL,
                 pass: process.env.NODEMAILER_PASSWORD,
             }
-        })
+        });
         const mailOptions = {
             from: process.env.NODEMAILER_EMAIL,
             to: email,
-            subject: "Uour OTP for password reset",
-            text: "Your OTP is ${otp}",
-            html: `<b><h4>Your OTP :${otp}</h4><br></b>`
-        }
+            subject: "Your OTP for password reset",
+            text: `Your OTP is ${otp}`,
+            html: `<b><h4>Your OTP: ${otp}</h4><br></b>`
+        };
 
         const info = await transporter.sendMail(mailOptions);
-        console.log("Email sent:", info.messageId);
         return true;
-
     } catch (error) {
         console.error("Error sending email", error);
         return false;
     }
-}
-
-
+};
 
 const getForgotPassPage = async (req, res) => {
     try {
-        res.render("forgot-password")
+        res.render("forgot-password");
     } catch (error) {
-        res.redirect("/pageNotFound")
+        res.redirect("/pageNotFound");
     }
-}
-
+};
 
 const forgotEmailValid = async (req, res) => {
     try {
@@ -66,27 +95,24 @@ const forgotEmailValid = async (req, res) => {
         const findUser = await User.findOne({ email: email });
         if (findUser) {
             const otp = generateOtp();
-            const emailSent = await sendVerificationEmail(email, otp)
+            const emailSent = await sendVerificationEmail(email, otp);
             if (emailSent) {
                 req.session.userOtp = otp;
                 req.session.email = email;
                 res.render("forgotPass-otp");
                 console.log("OTP", otp);
-
             } else {
-                res.json({ success: false, message: "Failed to send OTP .Please try again" })
+                res.json({ success: false, message: "Failed to send OTP. Please try again" });
             }
         } else {
             res.render("forgot-password", {
                 message: "User with this email does not exist"
-            })
+            });
         }
     } catch (error) {
-        res.redirect("/pageNotFound")
+        res.redirect("/pageNotFound");
     }
-}
-
-
+};
 
 const verifyForgotPassOtp = async (req, res) => {
     try {
@@ -94,12 +120,12 @@ const verifyForgotPassOtp = async (req, res) => {
         if (enteredOtp === req.session.userOtp) {
             res.json({ success: true, redirectUrl: "/reset-password" });
         } else {
-            res.json({ success: false, message: "OTP not matching" })
+            res.json({ success: false, message: "OTP not matching" });
         }
     } catch (error) {
-        res.status(500).json({ success: false, message: "An error occured .Please try again" })
+        res.status(500).json({ success: false, message: "An error occurred. Please try again" });
     }
-}
+};
 
 const getResetPassPage = async (req, res) => {
     try {
@@ -155,7 +181,6 @@ const postNewPassword = async (req, res) => {
     }
 };
 
-
 const userProfile = async (req, res) => {
     try {
         const user = req.session.user;
@@ -166,6 +191,7 @@ const userProfile = async (req, res) => {
 
         const page = parseInt(req.query.page) || 1;
         const walletPage = parseInt(req.query.walletPage) || 1;
+        const activeTab = req.query.tab || 'v-pills-profile-tab'; // Default to profile tab
         const itemsPerPage = 10;
 
         // Calculate pagination for orders
@@ -203,7 +229,8 @@ const userProfile = async (req, res) => {
                 totalPages: totalPages,
                 currentWalletPage: walletPage,
                 totalWalletPages: totalWalletPages
-            }
+            },
+            activeTab: activeTab
         });
     } catch (error) {
         console.error("Error fetching user profile:", error.message);
@@ -211,8 +238,158 @@ const userProfile = async (req, res) => {
     }
 };
 
+const updateProfileImage = async (req, res) => {
+  uploadMiddleware(req, res, async function(err) {
+    try {
+      // Handle multer errors
+      if (err instanceof multer.MulterError) {
+        console.error('Multer error:', err);
+        return res.status(400).json({ 
+          success: false, 
+          message: 'File upload error: ' + err.message 
+        });
+      } else if (err) {
+        console.error('Upload error:', err);
+        return res.status(400).json({ 
+          success: false, 
+          message: err.message || 'Error uploading file' 
+        });
+      }
 
-//change email....................................................................
+      // Check if file exists
+      if (!req.file) {
+        return res.status(400).json({ 
+          success: false, 
+          message: 'No file uploaded' 
+        });
+      }
+
+      // Check authentication
+      if (!req.session?.user?._id) {
+        return res.status(401).json({
+          success: false,
+          message: 'User not authenticated'
+        });
+      }
+
+      // Find and update user
+      const user = await User.findById(req.session.user._id);
+      if (!user) {
+        return res.status(404).json({ 
+          success: false, 
+          message: 'User not found' 
+        });
+      }
+
+      // Delete old profile image if it exists and is not the default
+      if (user.profileImage && !user.profileImage.includes('default')) {
+        const oldImagePath = path.join(uploadDir, user.profileImage);
+        try {
+          if (fs.existsSync(oldImagePath)) {
+            fs.unlinkSync(oldImagePath);
+          }
+        } catch (error) {
+          console.error('Error deleting old image:', error);
+        }
+      }
+
+      // Update user profile with new image
+      user.profileImage = req.file.filename;
+      await user.save();
+
+      // Log success and send response
+      console.log('Profile image updated successfully:', {
+        userId: user._id,
+        filename: req.file.filename,
+        filesize: req.file.size,
+        filepath: `/uploads/profile-images/${req.file.filename}`
+      });
+
+      // Update the session user data
+      req.session.user = user;
+
+      res.json({ 
+        success: true, 
+        message: 'Profile image updated successfully',
+        imageUrl: `/uploads/profile-images/${req.file.filename}`
+      });
+
+    } catch (error) {
+      console.error('Server error:', error);
+      res.status(500).json({ 
+        success: false, 
+        message: 'Server error',
+        error: error.message 
+      });
+    }
+  });
+};
+
+const deleteProfileImage = async (req, res) => {
+  try {
+    const userId = req.session.user._id;
+    const user = await User.findById(userId);
+    
+    if (!user) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'User not found' 
+      });
+    }
+
+    // Check if user has a profile image
+    if (!user.profileImage || user.profileImage === 'default-profile.jpg') {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'No profile image to delete' 
+      });
+    }
+
+    // Get the full path to the image
+    const imagePath = path.join(__dirname, '../../public/uploads/profile-images', user.profileImage);
+
+    // Check if file exists before attempting to delete
+    if (fs.existsSync(imagePath)) {
+      try {
+        fs.unlinkSync(imagePath);
+      } catch (error) {
+        console.error('Error deleting file:', error);
+        return res.status(500).json({ 
+          success: false, 
+          message: 'Error deleting image file' 
+        });
+      }
+    }
+
+    // Update user document with default image
+    try {
+      user.profileImage = 'default-profile.jpg';
+      await user.save();
+
+      // Update session
+      req.session.user = user;
+
+      return res.status(200).json({ 
+        success: true, 
+        message: 'Profile image deleted successfully',
+        defaultImage: '/uploads/profile-images/default-profile.jpg'
+      });
+    } catch (error) {
+      console.error('Error updating user:', error);
+      return res.status(500).json({ 
+        success: false, 
+        message: 'Error updating user profile' 
+      });
+    }
+  } catch (error) {
+    console.error('Error in deleteProfileImage:', error);
+    return res.status(500).json({ 
+      success: false, 
+      message: 'Internal server error',
+      error: error.message 
+    });
+  }
+};
 
 const changeEmail = async (req, res) => {
     try {
@@ -221,7 +398,6 @@ const changeEmail = async (req, res) => {
         res.redirect("/pageNotFound")
     }
 }
-
 
 const changeEmailValid = async (req, res) => {
     try {
@@ -250,7 +426,6 @@ const changeEmailValid = async (req, res) => {
         res.redirect("/pageNotFound")
     }
 }
-
 
 const verifyEmailOtp = async (req, res) => {
     try {
@@ -281,9 +456,6 @@ const updateEmail = async (req, res) => {
         res.redirect("/pageNotFound")
     }
 }
-
-//password changing.................................................................
-
 
 const renderChangePasswordPage = async (req, res) => {
     try {
@@ -322,7 +494,6 @@ const changePasswordValid = async (req, res) => {
     }
 };
 
-
 const verifyChangepassOtp = async (req, res) => {
     try {
         const enteredOtp = req.body.otp;
@@ -336,7 +507,6 @@ const verifyChangepassOtp = async (req, res) => {
         res.status(500).json({ success: false, message: "An error occurred. Please try again later" });
     }
 };
-
 
 const resetPassword = async (req, res) => {
     try {
@@ -365,46 +535,64 @@ const resetPassword = async (req, res) => {
 };
 
 const updateProfile = async (req, res) => {
-    try {
-      const { name, phone, email} = req.body;
-  
-      const userId = req.session.user;
-      const user = await User.findById(userId);
-  
-      if (!user) {
-        return res.status(404).json({ success: false, message: 'User not found.' });
-      }
-  
-      if (name) user.name = name;
-      if (phone) user.phone = phone;
-      if (email) user.email = email;
-      await user.save();
+  try {
+    const userId = req.session.user._id;
+    const { name, phone } = req.body;
 
-      req.session.user = {
-        name: user.name,
-        phone: user.phone,
-      };
-  
-      res.json({ success: true, message: 'Profile updated successfully!' });
-
-
-    } catch (error) {
-      console.error('Error updating profile:', error);
-      res.status(500).json({ success: false, message: 'An error occurred while updating the profile.' });
+    // Validate the input
+    if (!name || name.trim().length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Name is required'
+      });
     }
-  };
-  
+
+    // Update user profile
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    // Update user fields
+    user.name = name.trim();
+    if (phone) {
+      user.phone = phone.trim();
+    }
+
+    await user.save();
+
+    // Update session data
+    req.session.user = user;
+
+    res.json({
+      success: true,
+      message: 'Profile updated successfully',
+      user: {
+        name: user.name,
+        phone: user.phone
+      }
+    });
+  } catch (error) {
+    console.error('Profile update error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error updating profile'
+    });
+  }
+};
+
 const getAddressPage = async (req, res) => {
     try {
         const userId = req.session.user._id;
         const addressData = await Address.findOne({ userId: userId });
         return res.render("displayaddress", { userAddress: addressData });
     } catch (error) {
-        console.log("get address page error", error.message);
         res.redirect("/pageNotFound");
     }
 };
-
 
 const addAddress = async (req, res) => {
     try {
@@ -416,13 +604,10 @@ const addAddress = async (req, res) => {
     }
 };
 
-
-
 const postAddAddress = async (req, res) => {
     try {
         const userId = req.session.user._id;
         const { addressType, name, city, landMark, state, pincode, phone, altPhone } = req.body;
-        console.log("address", addressType)
         const userAddress = await Address.findOne({ userId: userId });
         if (!userAddress) {
             const newAddress = new Address({
@@ -437,14 +622,10 @@ const postAddAddress = async (req, res) => {
         return res.status(200).json({ success: true, message: "Address added successfully" });
 
     } catch (error) {
-        console.log("post add address error", error);
         res.status(500).json({ success: false, message: "Internal Server Error" });
 
     }
 };
-
-
-
 
 const editAddress = async (req, res) => {
     try {
@@ -454,19 +635,15 @@ const editAddress = async (req, res) => {
         if (!currAddress) {
             return res.redirect("/pageNotFound");
         }
-        console.log(currAddress)
         const addressData = currAddress.address.find((item) => item._id.toString() === addressId);
         if (!addressData) {
             return res.redirect("/pageNotFound");
         }
         res.render("editAddress", { address: addressData, user: user, id: addressId });
     } catch (error) {
-        console.log("edit page error", error.message);
         res.redirect("/pageNotFound");
     }
 };
-
-
 
 const postEditAddress = async (req, res) => {
     try {
@@ -500,12 +677,9 @@ const postEditAddress = async (req, res) => {
 
         res.status(200).json({ success: true, message: "Address updated successfully" });
     } catch (error) {
-        console.log("edit address error", error.message);
         res.status(500).json({ success: false, message: "Internal Server Error" });
     }
 };
-
-
 
 const deleteAddress = async (req, res) => {
     try {
@@ -521,13 +695,9 @@ const deleteAddress = async (req, res) => {
         );
         return res.redirect("/userProfile");
     } catch (error) {
-        console.log("delete address error", error.message);
         res.redirect("/pageNotFound");
     }
 };
-
-
-//order page........................
 
 const getOrders = async (req, res) => {
     try {
@@ -535,12 +705,9 @@ const getOrders = async (req, res) => {
         const orders = await Order.find({ userId: userId }).sort({ createdAt: -1 });
         res.render("orders", { orders: orders });
     } catch (error) {
-        console.log("get orders error", error.message);
         res.redirect("/pageNotFound");
     }
 };
-
-
 
 const cancelOrder = async (req, res) => {
     try {
@@ -556,7 +723,6 @@ const cancelOrder = async (req, res) => {
         await order.save();
         res.status(200).json({ success: true, message: "Order cancelled successfully" });
     } catch (error) {
-        console.log("cancel order error", error.message);
         res.status(500).json({ success: false, message: "Internal Server Error" });
     }
 };
@@ -583,8 +749,6 @@ const deleteOrder = async (req, res) => {
     }
 };
 
-
-
 const getWalletBalance = async (req, res) => {
     try {
         let wallet = await Wallet.findOne({ user: req.user._id });
@@ -598,7 +762,6 @@ const getWalletBalance = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 };
-
 
 const addMoney = async (req, res) => {
     try {
@@ -627,7 +790,6 @@ const addMoney = async (req, res) => {
     }
 };
 
-
 const getWalletHistory = async (req, res) => {
     try {
         const wallet = await Wallet.findOne({ user: req.user._id });
@@ -640,8 +802,6 @@ const getWalletHistory = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 };
-
-
 
 const refundToWallet = async (req, res) => {
     try {
@@ -670,7 +830,6 @@ const refundToWallet = async (req, res) => {
     }
 };
 
-
 const getWalletForUser = async (userId) => {
     try {
         const wallet = await WalletModel.findOne({ userId });
@@ -681,11 +840,95 @@ const getWalletForUser = async (userId) => {
     }
 };
 
+async function changePasswordModal(req, res) {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const userId = req.session.user_id;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.json({ success: false, message: 'User not found' });
+    }
+
+    const passwordMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!passwordMatch) {
+      return res.json({ success: false, message: 'Current password is incorrect' });
+    }
+
+    // Hash the new password
+    const hashedPassword = await securePassword(newPassword);
+    user.password = hashedPassword;
+    await user.save();
+
+    return res.json({ success: true, message: 'Password changed successfully' });
+  } catch (error) {
+    console.error('Error in changePasswordModal:', error);
+    return res.json({ success: false, message: 'Internal server error' });
+  }
+}
+
+async function changePasswordDirect(req, res) {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const userId = req.session.user._id;
+
+    // Input validation
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: 'Current password and new password are required'
+      });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: 'New password must be at least 6 characters long'
+      });
+    }
+
+    // Find user
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    // Verify current password
+    const passwordMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!passwordMatch) {
+      return res.status(400).json({
+        success: false,
+        message: 'Current password is incorrect'
+      });
+    }
+
+    // Hash new password
+    const hashedPassword = await securePassword(newPassword);
+    
+    // Update password
+    user.password = hashedPassword;
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: 'Password changed successfully'
+    });
+
+  } catch (error) {
+    console.error('Error in changePasswordDirect:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+}
 
 module.exports = {
     getForgotPassPage,
     forgotEmailValid,
-    sendVerificationEmail,
     verifyForgotPassOtp,
     getResetPassPage,
     resendOtp,
@@ -695,10 +938,13 @@ module.exports = {
     changeEmailValid,
     verifyEmailOtp,
     updateEmail,
-    resetPassword,
+    renderChangePasswordPage,
     changePasswordValid,
     verifyChangepassOtp,
+    resetPassword,
     updateProfile,
+    updateProfileImage,
+    deleteProfileImage,
     getAddressPage,
     addAddress,
     postAddAddress,
@@ -707,13 +953,11 @@ module.exports = {
     deleteAddress,
     getOrders,
     cancelOrder,
-    renderChangePasswordPage,
     deleteOrder,
     getWalletBalance,
     addMoney,
     getWalletHistory,
     refundToWallet,
-    getWalletForUser,
-    updateProfile
-
+    changePasswordDirect,
+    sendVerificationEmail
 }
