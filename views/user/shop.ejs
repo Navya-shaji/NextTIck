@@ -3,13 +3,13 @@
   <head>
     <link rel="stylesheet" href="/styles/shop-page.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
   </head>
 
   <div class="main-container">
     <section class="shop-page">
       <div class="shop-topbar">
-        <div class="search-bar">
+        <div class="search-container">
           <form action="/shop" method="GET" class="search-form" id="searchForm">
             <input type="text" name="query" placeholder="Search items..." class="search-input" id="searchInput"
               value="<%= query.query || '' %>" />
@@ -32,7 +32,6 @@
               Categories
               <span class="dropdown-arrow">⬇</span>
             </div>
-
 
             <div id="categoryDropdown" class="category-brand-container dropdown-content">
               <ul>
@@ -128,13 +127,15 @@
                                 <circle cx="12" cy="12" r="3"></circle>
                               </svg>
                             </div>
-                            <span class="wishlist-btn" onclick="addToWishlist('<%= product._id %>')">❤</span>
+                            <span class="wishlist-btn" onclick="addToWishlist('<%= product._id %>', this)">
+                              <i class="<%= wishlistItems.includes(product._id.toString()) ? 'fa-solid' : 'fa-regular' %> fa-heart"></i>
+                            </span>
                             <img src="/uploads/re-image/<%= product.productImage[0] %>"
                               alt="<%= product.productName %>" />
                             <h4>
                               <%= product.productName %>
                             </h4>
-                            <p>Brand: <%= product.brand %>
+                            
                             </p>
                             <span>
                               <%= product.category.name %>
@@ -149,13 +150,16 @@
                                     <%= product.regularPrice.toLocaleString('en-IN') %>
                                       <% } %>
                             </p>
-                            <p>Rating: <%= product.averageRating ? product.averageRating.toFixed(1) : 'N/A' %> / 5</p>
+                      
                             <p>In Stock: <%= product.quantity %>
+                              <br>
                             </p>
+                            <br>
                             <button class="add-to-cart-btn" onclick="addToCartHandler(event, '<%= product._id %>')"
                               <%=product.quantity> 0 ? '' : 'disabled' %>>
                               <%= product.quantity> 0 ? 'Add to Cart' : 'Out of Stock' %>
                             </button>
+                            <br>
                           </div>
                           <% }); %>
                       </div>
@@ -311,33 +315,54 @@
                             });
                         }
 
-                        function addToWishlist(productId) {
+                        function addToWishlist(productId, element) {
+                          const icon = element.querySelector('i');
+                          
                           $.ajax({
                             url: "/addToWishlist",
                             method: "POST",
-                            data: { productId: productId },
+                            data: {
+                              productId: productId
+                            },
                             success: (response) => {
-                              if (response.status) {
-                                Swal.fire({
-                                  title: "Added to wishlist",
-                                  text: "The product has been added to your wishlist.",
-                                  icon: "success",
-                                  timer: 2000,
-                                });
+                              if (response.success) {
+                                if (response.action === 'added') {
+                                  icon.classList.remove('fa-regular');
+                                  icon.classList.add('fa-solid');
+                                  Swal.fire({
+                                    title: "Added to wishlist",
+                                    text: response.message,
+                                    icon: "success",
+                                    timer: 2000,
+                                  });
+                                } else {
+                                  icon.classList.remove('fa-solid');
+                                  icon.classList.add('fa-regular');
+                                  Swal.fire({
+                                    title: "Removed from wishlist",
+                                    text: response.message,
+                                    icon: "info",
+                                    timer: 2000,
+                                  });
+                                }
                               } else {
-                                Swal.fire({
-                                  title: "Already in wishlist",
-                                  text: response.message || "This product is already in your wishlist.",
-                                  icon: "info",
-                                  timer: 2000,
-                                });
+                                if (response.redirect) {
+                                  window.location.href = response.redirect;
+                                } else {
+                                  Swal.fire({
+                                    title: "Error",
+                                    text: response.message,
+                                    icon: "error",
+                                    timer: 2000,
+                                  });
+                                }
                               }
                             },
                             error: (xhr, status, error) => {
                               console.error("AJAX Error: ", error, xhr.responseText);
                               Swal.fire({
                                 title: "Error",
-                                text: "There was an error adding the product to your wishlist. Please try again.",
+                                text: "There was an error updating your wishlist. Please try again.",
                                 icon: "error",
                                 timer: 2000,
                               });
@@ -384,6 +409,101 @@
       </div>
     </section>
   </div>
+
+  <style>
+    .search-container {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      max-width: 400px;
+    }
+
+    .search-form {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .search-input {
+      width: 250px;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    .search-button, .clear-button {
+      padding: 8px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .search-button {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .clear-button {
+      background-color: #6c757d;
+      color: white;
+    }
+
+  
+
+    .filter-title {
+      font-weight: bold;
+      padding: 10px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .category-brand-container {
+      padding: 10px;
+    }
+
+    .category-brand-container ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      max-height: none;
+      overflow: visible;
+    }
+
+    .category-brand-container li {
+      margin: 8px 0;
+    }
+
+    .category-brand-container a {
+      color: #333;
+      text-decoration: none;
+      display: block;
+      padding: 5px;
+      transition: background-color 0.2s;
+    }
+
+    .category-brand-container a:hover {
+      background-color: #f8f9fa;
+    }
+
+    .category-brand-container a.active {
+      background-color: #e9ecef;
+      font-weight: bold;
+    }
+
+    .clear-category {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #ddd;
+    }
+
+    .clear-category-link {
+      color: #dc3545;
+      text-decoration: none;
+      font-size: 0.9em;
+    }
+  </style>
 
   <script>
     function clearSearch() {

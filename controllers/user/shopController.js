@@ -2,6 +2,7 @@ const Product = require("../../models/productSchema");
 const Category = require("../../models/categorySchema");
 const Brand = require("../../models/brandSchema");
 const User = require("../../models/userSchema");
+const Wishlist = require("../../models/wishlistSchema");
 
 //for loading the shopping page.........................................................................................................
 
@@ -79,6 +80,14 @@ const loadshoppingPage = async (req, res) => {
       .populate('category')
       .populate('brand');
 
+    let wishlistItems = [];
+    if (user) {
+      const wishlist = await Wishlist.findOne({ userId: user });
+      if (wishlist) {
+        wishlistItems = wishlist.products.map(item => item.productId.toString());
+      }
+    }
+
     const brands = await Brand.find({ isBlocked: false });
     
     res.render("shop", {
@@ -90,6 +99,7 @@ const loadshoppingPage = async (req, res) => {
       currentPage: page,
       totalPages,
       query: req.query,
+      wishlistItems
     });
   } catch (error) {
     res.status(500).send("Internal Server Error");

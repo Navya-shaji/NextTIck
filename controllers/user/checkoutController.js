@@ -61,8 +61,11 @@ const getcheckoutPage = async (req, res) => {
         const address = await Address.findOne({ userId: user._id });
         const addressData = address || { address: [] };
 
-        const availableCoupons = await Coupon.find({ expireOn: { $gte: new Date() } });
-
+        const availableCoupons = await Coupon.find({
+            isActive: true,
+            expireOn: { $gt: new Date() },
+            usedBy: { $nin: [userId] }
+        });
         if (!productId) {
             // Handle cart checkout
             const cart = await Cart.findOne({ userId: user._id }).populate("items.productId");
@@ -102,7 +105,8 @@ const getcheckoutPage = async (req, res) => {
                 quantity: null,
                 addressData,
                 availableCoupons,
-                wallet
+                wallet,
+                
             });
         }
 
