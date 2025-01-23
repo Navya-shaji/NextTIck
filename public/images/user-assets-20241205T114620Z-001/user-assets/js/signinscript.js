@@ -82,7 +82,6 @@ document.addEventListener('DOMContentLoaded', function() {
     passvalidateChecking();
 
    
-
   // lines to check for null elements
   if (!emailid || !nameid || !mobileid || !passid || !error1 || !error2 || !error3 || !error4 || !signform) {
     console.error("One or more elements not found!");

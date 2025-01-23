@@ -54,7 +54,6 @@ const customerBlocked = async (req, res) => {
         }
 
         await User.updateOne({ _id: id }, { $set: { isBlocked: true } });
-        req.session.user=null
         res.redirect("/admin/users");
     } catch (error) {
         console.error("Error blocking customer:", error.message);

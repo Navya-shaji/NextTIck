@@ -3,11 +3,13 @@ const User = require("../models/userSchema")
 //userAuth............
 const userAuth=(req,res,next)=>{
     if(req.session.user){
-        User.findById(req.session.user)
+        console.log(req.session.user._id)
+        User.findById(req.session.user._id)
         .then(data=>{
             if(data && !data.isBlocked){
                 next();
             }else{
+                req.session.user = null
                 res.redirect("/login")
             }
         })

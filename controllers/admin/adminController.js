@@ -17,7 +17,9 @@ const pageerror = async (req, res) => {
 //loadig login page............................................................................................
 
 const loadLogin = (req, res) => {
+    console.log("admin login")
     if (req.session.admin) {
+        console.log("rediredting")
         return res.redirect("/admin/dashboard")
     }
     res.render("adminLogin", { message: null })
@@ -36,10 +38,10 @@ const login = async (req, res) => {
                 req.session.admin = true
                 return res.redirect("/admin")
             } else {
-                return res.redirect("/login")
+                return res.redirect("/admin/login")
             }
         } else {
-            return res.redirect("/login")
+            return res.redirect("/admin/login")
         }
     } catch (error) {
         return res.redirect("/pageerror")
@@ -176,7 +178,7 @@ const getDateRanges = () => {
 const loadDashboard = async (req, res) => {
     try {
         if (!req.session.admin) {
-            return res.redirect("login");
+            return res.redirect("/admin/login");
         }
 
         // Get date ranges for filtering

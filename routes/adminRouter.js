@@ -50,10 +50,10 @@ router.post("/editCategory/:id", adminAuth, categoryController.editCategory);
 //Brand Management.........................
 router.get("/brands",adminAuth,brandController.getBrandPage);
 router.post("/addBrand",adminAuth,uploads.single("image"),brandController.addBrand);
-router.post('/blockBrand/:id', brandController.blockBrand);
+router.post('/blockBrand/:id',adminAuth, brandController.blockBrand);
 router.post("/unblockBrand/:id", adminAuth, brandController.unblockBrand);
 router.post("/deleteBrand",adminAuth,brandController.deleteBrand)
-
+      
 //Product Management...........................
 router.get("/addProducts",adminAuth,productController.getProductAddPage);
 router.post("/addProducts",adminAuth,uploads.array("images",4),productController.addProducts);

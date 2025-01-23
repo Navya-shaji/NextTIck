@@ -42,8 +42,8 @@ app.set("views", [
 
 
 
-app.use("/", userRouter);
 app.use("/admin", adminRouter);
+app.use("/", userRouter);
 
 
 const PORT = 1212 || process.env.PORT;
