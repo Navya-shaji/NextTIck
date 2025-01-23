@@ -86,6 +86,7 @@ const getcheckoutPage = async (req, res) => {
                             ? product.productImage 
                             : ["default-image.jpg"],
                         salesPrice: parseFloat(product.salesPrice || 0),
+                        price : parseFloat(item.price || 0),
                         quantity: parseInt(item.quantity || 1),
                     };
                 });
@@ -95,7 +96,7 @@ const getcheckoutPage = async (req, res) => {
             }
 
             const subtotal = products.reduce((sum, item) => {
-                return sum + (item.salesPrice * item.quantity);
+                return sum + (item.price * item.quantity);
             }, 0);
 
             return res.render("checkout", {

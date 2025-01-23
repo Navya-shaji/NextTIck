@@ -15,14 +15,42 @@ const loadDashboard = async (req, res) => {
             status: 'Available'
         });
 
-        // Get total orders and revenue
-        const orders = await Order.find({ 
-            paymentStatus: 'Completed', 
-            status: { $nin: ['Cancelled', 'Returned'] }
-        });
-        
-        const totalOrders = orders.length;
-        const totalRevenue = orders.reduce((acc, order) => acc + Number(order.finalAmount || 0), 0);
+        // Get order statistics
+        const [
+            totalOrdersCount,
+            activeRevenueResult,
+            totalRevenueResult,
+            pendingOrdersCount,
+            completedOrdersCount
+        ] = await Promise.all([
+            Order.countDocuments(),
+            Order.aggregate([
+                {
+                    $match: { 
+                        status: { $nin: ['Cancelled', 'Returned'] }
+                    }
+                },
+                {
+                    $group: {
+                        _id: null,
+                        total: { $sum: '$finalAmount' }
+                    }
+                }
+            ]),
+            Order.aggregate([
+                {
+                    $group: {
+                        _id: null,
+                        total: { $sum: '$finalAmount' }
+                    }
+                }
+            ]),
+            Order.countDocuments({ status: 'Pending' }),
+            Order.countDocuments({ status: 'Delivered' })
+        ]);
+
+        const activeRevenue = activeRevenueResult[0]?.total || 0;
+        const totalRevenue = totalRevenueResult[0]?.total || 0;
 
         // Get current year for initial chart data
         const currentYear = new Date().getFullYear();
@@ -34,7 +62,9 @@ const loadDashboard = async (req, res) => {
             getTopBrands()
         ]);
 
-     
+        console.log('Top Products:', topProducts);
+        console.log('Top Categories:', topCategories);
+        console.log('Top Brands:', topBrands);
 
         // Get monthly data for initial chart
         const monthlyData = await Order.aggregate([
@@ -69,8 +99,11 @@ const loadDashboard = async (req, res) => {
             admin: req.session.admin,
             totalUsers,
             totalProducts,
-            totalOrders,
+            totalOrders: totalOrdersCount,
+            activeRevenue,
             totalRevenue,
+            pendingOrders: pendingOrdersCount,
+            completedOrders: completedOrdersCount,
             topProducts,
             topCategories,
             topBrands,
@@ -130,10 +163,10 @@ async function getTopProducts() {
             { $sort: { revenue: -1 } },
             { $limit: 10 }
         ]);
-     
+        console.log('Top Products Query Result:', result);
         return result;
     } catch (error) {
-        
+        console.error('Error in getTopProducts:', error);
         return [];
     }
 }
@@ -202,7 +235,7 @@ async function getTopCategories() {
             { $sort: { revenue: -1 } },
             { $limit: 10 }
         ]);
-     
+        console.log('Top Categories Query Result:', result);
         return result;
     } catch (error) {
         console.error('Error in getTopCategories:', error);
@@ -215,6 +248,7 @@ async function getTopBrands() {
     try {
         // First, get all brands that are not blocked
         const brands = await Brand.find({ isBlocked: false });
+        console.log('Found brands:', brands);
 
         // Get sales data for each brand
         const brandSalesPromises = brands.map(async (brand) => {
@@ -305,6 +339,43 @@ const getSalesData = async (req, res) => {
         const startYear = parseInt(year);
         let labels = [];
         let data = [];
+
+        // Get order statistics
+        const [
+            totalOrdersCount,
+            activeRevenueResult,
+            totalRevenueResult,
+            pendingOrdersCount,
+            completedOrdersCount
+        ] = await Promise.all([
+            Order.countDocuments(),
+            Order.aggregate([
+                {
+                    $match: { 
+                        status: { $nin: ['Cancelled', 'Returned'] }
+                    }
+                },
+                {
+                    $group: {
+                        _id: null,
+                        total: { $sum: '$finalAmount' }
+                    }
+                }
+            ]),
+            Order.aggregate([
+                {
+                    $group: {
+                        _id: null,
+                        total: { $sum: '$finalAmount' }
+                    }
+                }
+            ]),
+            Order.countDocuments({ status: 'Pending' }),
+            Order.countDocuments({ status: 'Delivered' })
+        ]);
+
+        const activeRevenue = activeRevenueResult[0]?.total || 0;
+        const totalRevenue = totalRevenueResult[0]?.total || 0;
         
         switch(filter) {
             case 'yearly':
@@ -317,7 +388,6 @@ const getSalesData = async (req, res) => {
                                     $gte: new Date(startYear - i, 0, 1),
                                     $lt: new Date(startYear - i + 1, 0, 1)
                                 },
-                                paymentStatus: 'Completed',
                                 status: { $nin: ['Cancelled', 'Returned'] }
                             }
                         },
@@ -328,6 +398,7 @@ const getSalesData = async (req, res) => {
                             }
                         }
                     ]);
+                    
                     labels.push(startYear - i);
                     data.push(yearData[0]?.total || 0);
                 }
@@ -418,10 +489,19 @@ const getSalesData = async (req, res) => {
                 break;
         }
 
-        res.json({ labels, data });
+        res.json({
+            labels,
+            data,
+            totalOrders: totalOrdersCount,
+            activeRevenue,
+            totalRevenue,
+            pendingOrders: pendingOrdersCount,
+            completedOrders: completedOrdersCount
+        });
+
     } catch (error) {
-        console.error('Error getting sales data:', error);
-        res.status(500).json({ error: 'Error getting sales data' });
+        console.error('Error in getSalesData:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 };
 

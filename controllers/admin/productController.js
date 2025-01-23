@@ -22,8 +22,8 @@ const  getProductAddPage = async(req,res)=>{
         })
 
     } catch (error) {
-        
-        res.redirect("/pageerror")
+        console.error("Error in getProductAddPage:", error);
+        res.redirect("/admin/error")
     }
 }
 const addProducts = async (req, res) => {
@@ -37,6 +37,14 @@ const addProducts = async (req, res) => {
             return res.status(400).json({ 
                 success: false, 
                 error: "All fields are required, including at least one image"
+            });
+        }
+
+        // Validate brand ID
+        if (!mongoose.Types.ObjectId.isValid(products.brand)) {
+            return res.status(400).json({
+                success: false,
+                error: "Invalid brand ID format"
             });
         }
 
@@ -56,6 +64,19 @@ const addProducts = async (req, res) => {
             return res.status(400).json({
                 success: false,
                 error: "Invalid category name"
+            });
+        }
+
+        // Check if brand exists and is not blocked
+        const brand = await Brand.findOne({ 
+            _id: products.brand,
+            isBlocked: false 
+        });
+
+        if (!brand) {
+            return res.status(400).json({
+                success: false,
+                error: "Selected brand not found or is blocked"
             });
         }
 
@@ -103,48 +124,54 @@ const addProducts = async (req, res) => {
 
 const getAllProducts = async(req,res)=>{
     try {
-      const search=req.query.search || "";
-      const page = req.query.page || 1;
-      const limit = 4
+        const search = req.query.search || "";
+        const page = parseInt(req.query.page) || 1;
+        const limit = 4;
   
-      const productData = await Product.find({
-        $or: [
-            { productName: { $regex: new RegExp(".*" + search + ".*", "i") } },
-            { brand: { $regex: new RegExp(".*" + search + ".*", "i") } }
-        ],
-    })
-    .limit(limit * 1)
-    .skip((page - 1) * limit)
-    .populate('category')
-    .populate('brand') // Add this line
-    .exec();
+        const searchQuery = {
+            productName: { $regex: new RegExp(search, "i") }
+        };
+  
+        const productData = await Product.find(searchQuery)
+            .limit(limit)
+            .skip((page - 1) * limit)
+            .populate('category')
+            .populate('brand', 'brandName')
+            .exec();
     
-      const count = await Product.find({
-          $or:[
-              {productName:{$regex:new RegExp(".*"+search+".*","i")}},
-              {brand:{$regex:new RegExp(".*"+search+".*","i")}}
-          ],
-      }).countDocuments();
+        const count = await Product.countDocuments(searchQuery);
   
-      const category = await Category.find({isListed:true});
-      const brand = await Product.find({isBlocked:false});
+        const category = await Category.find({isListed:true});
+        const brand = await Brand.find({isBlocked:false});
+
+        // Calculate brand distribution
+        const allProducts = await Product.find().populate('brand', 'brandName');
+        const brandCounts = {};
+        allProducts.forEach(product => {
+            if (product.brand && product.brand.brandName) {
+                const brandName = product.brand.brandName;
+                brandCounts[brandName] = (brandCounts[brandName] || 0) + 1;
+            }
+        });
+
+        const brandDistribution = {
+            labels: Object.keys(brandCounts),
+            data: Object.values(brandCounts)
+        };
   
-      if(category && brand){
-          res.render("products",{
-              data:productData,
-              currentPage:page,
-              totalPages:page,
-              totalPages:Math.ceil(count/limit),
-              cat:category,
-              brand:brand,
-          })
-      }else{
-          res.render("page-404")
-      }
+        res.render("products", {
+            data: productData,
+            currentPage: page,
+            totalPages: Math.ceil(count/limit),
+            cat: category,
+            brand: brand,
+            brandDistribution: brandDistribution
+        });
     } catch (error) {
-      res.redirect("/pageerror")
+        console.error("Error in getAllProducts:", error);
+        res.redirect("/admin/error");
     }
-  }
+}
   
   
 
@@ -236,7 +263,7 @@ const blockProduct = async(req,res)=>{
         await Product.updateOne({_id:id},{$set:{isBlocked:true}})
         res.redirect("/admin/products")
     } catch (error) {
-        res.redirect("/pageerror")
+        res.redirect("/admin/error")
     }
 }
 
@@ -248,7 +275,7 @@ const unblockProduct=async(req,res)=>{
         await Product.updateOne({_id:id},{$set:{isBlocked:false}});
         res.redirect("/admin/products")
     } catch(error){
-  res.redirect("/pageerror")
+  res.redirect("/admin/error")
     }
 }
 
@@ -256,22 +283,29 @@ const unblockProduct=async(req,res)=>{
 const getEditProduct = async (req, res) => {
     try {
         const id = req.query.id;
-        if (!id) {
-            return res.redirect("/pageerror"); 
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.redirect("/admin/error"); 
         }
-        const product = await Product.findOne({ _id: id });
+        
+        const product = await Product.findById(id)
+            .populate('brand', 'brandName')
+            .populate('category');
+            
         if (!product) {
-            return res.redirect("/pageerror"); 
+            return res.redirect("/admin/error"); 
         }
-        const category = await Category.find({isListed:true})
+        
+        const category = await Category.find({isListed:true});
         const brand = await Brand.find({isBlocked:false});
+
         res.render("edit-product", {
             product: product,
             cat: category,
-            brand:brand
+            brand: brand
         });
     } catch (error) {
-        res.redirect("/pageerror");
+        console.error("Error in getEditProduct:", error);
+        res.redirect("/admin/error");
     }
 };
 
@@ -317,7 +351,7 @@ if(existingProduct && existingProduct._id != id){
   res.redirect("/admin/products")
    } catch (error) {
        console.error(error);
-       res.redirect("/pageerror") 
+       res.redirect("/admin/error") 
     }
 }
 const updateProduct = async (req, res) => {
@@ -327,7 +361,7 @@ const updateProduct = async (req, res) => {
             return res.status(400).json({success:true, message:"Invalid product id"})
         }
 
-        const product = await Product.findById(id);
+        const product = await Product.findById(id).populate('brand', 'brandName');
         if (!product) {
             return res.status(404).json({success:true, message:"Product Not Found"})
         }
@@ -350,6 +384,25 @@ const updateProduct = async (req, res) => {
             return res.status(400).json({success:false, message:'Product with same name already exists'})
         }
 
+        // Validate brand ID if provided
+        if (data.brand && !mongoose.Types.ObjectId.isValid(data.brand)) {
+            return res.status(400).json({success:false, message:"Invalid brand ID format"});
+        }
+
+        // Check if brand exists and is not blocked
+        if (data.brand) {
+            const brand = await Brand.findOne({ 
+                _id: data.brand,
+                isBlocked: false 
+            });
+            if (!brand) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Selected brand not found or is blocked"
+                });
+            }
+        }
+
         const image = [];
         if (req.files && req.files.length > 0) {
             req.files.forEach(file => image.push(file.filename));
@@ -358,7 +411,7 @@ const updateProduct = async (req, res) => {
         const updateFields = {
             productName: data.productName,
             description: data.description,
-            brand: data.brand,
+            brand: data.brand || product.brand,
             category: product.category,
             regularPrice: data.regularPrice,
             salePrice: data.salePrice,
@@ -371,10 +424,17 @@ const updateProduct = async (req, res) => {
             updateFields.productImage = image;
         }
 
-        await Product.findByIdAndUpdate(id, updateFields, { new: true });
+        const updatedProduct = await Product.findByIdAndUpdate(
+            id, 
+            updateFields, 
+            { new: true }
+        ).populate('brand', 'brandName');
 
-        // return res.redirect("/admin/products");
-        return res.status(200).json({success:true, message:"Product updated successfully"})
+        return res.status(200).json({
+            success: true, 
+            message: "Product updated successfully",
+            product: updatedProduct
+        });
     } catch (error) {
         console.error("Edit product error:", error);
         return res.status(400).json({success:false, message:"Something went wrong"})

@@ -1,9 +1,9 @@
 <%- include("../../views/partials/admin/header") %>
 <head>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         th{
-
             font-size: 15px;
             font-weight: bold;
             font-family: monospace;
@@ -13,11 +13,31 @@
             font-weight: bold;
             font-family: Verdana, Geneva, Tahoma, sans-serif;
         }
+        .chart-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .chart-container {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .chart-title {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+        }
     </style>
 </head>
 <div class="content-header">
-    <div>
+    <div class="d-flex justify-content-between align-items-center">
         <h2 class="content-title card-title">Products</h2>
+       
     </div>
 </div>
 <header class="card-header text-center mb-20">
@@ -47,7 +67,7 @@
             <%for(let i=data.length-1;i>=0;i--) { %>
             <tr>
                 <td><%= data[i].productName %></td>
-                <td><%= data[i].brand %></td>
+                <td><%= data[i].brand && data[i].brand.brandName ? data[i].brand.brandName : 'No Brand' %></td>
                 <td><%= data[i].category ? data[i].category.name : 'No Category' %></td>
                 <td><%= data[i].salesPrice %></td>
                 <td><%= data[i].productOffer || '0%' %></td>
@@ -290,6 +310,5 @@
 
 </script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <%- include("../../views/partials/admin/footer") %>
-
-

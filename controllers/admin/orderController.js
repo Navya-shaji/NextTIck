@@ -14,8 +14,44 @@ const listOrders = async (req, res) => {
         const limit = 20; 
         const skip = (page - 1) * limit;
 
+        // Get total orders count
         const totalOrders = await Order.countDocuments(); 
         const totalPages = Math.ceil(totalOrders / limit);
+
+        // Calculate order statistics
+        const [
+            activeRevenueResult,
+            totalRevenueResult,
+            pendingOrdersCount,
+            completedOrdersCount
+        ] = await Promise.all([
+            Order.aggregate([
+                {
+                    $match: { 
+                        status: { $nin: ['Cancelled', 'Returned'] }
+                    }
+                },
+                {
+                    $group: {
+                        _id: null,
+                        total: { $sum: '$finalAmount' }
+                    }
+                }
+            ]),
+            Order.aggregate([
+                {
+                    $group: {
+                        _id: null,
+                        total: { $sum: '$finalAmount' }
+                    }
+                }
+            ]),
+            Order.countDocuments({ status: 'Pending' }),
+            Order.countDocuments({ status: 'Delivered' })
+        ]);
+
+        const activeRevenue = activeRevenueResult[0]?.total || 0;
+        const totalRevenue = totalRevenueResult[0]?.total || 0;
 
         const orders = await Order.find({})
             .populate('userId', 'name email')
@@ -30,16 +66,19 @@ const listOrders = async (req, res) => {
             ...order,
             userName: order.userId ? order.userId.name : 'Unknown User',
             couponDetails: order.couponApplied ? `Coupon: ${order.couponCode} applied.` : 'No coupon applied.',
-            
             offerDetails: order.offerApplied ? order.offerDetails : 'No offer applied.'
         }));
-        
 
         if (req.headers.accept === 'application/json') {
             return res.json({
                 orders: processedOrders,
                 currentPage: page,
                 totalPages,
+                totalOrders,
+                activeRevenue,
+                totalRevenue,
+                pendingOrders: pendingOrdersCount,
+                completedOrders: completedOrdersCount
             });
         }
 
@@ -47,11 +86,17 @@ const listOrders = async (req, res) => {
             orders: processedOrders,
             currentPage: page,
             totalPages,
-            title: 'Order Management',
+            totalOrders,
+            activeRevenue,
+            totalRevenue,
+            pendingOrders: pendingOrdersCount,
+            completedOrders: completedOrdersCount,
+            title: 'Order Management'
         });
+
     } catch (error) {
-        console.error('Error fetching orders:', error);
-        res.status(500).render('admin/error', { message: 'Failed to fetch orders' });
+        console.error('Error in listOrders:', error);
+        res.status(500).send('Internal Server Error');
     }
 };
 

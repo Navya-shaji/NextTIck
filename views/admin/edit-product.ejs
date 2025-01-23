@@ -193,7 +193,7 @@
             </div>
         </div>
         <div class="col-lg-8">
-            <form method="post" action="/admin/product/edit/<%= product._id %>" enctype="multipart/form-data" id="editProductForm" onsubmit="handleSubmit(event)">
+            <form method="post" action="/admin/product/edit/<%= product._id %>" enctype="multipart/form-data" id="editProductForm">
                 <div class="card">
                     <div class="card-body">
                         <div class="form-section">
@@ -216,13 +216,14 @@
                             <div class="row">
                                 <div class="col-md-6 mb-4">
                                     <label class="form-label">Brand</label>
-                                        <select class="form-select border" name="brand">
-                                            <% for(let i=0; i<brand.length; i++) { %>
-                                                 <option value="<%= brand[i].brandName%>">
-                                                  <%=brand[i].brandName%> 
-                                                 </option>
-                                            <% } %>
-                                        </select>
+                                    <select class="form-select border" name="brand" required>
+                                        <% for(let i=0; i<brand.length; i++) { %>
+                                            <option value="<%= brand[i]._id %>" 
+                                                <%= (product.brand && product.brand._id && product.brand._id.toString() === brand[i]._id.toString()) ? 'selected' : '' %>>
+                                                <%= brand[i].brandName %>
+                                            </option>
+                                        <% } %>
+                                    </select>
                                 </div>
                                 <div class="col-md-6 mb-4">
                                     <label class="form-label">Category</label>
@@ -286,14 +287,12 @@
                             <input type="hidden" name="images" id="selectedImages">
                         </div>
 
-                        <div class="text-end">
-                            <a href="/admin/products" class="btn btn-secondary me-2">
-                                <i class="fas fa-times me-1"></i> Close
-                            </a>
-                            <button type="submit" class="btn btn-primary">
+                        <div class="form-actions mt-4">
+                            <button type="submit" class="btn btn-primary" style="width: 200px;">
                                 <i class="fas fa-save me-1"></i> Update Product
                             </button>
                         </div>
+
                     </div>
                 </div>
             </form>
@@ -619,6 +618,45 @@
             element.textContent = '';
         });
     }
+
+    document.getElementById('editProductForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        try {
+            const formData = new FormData(this);
+            const response = await fetch(this.action, {
+                method: 'POST',
+                body: formData
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: result.message,
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(() => {
+                    window.location.href = '/admin/products';
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: result.message
+                });
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: 'Something went wrong. Please try again.'
+            });
+        }
+    });
 </script>
 
 <%- include("../../views/partials/admin/footer") %>

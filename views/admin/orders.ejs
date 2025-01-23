@@ -1,15 +1,107 @@
 <%- include("../../views/partials/admin/header") %>
 
-    <head>
-        <link rel="stylesheet" href="styles/adminOrder.css">
-    </head>
+<head>
+    <link rel="stylesheet" href="styles/adminOrder.css">
+    <style>
+        .summary-card {
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+        .summary-card:hover {
+            transform: translateY(-5px);
+        }
+        .card-body-icon {
+            font-size: 2rem;
+            opacity: 0.7;
+            margin-bottom: 10px;
+        }
+        .summary-title {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        .summary-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
 
-    <div class="container-fluid">
-        <div class="row">
-         
-                
-                    <div style="background-color: white;" >
-                        <h3 style="font-family:math; margin-left: 24px; margin-top: 15px; font-size: 35px" class="card-title">Order Management</h3>
+<div class="container-fluid">
+    <!-- Order Summary Section -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-sm-6 mb-3">
+            <div class="card text-white bg-primary summary-card">
+                <div class="card-body">
+                    <div class="card-body-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <div class="text-center">
+                        <h5 class="summary-title">Total Orders</h5>
+                        <div class="summary-value"><%= totalOrders %></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 mb-3">
+            <div class="card text-white bg-success summary-card">
+                <div class="card-body">
+                    <div class="card-body-icon">
+                        <i class="fas fa-rupee-sign"></i>
+                    </div>
+                    <div class="text-center">
+                        <h5 class="summary-title">Active Revenue</h5>
+                        <div class="summary-value">₹<%= activeRevenue.toLocaleString('en-IN') %></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 mb-3">
+            <div class="card text-white bg-danger summary-card">
+                <div class="card-body">
+                    <div class="card-body-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="text-center">
+                        <h5 class="summary-title">Total Revenue</h5>
+                        <div class="summary-value">₹<%= totalRevenue.toLocaleString('en-IN') %></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 mb-3">
+            <div class="card text-white bg-warning summary-card">
+                <div class="card-body">
+                    <div class="card-body-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="text-center">
+                        <h5 class="summary-title">Pending Orders</h5>
+                        <div class="summary-value"><%= pendingOrders %></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 mb-3">
+            <div class="card text-white bg-info summary-card">
+                <div class="card-body">
+                    <div class="card-body-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="text-center">
+                        <h5 class="summary-title">Completed Orders</h5>
+                        <div class="summary-value"><%= completedOrders %></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Orders Table Section -->
+    <div class="row">
+        <div class="col-12">
+            <div style="background-color: white;">
+                <h3 style="font-family:math; margin-left: 24px; margin-top: 15px; font-size: 35px" class="card-title">Order Management</h3>
                    
                     <div class="card-body">
                         <div class="table-responsive">
@@ -70,7 +162,6 @@
             </div>
         </div>
     </div>
-
 
     <div class="pagination-container mt-4">
         <ul class="pagination justify-content-center">

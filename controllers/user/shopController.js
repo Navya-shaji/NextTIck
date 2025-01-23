@@ -20,7 +20,6 @@ const loadshoppingPage = async (req, res) => {
       isBlocked: false,
       category: { $in: categoryIds },
     };
-
     let sort = { createdOn: -1 }; 
 
     const sortOption = req.query.sort;
@@ -38,12 +37,17 @@ const loadshoppingPage = async (req, res) => {
         case 'rating':
           sort = { averageRating: -1 };
           break;
+        case 'a_to_z':
+          sort = { productName: 1 }; 
+          break;
+        case 'z_to_a':
+          sort = { productName: -1 };
+          break;
         case 'newest':
         default:
           sort = { createdOn: -1 };
       }
     }
-
     if (req.query.category) {
       query.category = req.query.category;
     }
@@ -65,7 +69,7 @@ const loadshoppingPage = async (req, res) => {
     if (req.query.query) {
       query.$or = [
         { productName: { $regex: req.query.query, $options: "i" } },
-        { 'category.name': { $regex: req.query.query, $options: "i" } }
+        // { 'category.name': { $regex: req.query.query, $options: "i" } }
       ];
     }
 

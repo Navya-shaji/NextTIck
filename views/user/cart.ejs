@@ -74,7 +74,7 @@
                                         <!-- Total & Remove -->
                                         <div class="col-md-3">
                                             <div class="text-end">
-                                                <h6 class="mb-3 total-price">₹<%= item.totalPrice.toLocaleString() %></h6>
+                                                <h6 class="mb-3 total-price">₹<%= item.price.toLocaleString() * item.quantity %></h6>
                                                 <button class="btn btn-outline-danger" 
                                                         onclick="removeFromCart('<%= item.productId._id %>')">
                                                     <i class="fas fa-trash-alt me-2"></i>Remove

@@ -648,7 +648,7 @@
                     const bestOffer = totalOffer || Math.max(productOffer, categoryOffer);
                     
                     // Calculate prices
-                    const regularPrice = product.regularPrice || 0;
+                    const regularPrice = product.salesPrice || 0;
                     const discountAmount = regularPrice * (bestOffer / 100);
                     const salesPrice = regularPrice - discountAmount;
                     
