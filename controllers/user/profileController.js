@@ -100,7 +100,7 @@ const forgotEmailValid = async (req, res) => {
                 req.session.userOtp = otp;
                 req.session.email = email;
                 res.render("forgotPass-otp");
-                console.log("OTP", otp);
+             
             } else {
                 res.json({ success: false, message: "Failed to send OTP. Please try again" });
             }
@@ -141,10 +141,10 @@ const resendOtp = async (req, res) => {
         const otp = generateOtp();
         req.session.userOtp = otp;
         const email = req.session.email;
-        console.log("Resending OTP to email:", email);
+    
         const emailSent = await sendVerificationEmail(email, otp);
         if (emailSent) {
-            console.log("Resend OTP", otp);
+          
             res.status(200).json({ success: true, message: "Resend OTP Successful" });
         } else {
             throw new Error("Failed to send email");
@@ -297,14 +297,7 @@ const updateProfileImage = async (req, res) => {
       user.profileImage = req.file.filename;
       await user.save();
 
-      // Log success and send response
-      console.log('Profile image updated successfully:', {
-        userId: user._id,
-        filename: req.file.filename,
-        filesize: req.file.size,
-        filepath: `/uploads/profile-images/${req.file.filename}`
-      });
-
+   
       // Update the session user data
       req.session.user = user;
 

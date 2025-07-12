@@ -62,10 +62,7 @@ const loadDashboard = async (req, res) => {
             getTopBrands()
         ]);
 
-        console.log('Top Products:', topProducts);
-        console.log('Top Categories:', topCategories);
-        console.log('Top Brands:', topBrands);
-
+       
         // Get monthly data for initial chart
         const monthlyData = await Order.aggregate([
             {
@@ -163,7 +160,7 @@ async function getTopProducts() {
             { $sort: { revenue: -1 } },
             { $limit: 10 }
         ]);
-        console.log('Top Products Query Result:', result);
+        
         return result;
     } catch (error) {
         console.error('Error in getTopProducts:', error);
@@ -235,7 +232,7 @@ async function getTopCategories() {
             { $sort: { revenue: -1 } },
             { $limit: 10 }
         ]);
-        console.log('Top Categories Query Result:', result);
+        
         return result;
     } catch (error) {
         console.error('Error in getTopCategories:', error);
@@ -248,7 +245,7 @@ async function getTopBrands() {
     try {
         // First, get all brands that are not blocked
         const brands = await Brand.find({ isBlocked: false });
-        console.log('Found brands:', brands);
+    
 
         // Get sales data for each brand
         const brandSalesPromises = brands.map(async (brand) => {
@@ -257,7 +254,7 @@ async function getTopBrands() {
                 brand: brand._id,
                 isBlocked: false
             });
-            console.log(`Products for brand ${brand.brandName}:`, products.length);
+            
 
             // Get all orders containing these products
             const productIds = products.map(p => p._id);
@@ -324,7 +321,7 @@ async function getTopBrands() {
                 averageRevenuePerProduct: Number(brand.averageRevenuePerProduct || 0).toFixed(2)
             }));
 
-        console.log('Top Brands Result:', topBrands);
+        
         return topBrands;
     } catch (error) {
         console.error('Error in getTopBrands:', error);

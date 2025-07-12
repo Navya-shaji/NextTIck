@@ -17,9 +17,9 @@ const pageerror = async (req, res) => {
 //loadig login page............................................................................................
 
 const loadLogin = (req, res) => {
-    console.log("admin login")
+
     if (req.session.admin) {
-        console.log("rediredting")
+
         return res.redirect("/admin/dashboard")
     }
     res.render("adminLogin", { message: null })
@@ -31,15 +31,17 @@ const loadLogin = (req, res) => {
 const login = async (req, res) => {
     try {
         const { email, password } = req.body;
+        console.log(req.body)
         const admin = await User.findOne({ email, isAdmin: true })
         if (admin) {
-            const passwordMatch = bcrypt.compare(password, admin.password);
+            const passwordMatch = await bcrypt.compare(password, admin.password);
             if (passwordMatch) {
-                req.session.admin = true
-                return res.redirect("/admin")
+                req.session.admin = true;
+                return res.redirect("/admin");
             } else {
-                return res.redirect("/admin/login")
+                return res.redirect("/admin/login");
             }
+
         } else {
             return res.redirect("/admin/login")
         }
@@ -76,7 +78,7 @@ const getTopSellingData = async () => {
                 }
             },
             { $sort: { totalQuantity: -1 } },
-            { $limit: 10 } 
+            { $limit: 10 }
         ]);
 
         const topCategories = await Order.aggregate([
@@ -107,7 +109,7 @@ const getTopSellingData = async () => {
                 }
             },
             { $sort: { totalQuantity: -1 } },
-            { $limit: 10 } 
+            { $limit: 10 }
         ]);
 
         const topBrands = await Order.aggregate([
@@ -129,7 +131,7 @@ const getTopSellingData = async () => {
                 }
             },
             { $sort: { totalQuantity: -1 } },
-            { $limit: 10 } 
+            { $limit: 10 }
         ]);
 
         return { topProducts, topCategories, topBrands };
@@ -281,8 +283,8 @@ const loadDashboard = async (req, res) => {
 
         // Get top selling products with revenue
         const topProducts = await Order.aggregate([
-            { 
-                $match: { 
+            {
+                $match: {
                     status: { $ne: "Cancelled" }
                 }
             },
@@ -304,10 +306,10 @@ const loadDashboard = async (req, res) => {
                     category: { $first: "$productDetails.category" },
                     brand: { $first: "$productDetails.brand" },
                     totalSalesCount: { $sum: "$orderItems.quantity" },
-                    totalRevenue: { 
-                        $sum: { 
+                    totalRevenue: {
+                        $sum: {
                             $multiply: ["$orderItems.quantity", "$orderItems.price"]
-                        } 
+                        }
                     }
                 }
             },
@@ -363,10 +365,10 @@ const loadDashboard = async (req, res) => {
                     _id: "$brandInfo._id",
                     name: { $first: "$brandInfo.name" },
                     totalSalesCount: { $sum: "$orderItems.quantity" },
-                    totalRevenue: { 
-                        $sum: { 
-                            $multiply: ["$orderItems.quantity", "$orderItems.price"] 
-                        } 
+                    totalRevenue: {
+                        $sum: {
+                            $multiply: ["$orderItems.quantity", "$orderItems.price"]
+                        }
                     },
                     productCount: { $addToSet: "$product._id" }
                 }
@@ -386,8 +388,8 @@ const loadDashboard = async (req, res) => {
 
         // Get top selling categories
         const topCategories = await Order.aggregate([
-            { 
-                $match: { 
+            {
+                $match: {
                     status: { $ne: "Cancelled" }
                 }
             },
@@ -434,17 +436,14 @@ const loadDashboard = async (req, res) => {
             { $limit: 10 }
         ]);
 
-        // Log the results for debugging
-        console.log('Top Products:', JSON.stringify(topProducts, null, 2));
-        console.log('Top Categories:', JSON.stringify(topCategories, null, 2));
-        console.log('Top Brands:', JSON.stringify(bestSellingBrands, null, 2));
+
 
         // Prepare chart data
         const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
         const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
         // Get last 7 days
-        const last7Days = Array.from({length: 7}, (_, i) => {
+        const last7Days = Array.from({ length: 7 }, (_, i) => {
             const d = new Date();
             d.setDate(d.getDate() - i);
             return d.toISOString().split('T')[0];
@@ -620,7 +619,7 @@ const calculateTotals = async (orders) => {
             totals.totalAmount += Number(order.totalPrice || 0);
             totals.finalAmount += Number(order.finalAmount || 0);
             totals.discount += Number(order.discount || 0);
-            
+
             if (order.userId) {
                 totals.uniqueUsers.add(order.userId.toString());
             }
@@ -644,7 +643,7 @@ const calculateTotals = async (orders) => {
 
         // Calculate averages
         totals.averageOrderValue = totals.count ? totals.finalAmount / totals.count : 0;
-        
+
         // Convert Set to count
         totals.uniqueCustomers = totals.uniqueUsers.size;
         delete totals.uniqueUsers;
@@ -702,7 +701,7 @@ const loadSalesReport = async (req, res) => {
             Order.countDocuments(dateFilter),
             Order.aggregate([
                 {
-                    $match: { 
+                    $match: {
                         ...dateFilter,
                         status: { $nin: ['Cancelled', 'Returned'] }
                     }
@@ -820,23 +819,23 @@ const downloadSalesReport = async (req, res) => {
         const { format, period, startDate, endDate } = req.query;
         function convertToIST(inputTime) {
             const date = new Date(inputTime);
-            
+
             const istOffset = 330; // 5 hours and 30 minutes in minutes
             const istTime = new Date(date.getTime() + (istOffset * 60000));
-            
+
             return istTime;
-          }
+        }
         const dateFilter = getDateFilter(period, convertToIST(startDate), convertToIST(endDate));
-        console.log("filter ", dateFilter)
+
         const orders = await Order.find({
             ...dateFilter,
             status: { $nin: ['Pending', 'Processing'] }
         })
             .populate('userId', 'name')
             .sort({ createdOn: -1 });
-        console.log("order", orders)
-        const totals =await calculateTotals(orders);
-        console.log("totals", totals)
+
+        const totals = await calculateTotals(orders);
+
         if (format === 'pdf') {
             const doc = new PDFDocument({ margin: 50 });
             res.setHeader('Content-Type', 'application/pdf');
@@ -846,20 +845,20 @@ const downloadSalesReport = async (req, res) => {
 
             // Header
             doc.font('Helvetica-Bold')
-               .fontSize(24)
-               .text('Sales Report', { align: 'center' });
+                .fontSize(24)
+                .text('Sales Report', { align: 'center' });
             doc.moveDown(1);
 
             // Report Period
             doc.fontSize(12)
-               .font('Helvetica')
-               .text(`Report Period: ${period.charAt(0).toUpperCase() + period.slice(1)}`, { align: 'left' });
+                .font('Helvetica')
+                .text(`Report Period: ${period.charAt(0).toUpperCase() + period.slice(1)}`, { align: 'left' });
             doc.moveDown(1);
 
             // Summary Section
             doc.font('Helvetica-Bold')
-               .fontSize(16)
-               .text('Summary', { underline: true });
+                .fontSize(16)
+                .text('Summary', { underline: true });
             doc.moveDown(0.5);
 
             // Summary Table
@@ -873,17 +872,17 @@ const downloadSalesReport = async (req, res) => {
 
             summaryData.forEach(([label, value]) => {
                 doc.font('Helvetica')
-                   .fontSize(12)
-                   .text(label, { continued: true, width: 150 })
-                   .text(value.toString(), { align: 'left' });
+                    .fontSize(12)
+                    .text(label, { continued: true, width: 150 })
+                    .text(value.toString(), { align: 'left' });
             });
 
             doc.moveDown(2);
 
             // Order Details Section
             doc.font('Helvetica-Bold')
-               .fontSize(16)
-               .text('Order Details', { underline: true });
+                .fontSize(16)
+                .text('Order Details', { underline: true });
             doc.moveDown(1);
 
             // Table Headers
@@ -895,12 +894,12 @@ const downloadSalesReport = async (req, res) => {
             // Draw table headers with background
             const headerY = doc.y;
             doc.rect(startX - 5, headerY - 5, 520, 20).fill('#f0f0f0');
-            
+
             headers.forEach((header, i) => {
                 doc.font('Helvetica-Bold')
-                   .fontSize(10)
-                   .fillColor('black')
-                   .text(header, currentX, headerY, { width: colWidths[i] });
+                    .fontSize(10)
+                    .fillColor('black')
+                    .text(header, currentX, headerY, { width: colWidths[i] });
                 currentX += colWidths[i];
             });
 
@@ -912,20 +911,20 @@ const downloadSalesReport = async (req, res) => {
                 if (doc.y > 700) {
                     doc.addPage();
                     doc.font('Helvetica-Bold')
-                       .fontSize(16)
-                       .text('Order Details (continued)', { underline: true });
+                        .fontSize(16)
+                        .text('Order Details (continued)', { underline: true });
                     doc.moveDown(1);
-                    
+
                     // Repeat headers on new page
                     currentX = startX;
                     const headerY = doc.y;
                     doc.rect(startX - 5, headerY - 5, 520, 20).fill('#f0f0f0');
-                    
+
                     headers.forEach((header, i) => {
                         doc.font('Helvetica-Bold')
-                           .fontSize(10)
-                           .fillColor('black')
-                           .text(header, currentX, headerY, { width: colWidths[i] });
+                            .fontSize(10)
+                            .fillColor('black')
+                            .text(header, currentX, headerY, { width: colWidths[i] });
                         currentX += colWidths[i];
                     });
                     doc.moveDown(0.5);
@@ -938,7 +937,7 @@ const downloadSalesReport = async (req, res) => {
 
                 currentX = startX;
                 const rowY = doc.y;
-                
+
                 // Order data
                 const date = new Date(order.createdOn).toLocaleDateString();
                 const rowData = [
@@ -952,9 +951,9 @@ const downloadSalesReport = async (req, res) => {
 
                 rowData.forEach((text, i) => {
                     doc.font('Helvetica')
-                       .fontSize(10)
-                       .fillColor('black')
-                       .text(text, currentX, rowY, { width: colWidths[i] });
+                        .fontSize(10)
+                        .fillColor('black')
+                        .text(text, currentX, rowY, { width: colWidths[i] });
                     currentX += colWidths[i];
                 });
 

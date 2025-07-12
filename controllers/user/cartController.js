@@ -137,104 +137,6 @@ const updateQuantity = async (req, res) => {
   }
 };
 
-// Add to Cart.....................................................
-
-// const addToCart = async (req, res) => {
-//   try {
-//     const userId = req.session.user;
-//     const { productId, quantity = 1 } = req.body;
-
-//     if (!userId) {
-//       return res.status(401).json({
-//         success: false,
-//         message: "Please log in to add items to your cart.",
-//         redirect: "/login", 
-//       });
-//     }
-    
-//     const product = await Product.findById(productId);
-//     if (!product) {
-//       return res.status(404).json({
-//         success: false,
-//         message: "Product not found",
-//       });
-//     }
-
-//     if (product.quantity < 1) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "Product is out of stock",
-//       });
-//     }
-
-//     let cart = await Cart.findOne({ userId });
-//     if (!cart) {
-//       cart = new Cart({ userId, items: [] });
-//     }
-
-//     const existingItem = cart.items.find(
-//       (item) => item.productId.toString() === productId && item.status === "placed"
-//     );
-
-//     if (existingItem) {
-//       return res.status(200).json({
-//         success: true,
-//         status: 'already_in_cart',
-//         message: "Item is already in your cart"
-//       });
-//     }
-
-//     // Validate quantity
-//     if (quantity > 5) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "Maximum 5 items allowed per product",
-//       });
-//     }
-
-//     if (quantity > product.quantity) {
-//       return res.status(400).json({
-//         success: false,
-//         message: `Only ${product.quantity} items available in stock`,
-//       });
-//     }
-
-
-//     console.log("jhhghghghghghghghghg",product.salesPrice.toString());
-//     // Calculate offers
-//     const productOffer = product.productOffer || 0;
-//     const categoryOffer = category?.categoryOffer || 0;
-    
-//     // Get the best offer
-//     const bestOffer = totalOffer || Math.max(productOffer, categoryOffer);
-
-//     // Add new item
-//     cart.items.push({
-//       productId,
-//       quantity,
-//       price: product.salesPrice.toString(),
-//       totalPrice: quantity * parseFloat(product.salesPrice),
-//       status: "placed", 
-//     });
-
-//     await cart.save();
-
-//     res.json({
-//       success: true,
-//       message: "Product added to cart successfully",
-//     });
-//   } catch (error) {
-//     console.error("Add to cart error:", error);
-//     res.status(500).json({
-//       success: false,
-//       message: "Failed to add product to cart",
-//     });
-//   }
-// };
-
-// --------------------------------------------------------------
-
-
 const addToCart = async (req, res) => {
   try {
     const userId = req.session.user;
@@ -298,16 +200,13 @@ const addToCart = async (req, res) => {
     // Calculate offers
     const productOffer = product.productOffer || 0;
     const categoryOffer = product.category?.categoryOffer || 0;
-    console.log("productOffer",productOffer);
-    console.log("categoryOffer",categoryOffer)
-
+    
     // Get the best offer
     const bestOffer = Math.max(productOffer, categoryOffer);
     
     // Calculate discounted price
     const priceAfterDiscount = product.salesPrice * (1 - bestOffer / 100);
 
-    console.log(priceAfterDiscount)
 
     // Add new item
     cart.items.push({
