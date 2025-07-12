@@ -64,7 +64,6 @@ const getcheckoutPage = async (req, res) => {
         const availableCoupons = await Coupon.find({
             isActive: true,
             expireOn: { $gt: new Date() },
-            usedBy: { $nin: [userId] }
         });
         if (!productId) {
             // Handle cart checkout
