@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>NexTick</title>
+    <title>NextTick</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="css/open-iconic-bootstrap.min.css">
     <link rel="stylesheet" href="css/animate.css">
     <link rel="stylesheet" href="css/owl.carousel.min.css">
@@ -19,88 +20,914 @@
     <link rel="stylesheet" href="css/icomoon.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="/styles/header.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        .brand-logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            text-decoration: none;
-            color: inherit;
-        }
-        .brand-logo img {
-            width: 40px;
-            height: auto;
-            transition: transform 0.3s ease;
-        }
-        .brand-logo:hover img {
-            transform: scale(1.1);
-        }
-        .brand-name {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #333333;
-            margin: 0;
-        }
-        @media (min-width: 992px) {
-  .navbar-expand-lg {
-      flex-wrap: nowrap;
-      justify-content: center;
-      height: 100px;
+/* Header Styling - Complete CSS */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Ensure body can scroll */
+html,
+body {
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: auto;
+  min-height: 100%;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  line-height: 1.6;
+  color: #333;
+}
+
+/* Top Bar Styling */
+.top-bar {
+  background: #1a1a1a;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 10px 0;
+  font-size: 13px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  z-index: 100;
+}
+
+.top-bar .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.top-bar-left {
+  font-family: "Inter", sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.top-bar-right {
+  display: flex;
+  align-items: center;
+}
+
+.top-bar-icons {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.top-bar-icon {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 16px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  position: relative;
+  padding: 5px;
+  border-radius: 3px;
+}
+
+.top-bar-icon:hover {
+  color: #ffd700;
+  background: rgba(255, 215, 0, 0.1);
+  text-decoration: none;
+}
+
+.cart-icon {
+  position: relative;
+}
+
+.cart-count {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background: #ffd700;
+  color: #000;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #1a1a1a;
+}
+
+/* Main Header Styling */
+.main-header {
+  background: #000;
+  padding: 20px 0;
+  position: relative;
+  z-index: 99;
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+}
+
+.main-header::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 50% 0%, rgba(255, 215, 0, 0.03) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.main-header .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  position: relative;
+  z-index: 2;
+}
+
+/* Brand Section */
+.brand-section {
+  flex: 0 0 auto;
+}
+
+.brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.3s ease;
+}
+
+.brand-logo:hover {
+  text-decoration: none;
+  color: inherit;
+  transform: translateY(-1px);
+}
+
+.brand-logo img {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  filter: brightness(1.2) drop-shadow(0 0 10px rgba(255, 215, 0, 0.2));
+  transition: all 0.3s ease;
+}
+
+.brand-logo:hover img {
+  filter: brightness(1.3) drop-shadow(0 0 15px rgba(255, 215, 0, 0.4));
+  transform: scale(1.05);
+}
+
+.brand-info h1 {
+  font-family: "Orbitron", monospace;
+  font-size: 26px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  background: linear-gradient(45deg, #fff, #ffd700);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.brand-tagline {
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  color: rgba(255, 215, 0, 0.8);
+  margin: 0;
+  font-weight: 400;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* Navigation Styling */
+.main-nav {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.nav-menu {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 40px;
+  align-items: center;
+}
+
+.nav-item {
+  position: relative;
+}
+
+.nav-link {
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 12px 0;
+  transition: all 0.3s ease;
+  position: relative;
+  display: block;
+}
+
+.nav-link:hover,
+.nav-link:focus {
+  color: #ffd700;
+  text-decoration: none;
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(45deg, #ffd700, #ffed4e);
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+/* Dropdown Styling */
+.dropdown {
+  position: relative;
+  cursor: pointer;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1a1a1a;
+  min-width: 200px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  border-radius: 8px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-50%) translateY(-10px);
+  transition: all 0.3s ease;
+  z-index: 9999; /* Increased z-index */
+  padding: 8px 0;
+  margin-top: 15px;
+  pointer-events: none; /* Initially disabled */
+}
+
+/* Show dropdown on hover */
+.dropdown:hover .dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto; /* Enable pointer events when visible */
+}
+
+/* Keep dropdown visible when hovering over it */
+.dropdown-menu:hover {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.dropdown-item {
+  display: block;
+  padding: 12px 20px;
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 400;
+  transition: all 0.3s ease;
+  text-transform: none;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  pointer-events: auto; /* Ensure items are clickable */
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+  background: rgba(255, 215, 0, 0.15);
+  color: #ffd700;
+  text-decoration: none;
+  padding-left: 25px;
+}
+
+.dropdown-item:active {
+  background: rgba(255, 215, 0, 0.25);
+}
+
+.dropdown > .nav-link {
+  position: relative;
+}
+
+/* Add dropdown arrow indicator */
+.dropdown > .nav-link::before {
+  content: "";
+  position: absolute;
+  right: -15px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid rgba(255, 255, 255, 0.7);
+  transition: all 0.3s ease;
+}
+
+.dropdown:hover > .nav-link::before {
+  border-top-color: #ffd700;
+  transform: translateY(-50%) rotate(180deg);
+}
+
+/* Ensure dropdown stays open when moving mouse to it */
+.dropdown::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 15px;
+  background: transparent;
+  z-index: 9998;
+}
+
+/* Contact Info */
+.contact-info {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #fff;
+}
+
+.contact-icon {
+  color: #ffd700;
+  font-size: 18px;
+  animation: pulse 2s infinite;
+}
+
+.contact-number {
+  font-family: "Inter", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
   }
 }
-    </style>
-</head>
-<body class="goto-here" style="background-color: #c4dade9f;">
-    <nav class="navbar navbar-expand-lg ftco-navbar-light" id="ftco-navbar">
-        <div class="container">
-            <a class="navbar-brand brand-logo" href="/">
-                <img src="images/logo.png "alt="Logo" style="width: 76px; height: 76px;">
-                <span class="brand-name" style="color: black;">NextTick</span>
-            </a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="oi oi-menu"></span> Menu
-            </button>
 
-            <div class="collapse navbar-collapse" id="ftco-nav">
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item"><a href="/" class="nav-link">Home</a></li>
+/* Mobile Toggle */
+.mobile-toggle {
+  display: none;
+  background: transparent;
+  border: 2px solid rgba(255, 215, 0, 0.3);
+  color: #ffd700;
+  padding: 10px 15px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  border-radius: 5px;
+  font-family: "Inter", sans-serif;
+}
+
+.mobile-toggle:hover {
+  background: rgba(255, 215, 0, 0.1);
+  border-color: #ffd700;
+  transform: translateY(-1px);
+}
+
+.mobile-toggle i {
+  margin-right: 8px;
+}
+
+/* Mobile Menu - Fixed for scrolling */
+.mobile-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.98);
+  z-index: 9999;
+  padding: 80px 30px 30px;
+  backdrop-filter: blur(10px);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  overflow-y: auto; /* Allow scrolling within mobile menu */
+}
+
+.mobile-menu.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+body.mobile-menu-open {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+}
+
+.mobile-menu-close {
+  position: absolute;
+  top: 25px;
+  right: 25px;
+  background: transparent;
+  border: 2px solid rgba(255, 215, 0, 0.3);
+  color: #ffd700;
+  font-size: 20px;
+  cursor: pointer;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.mobile-menu-close:hover {
+  background: rgba(255, 215, 0, 0.1);
+  border-color: #ffd700;
+  transform: rotate(90deg);
+}
+
+.mobile-menu-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: center;
+}
+
+.mobile-menu-items li {
+  margin-bottom: 25px;
+}
+
+.mobile-menu-items a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 20px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  display: block;
+  padding: 15px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+  font-family: "Inter", sans-serif;
+}
+
+.mobile-menu-items a:hover {
+  color: #ffd700;
+  transform: translateX(10px);
+  border-bottom-color: rgba(255, 215, 0, 0.3);
+}
+
+/* Animations */
+.main-header {
+  animation: slideDown 0.6s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Sticky Header - Fixed positioning */
+.header-sticky .top-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1001;
+}
+
+.header-sticky .main-header {
+  position: fixed;
+  top: 43px; /* Height of top bar */
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(15px);
+  padding: 15px 0;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+}
+
+/* Add padding to body when header is sticky */
+.header-sticky body {
+  padding-top: 120px; /* Adjust based on header height */
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .main-header .container {
+    padding: 0 15px;
+  }
+
+  .nav-menu {
+    gap: 30px;
+  }
+
+  .contact-number {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 992px) {
+  .nav-menu {
+    gap: 25px;
+  }
+
+  .nav-link {
+    font-size: 13px;
+  }
+
+  .contact-info {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .top-bar {
+    padding: 8px 0;
+  }
+
+  .top-bar .container {
+    padding: 0 15px;
+  }
+
+  .top-bar-left {
+    font-size: 12px;
+  }
+
+  .main-header {
+    padding: 15px 0;
+  }
+
+  .main-header .container {
+    padding: 0 15px;
+  }
+
+  .brand-info h1 {
+    font-size: 22px;
+  }
+
+  .brand-tagline {
+    font-size: 11px;
+  }
+
+  .brand-logo img {
+    width: 45px;
+    height: 45px;
+  }
+
+  .main-nav {
+    display: none;
+  }
+
+  .mobile-toggle {
+    display: flex;
+    align-items: center;
+  }
+
+  .contact-info {
+    display: none;
+  }
+
+  /* Adjust sticky header for mobile */
+  .header-sticky .main-header {
+    top: 35px; /* Smaller top bar on mobile */
+  }
+}
+
+@media (max-width: 480px) {
+  .top-bar-left {
+    display: none;
+  }
+
+  .brand-info h1 {
+    font-size: 20px;
+  }
+
+  .brand-logo img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .brand-logo {
+    gap: 12px;
+  }
+
+  .mobile-menu {
+    padding: 70px 20px 20px;
+  }
+
+  .mobile-menu-items a {
+    font-size: 18px;
+    letter-spacing: 1px;
+  }
+
+  /* Hide top bar on small screens when sticky */
+  .header-sticky .top-bar {
+    display: none;
+  }
+
+  .header-sticky .main-header {
+    top: 0;
+  }
+}
+
+/* Focus States for Accessibility */
+.nav-link:focus,
+.top-bar-icon:focus,
+.mobile-toggle:focus,
+.dropdown-item:focus {
+  outline: 2px solid #ffd700;
+  outline-offset: 2px;
+}
+
+/* Ensure content is not hidden behind fixed header */
+.content-wrapper {
+  position: relative;
+  z-index: 1;
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+
+    </style>
+
+
+<body class="goto-here">
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="top-bar-left">
+                Custom Watches & More. Free Shipping & Returns
+            </div>
+            <div class="top-bar-right">
+                <div class="top-bar-icons">
+                    <a href="#" class="top-bar-icon">
+                        <i class="fas fa-search"></i>
+                    </a>
+                    <a href="/cart" class="top-bar-icon cart-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count">0</span>
+                    </a>
+                    <% if (locals.user) { %>
+                        <a href="/userProfile" class="top-bar-icon">
+                            <i class="fas fa-user"></i>
+                        </a>
+                    <% } else { %>
+                        <a href="/login" class="top-bar-icon">
+                            <i class="fas fa-user"></i>
+                        </a>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Header -->
+    <header class="main-header">
+        <div class="container">
+            <!-- Brand Section -->
+            <div class="brand-section">
+                <a href="/" class="brand-logo">
+                    <img src="images/logo.png" alt="NextTick Logo">
+                    <div class="brand-info">
+                        <h1>NextTick</h1>
+                        <p class="brand-tagline">Premium Timepieces</p>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="main-nav">
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="/" class="nav-link">Home</a>
+                    </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Catalog</a>
-                        <div class="dropdown-menu" aria-labelledby="dropdown04">
-                            <a class="dropdown-item" href="shop">Shop</a>
-                            <!-- <a class="dropdown-item" href="product-single.html">Single Product</a> -->
+                        <a href="/shop" class="nav-link">Watches</a>
+                        <div class="dropdown-menu">
+                            <a href="/shop" class="dropdown-item">All Watches</a>
+                            <a href="/shop?category=luxury" class="dropdown-item">Luxury Collection</a>
+                            <a href="/shop?category=sport" class="dropdown-item">Sport Collection</a>
                         </div>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">Services</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">Contact</a>
                     </li>
                     <% if (locals.user) { %>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span id="headerUserName"><%= user.name %></span>
-                            </a>
-                            <div class="dropdown-menu" aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="/userProfile">Profile</a>
-                                <a class="dropdown-item" href="/wishlist">Wishlist</a>
-                                <a class="dropdown-item" href="/cart">Cart</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="/logout">Logout</a>
+                            <a href="#" class="nav-link"><%= user.name %></a>
+                            <div class="dropdown-menu">
+                                <a href="/userProfile" class="dropdown-item">Profile</a>
+                                <a href="/wishlist" class="dropdown-item">Wishlist</a>
+                                <a href="/cart" class="dropdown-item">Cart</a>
+                                <a href="/logout" class="dropdown-item">Logout</a>
                             </div>
                         </li>
                     <% } else { %>
-                        <li class="nav-item"><a href="/login" class="nav-link">Login</a></li>
-                        <li class="nav-item"><a href="/signup" class="nav-link">Sign Up</a></li>
+                        <li class="nav-item">
+                            <a href="/login" class="nav-link">Login</a>
+                        </li>
                     <% } %>
                 </ul>
-                
+            </nav>
+
+            <!-- Contact Info -->
+            <div class="contact-info">
+                <i class="fas fa-phone contact-icon"></i>
+                <span class="contact-number">1 (800) 862 6772</span>
             </div>
+
+            <!-- Mobile Toggle -->
+            <button class="mobile-toggle" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i> Menu
+            </button>
         </div>
-    </nav>
-<style>
-  .dd {
-    position: relative;
-    display: inline-block;
-    margin-top: 12px;
-  }
-  
-  
-   
-</style>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <button class="mobile-menu-close" onclick="toggleMobileMenu()">
+            <i class="fas fa-times"></i>
+        </button>
+        <ul class="mobile-menu-items">
+            <li><a href="/">Home</a></li>
+            <li><a href="/shop">Watches</a></li>
+            <li><a href="#">Services</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Contact</a></li>
+            <% if (locals.user) { %>
+                <li><a href="/userProfile">Profile</a></li>
+                <li><a href="/wishlist">Wishlist</a></li>
+                <li><a href="/cart">Cart</a></li>
+                <li><a href="/logout">Logout</a></li>
+            <% } else { %>
+                <li><a href="/login">Login</a></li>
+                <li><a href="/signup">Sign Up</a></li>
+            <% } %>
+        </ul>
+    </div>
+
+    <script>
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            const body = document.body;
+            
+            mobileMenu.classList.toggle('active');
+            
+            if (mobileMenu.classList.contains('active')) {
+                body.classList.add('mobile-menu-open');
+            } else {
+                body.classList.remove('mobile-menu-open');
+            }
+        }
+
+        // Sticky Header
+        let lastScrollTop = 0;
+        window.addEventListener('scroll', function() {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const headerContainer = document.querySelector('.top-bar').parentElement;
+            
+            if (scrollTop > 100) {
+                headerContainer.classList.add('header-sticky');
+            } else {
+                headerContainer.classList.remove('header-sticky');
+            }
+            
+            lastScrollTop = scrollTop;
+        });
+
+        // Update cart count
+        function updateCartCount(count) {
+            const cartCountElement = document.querySelector('.cart-count');
+            if (cartCountElement) {
+                cartCountElement.textContent = count;
+            }
+        }
+
+        // Enhanced dropdown functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropdowns = document.querySelectorAll('.dropdown');
+            
+            dropdowns.forEach(dropdown => {
+                const menu = dropdown.querySelector('.dropdown-menu');
+                let timeoutId;
+                
+                // Show dropdown on hover
+                dropdown.addEventListener('mouseenter', function() {
+                    clearTimeout(timeoutId);
+                    menu.style.opacity = '1';
+                    menu.style.visibility = 'visible';
+                    menu.style.transform = 'translateX(-50%) translateY(0)';
+                    menu.style.pointerEvents = 'auto';
+                });
+                
+                // Hide dropdown with delay
+                dropdown.addEventListener('mouseleave', function() {
+                    timeoutId = setTimeout(() => {
+                        menu.style.opacity = '0';
+                        menu.style.visibility = 'hidden';
+                        menu.style.transform = 'translateX(-50%) translateY(-10px)';
+                        menu.style.pointerEvents = 'none';
+                    }, 100);
+                });
+                
+                // Keep dropdown open when hovering over menu
+                menu.addEventListener('mouseenter', function() {
+                    clearTimeout(timeoutId);
+                });
+                
+                menu.addEventListener('mouseleave', function() {
+                    timeoutId = setTimeout(() => {
+                        menu.style.opacity = '0';
+                        menu.style.visibility = 'hidden';
+                        menu.style.transform = 'translateX(-50%) translateY(-10px)';
+                        menu.style.pointerEvents = 'none';
+                    }, 100);
+                });
+            });
+            
+            // Ensure dropdown items are clickable
+            const dropdownItems = document.querySelectorAll('.dropdown-item');
+            dropdownItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    // Allow default link behavior
+                    console.log('Dropdown item clicked:', this.href);
+                });
+            });
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const mobileMenu = document.getElementById('mobileMenu');
+            const mobileToggle = document.querySelector('.mobile-toggle');
+            
+            if (mobileMenu.classList.contains('active') && 
+                !mobileMenu.contains(event.target) && 
+                !mobileToggle.contains(event.target)) {
+                toggleMobileMenu();
+            }
+        });
+
+        // Prevent scroll issues on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.classList.remove('mobile-menu-open');
+        });
+    </script>
+

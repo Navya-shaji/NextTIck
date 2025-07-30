@@ -1,62 +1,100 @@
-
 <style>
-    /* General Reset */
-body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Arial', sans-serif;
-  line-height: 1.6;
-  color: #333;
-  background-color: #f8f9fa;
+/* Footer Styling to Match Home Page */
+.ftco-footer {
+  background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 50%, #0f0f0f 100%);
+  color: #fff;
+  padding: 80px 0 40px;
+  font-size: 14px;
+  position: relative;
+  font-family: "Inter", sans-serif;
 }
 
-/* Footer Styling */
-.ftco-footer {
-  background: #343a40;
-  color: #fff;
-  padding: 4rem 0;
-  font-size: 14px;
+.ftco-footer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 50% 0%, rgba(255, 215, 0, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.ftco-footer .container {
+  position: relative;
+  z-index: 2;
 }
 
 .ftco-footer .ftco-heading-2 {
-  font-size: 20px;
-  font-weight: bold;
-  margin-bottom: 1.5rem;
-  color: #f96d00;
+  font-family: "Orbitron", monospace;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  color: #ffd700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  position: relative;
+}
+
+.ftco-footer .ftco-heading-2::after {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  width: 50px;
+  height: 2px;
+  background: linear-gradient(45deg, #ffd700, #ffed4e);
 }
 
 .ftco-footer p {
-  margin-bottom: 1.5rem;
-  font-size: 14px;
-  color: #ddd;
+  margin-bottom: 2rem;
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.8;
 }
 
 .ftco-footer a {
-  color: #f96d00;
+  color: rgba(255, 255, 255, 0.8);
   text-decoration: none;
-  transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease;
+  position: relative;
 }
 
 .ftco-footer a:hover {
-  color: #fff;
+  color: #ffd700;
+  text-decoration: none;
+}
+
+.ftco-footer-widget {
+  margin-bottom: 3rem;
 }
 
 .ftco-footer-widget ul {
   list-style: none;
   padding: 0;
+  margin: 0;
 }
 
 .ftco-footer-widget ul li {
-  margin-bottom: 10px;
+  margin-bottom: 12px;
+  transition: all 0.3s ease;
+}
+
+.ftco-footer-widget ul li:hover {
+  transform: translateX(5px);
 }
 
 .ftco-footer-widget ul li a {
-  color: #ddd;
+  color: rgba(255, 255, 255, 0.8);
   text-decoration: none;
+  font-size: 14px;
+  display: inline-block;
+  padding: 5px 0;
+  transition: all 0.3s ease;
 }
 
 .ftco-footer-widget ul li a:hover {
-  color: #f96d00;
+  color: #ffd700;
 }
 
 /* Social Icons */
@@ -66,49 +104,85 @@ body {
   padding: 0;
   display: flex;
   gap: 15px;
+  margin-top: 2rem;
 }
 
 .ftco-footer-social li a {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 40px;
-  height: 40px;
-  background: #f96d00;
-  color: #fff;
+  width: 45px;
+  height: 45px;
+  background: rgba(255, 215, 0, 0.1);
+  color: #ffd700;
   border-radius: 50%;
-  transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease;
+  border: 2px solid rgba(255, 215, 0, 0.3);
+  font-size: 18px;
 }
 
 .ftco-footer-social li a:hover {
-  background: #fff;
-  color: #f96d00;
+  background: linear-gradient(45deg, #ffd700, #ffed4e);
+  color: #000;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(255, 215, 0, 0.3);
+  border-color: #ffd700;
 }
 
 /* Address and Contact */
 .block-23 ul {
   list-style: none;
   padding: 0;
+  margin: 0;
 }
 
 .block-23 ul li {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  gap: 15px;
+  transition: all 0.3s ease;
 }
 
-.block-23 ul li span {
-  margin-right: 10px;
-  color: #f96d00;
+.block-23 ul li:hover {
+  transform: translateX(5px);
+}
+
+.block-23 ul li .icon {
+  color: #ffd700;
+  font-size: 18px;
+  margin-top: 2px;
+  min-width: 20px;
+}
+
+.block-23 ul li .text {
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.6;
+  flex: 1;
 }
 
 .block-23 ul li a {
-  color: #ddd;
+  color: rgba(255, 255, 255, 0.8);
   text-decoration: none;
+  transition: all 0.3s ease;
 }
 
 .block-23 ul li a:hover {
-  color: #fff;
+  color: #ffd700;
+}
+
+/* Copyright Section */
+.ftco-footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 30px;
+  margin-top: 50px;
+  text-align: center;
+}
+
+.ftco-footer-bottom p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
 }
 
 /* Loader */
@@ -118,11 +192,12 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(255, 255, 255, 0.9);
-  z-index: 1000;
+  background: rgba(15, 15, 15, 0.95);
+  z-index: 10000;
   display: flex;
   justify-content: center;
   align-items: center;
+  backdrop-filter: blur(5px);
 }
 
 #ftco-loader .circular {
@@ -133,8 +208,14 @@ body {
   stroke-dasharray: 1, 200;
   stroke-dashoffset: 0;
   animation: dash 1.5s ease-in-out infinite;
-  stroke: #f96d00;
+  stroke: #ffd700;
   stroke-linecap: round;
+  stroke-width: 3;
+}
+
+#ftco-loader .path-bg {
+  stroke: rgba(255, 255, 255, 0.1);
+  stroke-width: 3;
 }
 
 /* Animations */
@@ -163,81 +244,157 @@ body {
 @media (max-width: 768px) {
   .ftco-footer {
     text-align: center;
+    padding: 60px 0 30px;
   }
-
+  
   .ftco-footer-widget {
     margin-bottom: 2rem;
   }
-
+  
   .ftco-footer-social {
     justify-content: center;
   }
+  
+  .ftco-footer .ftco-heading-2::after {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  .block-23 ul li {
+    justify-content: center;
+    text-align: left;
+  }
+  
+  .ftco-footer .row.mb-5 {
+    margin-bottom: 2rem !important;
+  }
 }
 
+@media (max-width: 480px) {
+  .ftco-footer {
+    padding: 40px 0 20px;
+  }
+  
+  .ftco-footer .ftco-heading-2 {
+    font-size: 1.3rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .ftco-footer-social li a {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+}
+
+/* Fade in animation for footer */
+.ftco-footer {
+  animation: fadeInUp 0.8s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 </style>
+
 <footer class="ftco-footer ftco-section">
-
-
   <div class="container">
-      <div class="row mb-5">
-          <div class="col-md">
-              <div class="ftco-footer-widget mb-4">
-                  <h2 class="ftco-heading-2">NexTick</h2>
-                  <p>"Timeless elegance and unparalleled craftsmanship come together in every watch we offer. Discover the perfect timepiece that reflects your style and keeps you in sync with life's most precious moments."</p>
-                  <ul class="ftco-footer-social list-unstyled float-md-left float-lft mt-5">
-                      <li class="ftco-animate"><a href="#"><span class="icon-twitter"></span></a></li>
-                      <li class="ftco-animate"><a href="#"><span class="icon-facebook"></span></a></li>
-                      <li class="ftco-animate"><a href="#"><span class="icon-instagram"></span></a></li>
-                  </ul>
-              </div>
-          </div>
-          <div class="col-md">
-              <div class="ftco-footer-widget mb-4 ml-md-5">
-                  <h2 class="ftco-heading-2">Menu</h2>
-                  <ul class="list-unstyled">
-                      <li><a href="#" class="py-2 d-block">Shop</a></li>
-                      <li><a href="#" class="py-2 d-block">About</a></li>
-                      <li><a href="#" class="py-2 d-block">Journal</a></li>
-                      <li><a href="#" class="py-2 d-block">Contact Us</a></li>
-                  </ul>
-              </div>
-          </div>
-          <div class="col-md-4">
-              <div class="ftco-footer-widget mb-4">
-                  <h2 class="ftco-heading-2">Help</h2>
-                  <div class="d-flex">
-                      <ul class="list-unstyled mr-l-5 pr-l-3 mr-4">
-                          <li><a href="#" class="py-2 d-block">Shipping Information</a></li>
-                          <li><a href="#" class="py-2 d-block">Returns & Exchange</a></li>
-                          <li><a href="#" class="py-2 d-block">Terms & Conditions</a></li>
-                          <li><a href="#" class="py-2 d-block">Privacy Policy</a></li>
-                      </ul>
-                  </div>
-              </div>
-          </div>
-          <div class="col-md">
-              <div class="ftco-footer-widget mb-4">
-                  <h2 class="ftco-heading-2">Have a Questions?</h2>
-                  <div class="block-23 mb-3">
-                      <ul>
-                          <li><span class="icon icon-map-marker"></span><span class="text">203 Fake St. Mountain View, San Francisco, California, USA</span></li>
-                          <li><a href="#"><span class="icon icon-phone"></span><span class="text">+45127689456</span></a></li>
-                          <li><a href="#"><span class="icon icon-envelope"></span><span class="text">ntick@gmail.com</span></a></li>
-                      </ul>
-                  </div>
-              </div>
-          </div>
+    <div class="row mb-5">
+      <div class="col-md">
+        <div class="ftco-footer-widget mb-4">
+          <h2 class="ftco-heading-2">NextTick</h2>
+          <p>"Timeless elegance and unparalleled craftsmanship come together in every watch we offer. Discover the perfect timepiece that reflects your style and keeps you in sync with life's most precious moments."</p>
+          <ul class="ftco-footer-social list-unstyled">
+            <li class="ftco-animate">
+              <a href="#"><i class="icon-twitter"></i></a>
+            </li>
+            <li class="ftco-animate">
+              <a href="#"><i class="icon-facebook"></i></a>
+            </li>
+            <li class="ftco-animate">
+              <a href="#"><i class="icon-instagram"></i></a>
+            </li>
+          </ul>
+        </div>
       </div>
+      
+      <div class="col-md">
+        <div class="ftco-footer-widget mb-4 ml-md-5">
+          <h2 class="ftco-heading-2">Menu</h2>
+          <ul class="list-unstyled">
+            <li><a href="#" class="py-2 d-block">Shop</a></li>
+            <li><a href="#" class="py-2 d-block">About</a></li>
+            <li><a href="#" class="py-2 d-block">Journal</a></li>
+            <li><a href="#" class="py-2 d-block">Contact Us</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="col-md-4">
+        <div class="ftco-footer-widget mb-4">
+          <h2 class="ftco-heading-2">Help</h2>
+          <div class="d-flex">
+            <ul class="list-unstyled mr-l-5 pr-l-3 mr-4">
+              <li><a href="#" class="py-2 d-block">Shipping Information</a></li>
+              <li><a href="#" class="py-2 d-block">Returns & Exchange</a></li>
+              <li><a href="#" class="py-2 d-block">Terms & Conditions</a></li>
+              <li><a href="#" class="py-2 d-block">Privacy Policy</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md">
+        <div class="ftco-footer-widget mb-4">
+          <h2 class="ftco-heading-2">Have Questions?</h2>
+          <div class="block-23 mb-3">
+            <ul>
+              <li>
+                <span class="icon icon-map-marker"></span>
+                <span class="text">203 Fake St. Mountain View, San Francisco, California, USA</span>
+              </li>
+              <li>
+                <a href="tel:+45127689456">
+                  <span class="icon icon-phone"></span>
+                  <span class="text">+45127689456</span>
+                </a>
+              </li>
+              <li>
+                <a href="mailto:ntick@gmail.com">
+                  <span class="icon icon-envelope"></span>
+                  <span class="text">ntick@gmail.com</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="ftco-footer-bottom">
+      <p>&copy; 2024 NextTick. All rights reserved. Crafted with precision and passion.</p>
+    </div>
   </div>
 </footer>
 
-<!-- loader -->
-<div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div>
+<!-- Loader -->
+<div id="ftco-loader" class="show fullscreen">
+  <svg class="circular" width="48px" height="48px">
+    <circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="3" stroke="#333"/>
+    <circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="3" stroke-miterlimit="10"/>
+  </svg>
+</div>
 
 <script src="js/jquery.min.js"></script>
 <script src="js/jquery-migrate-3.0.1.min.js"></script>
 <script src="js/popper.min.js"></script>
-<!-- <script src="js/bootstrap.min.js"></script> -->
 <script src="js/jquery.easing.1.3.js"></script>
 <script src="js/jquery.waypoints.min.js"></script>
 <script src="js/jquery.stellar.min.js"></script>
@@ -258,13 +415,24 @@ body {
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-      const navbarToggler = document.querySelector('.navbar-toggler');
-      const navbarCollapse = document.querySelector('.navbar-collapse');
-      
+    const navbarToggler = document.querySelector('.navbar-toggler');
+    const navbarCollapse = document.querySelector('.navbar-collapse');
+    
+    if (navbarToggler && navbarCollapse) {
       navbarToggler.addEventListener('click', function() {
-          navbarCollapse.classList.toggle('show');
+        navbarCollapse.classList.toggle('show');
       });
+    }
+    
+    // Hide loader after page load
+    const loader = document.getElementById('ftco-loader');
+    if (loader) {
+      setTimeout(() => {
+        loader.style.display = 'none';
+      }, 1000);
+    }
   });
 </script>
+
 </body>
 </html>

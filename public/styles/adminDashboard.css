@@ -1,0 +1,80 @@
+
+
+    .dashboard-card {
+        border-radius: 15px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        transition: transform 0.2s;
+    }
+    .dashboard-card:hover {
+        transform: translateY(-5px);
+    }
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 15px;
+    }
+    .bg-primary-light { background-color: rgba(12, 151, 127, 0.1); }
+    .bg-success-light { background-color: rgba(40, 167, 69, 0.1); }
+    .bg-warning-light { background-color: rgba(255, 193, 7, 0.1); }
+    .bg-info-light { background-color: rgba(23, 162, 184, 0.1); }
+    .chart-container {
+        position: relative;
+        height: 300px;
+    }
+    .filter-container {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+    .content-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding: 0.5rem 1rem;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    }
+    .content-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #2c3e50;
+        margin: 0;
+    }
+    .btn-primary {
+        background-color: #0C977F;
+        border-color: #0C977F;
+    }
+    .btn-primary:hover {
+        background-color: #0a7d6a;
+        border-color: #0a7d6a;
+    }
+    .summary-card {
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    }
+    .summary-card .card-body-icon {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 24px;
+        color: #fff;
+    }
+    .summary-card .summary-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #fff;
+        margin-bottom: 5px;
+    }
+    .summary-card .summary-value {
+        font-size: 24px;
+        font-weight: 600;
+        color: #fff;
+    }
+

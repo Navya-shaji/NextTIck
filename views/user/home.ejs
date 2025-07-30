@@ -1,719 +1,440 @@
 <%- include ("../../views/partials/user/header.ejs")  %>
-<style>
+<head>  
+  <link rel="stylesheet" href="/styles/home.css">  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">  
+  <link rel="preconnect" href="https://fonts.googleapis.com">  
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>  
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
 
-.choose-wrap {
-    background-size: cover;
-    background-position: center;
-    width: 100%;
-    height: 100%;
-    min-height: 300px;
-    overflow: hidden;
-    border-radius: 5px;
-  }
-  .text {
-    z-index: 2;
-    position: relative;
-  }
-  .text .btn {
-    background-color: #000;
-    color: #fff;
-    border: none;
-  }
-  .text .btn:hover {
-    background-color: #444;
-    color: #fff;
-  }
-
-  /* Responsive Styles */
-  @media (max-width: 991.98px) {
-    .choose-wrap.full-wrap {
-      flex-direction: column !important;
-      text-align: center !important;
-    }
-    .choose-wrap img {
-      height: auto;
-    }
-    .col-md-6,
-    .col-md-12 {
-      flex: 0 0 100%;
-      max-width: 100%;
-    }
-    .text {
-      padding: 20px !important;
-    }
-  }
-
-  @media (max-width: 767.98px) {
-    .choose-wrap {
-      min-height: 200px;
-    }
-    .text h2 {
-      font-size: 20px;
-    }
-    .text p {
-      font-size: 14px;
-    }
-    .text .btn {
-      padding: 8px 16px;
-      font-size: 14px;
-    }
-  }
-
-  @media (max-width: 575.98px) {
-    .text h2 {
-      font-size: 18px;
-    }
-    .text p {
-      font-size: 12px;
-    }
-    .choose-wrap {
-      min-height: 150px;
-    }
-  }
-  .media-container {
-  position: relative;
-  overflow: hidden;
-}
-
-.product-video {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.toggle-media {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-  background-color: rgba(255, 255, 255, 0.7);
-  border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.toggle-media:hover {
-  background-color: rgba(255, 255, 255, 0.9);
-}
-
-.toggle-media i {
-  font-size: 18px;
-  color: #333;
-}
-
-@media (max-width: 768px) {
-  .toggle-media {
-    width: 30px;
-    height: 30px;
-  }
-
-  .toggle-media i {
-    font-size: 14px;
-  }
-}
-
-.product-offer-box {
-    display: inline-block;
-    background-color: red;
-    color: white;
-    font-size: 8px;
-    font-weight: bold;
-    padding: 2px 6px; 
-    border-radius: 4px;
-    text-align: center;
-    margin-left: 10px; 
-    position: absolute;
-    left: 0; 
-    top: 8%; 
-    transform: translateY(-50%); 
-}
-
-.wishlist-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  font-size: 20px;
-  color: #ff5c8e; 
-  cursor: pointer;
-  transition: transform 0.2s ease-in-out;
-}
-
-.wishlist-btn:hover {
-  transform: scale(1.2);
-}
-
-.wishlist-btn.liked {
-  color: #d63031; 
-}
-
-.wishlist-btn:active {
-  transform: scale(1.1); 
-}
-.category-offer-box {
-    display: inline-block;
-    background-color: #28a745; 
-    color: white;
-    font-size: 8px;
-    font-weight: bold;
-    padding: 2px 6px;
-    border-radius: 4px;
-    text-align: center;
-    position: absolute;
-    left: 0;
-    top: 15%; /* Position it below the product offer */
-    transform: translateY(-50%);
-}
-.container {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .horizontal-line {
-            border-top: 2px solid #333;
-            margin: 20px 0;
-        }
-        .video-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-        }
-        .video-box {
-            aspect-ratio: 1 / 1;
-            position: relative;
-            overflow: hidden;
-            background-color: #000;
-        }
-        video {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-/* General Reset */
-body, h2, p, span {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-.ftco-section {
-  padding: 50px 0;
-}
-
-.choose-wrap {
-  position: relative;
-  overflow: hidden;
-  border-radius: 10px;
-}
-
-.choose-wrap.img {
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
-.text {
-  position: relative;
-  z-index: 2;
-}
-
-.text-white {
-  color: #fff;
-}
-
-.text-center {
-  text-align: center;
-}
-
-.text-black {
-  color: #000;
-}
-
-.text .subheading {
-  font-size: 16px;
-  font-weight: 600;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  margin-bottom: 10px;
-  display: block;
-}
-
-.text h2 {
-  font-size: 28px;
-  font-weight: 700;
-  margin-bottom: 15px;
-}
-
-.text p {
-  font-size: 14px;
-  line-height: 1.8;
-  margin-bottom: 20px;
-}
-
-.text a.btn {
-  background-color: #000;
-  color: #fff;
-  border: 1px solid transparent;
-  text-transform: uppercase;
-  font-size: 14px;
-  font-weight: 600;
-  border-radius: 50px;
-  padding: 10px 20px;
-  text-decoration: none;
-  transition: all 0.3s ease-in-out;
-}
-
-.text a.btn:hover {
-  background-color: #fff;
-  color: #000;
-  border-color: #000;
-}
-
-.bg-light {
-  background-color: #d9e4ef !important;
-}
-
-.divider-one, .divider-two {
-  margin-bottom: 20px;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .text h2 {
-    font-size: 24px;
-  }
-
-  .text p {
-    font-size: 13px;
-  }
-
-  .text a.btn {
-    font-size: 12px;
-    padding: 8px 16px;
-  }
-}
-
-</style>
-
-
-	<section id="home-section" class="hero">
-			<div class="home-slider owl-carousel">
-			<div class="slider-item js-fullheight">
-				<div class="overlay"></div>
-			  <div class="container-fluid p-0">
-				<div class="row d-md-flex no-gutters slider-text align-items-center justify-content-end" data-scrollax-parent="true">
-					<img class="img-fluid" src="/images/kylefromthenorth-TeOH1b-t3Nc-unsplash.jpg" alt="Watch Collection 2024">
-
-					<div class="one-forth d-flex align-items-center ftco-animate" data-scrollax=" properties: { translateY: '70%' }">
-						<div class="text">
-							<span class="subheading">#New Arrival</span>
-							<div class="horizontal">
-							  <h1 class="mb-4 mt-3">Watch Collection 2024</h1>
-							  <p class="mb-4">From sleek designs to understated elegance, NextTick offers minimalist watches that are crafted to complement your everyday style. Explore timepieces that are subtle yet captivating.</p>
-							  
-							  <p><a href="#" class="btn-custom">Discover Now</a></p>
-							</div>
-					  </div>
-					</div>
-				  </div>
-			  </div>
-			</div>
-		
-    </section>
-
-    <section class="ftco-section ftco-no-pt ftco-no-pb">
-			<div class="container">
-				<div class="row no-gutters ftco-services">
-          <div class="col-lg-4 text-center d-flex align-self-stretch ftco-animate">
-            <div class="media block-6 services p-4 py-md-5">
-              <div class="icon d-flex justify-content-center align-items-center mb-4">
-            		<span class="flaticon-bag"></span>
-              </div>
-              <div class="media-body">
-                <h3 class="heading">Free Shipping</h3>
-                <p>Across the seas and through the mists, lies a place where language itself dreams, where the blind texts live in serene oblivion.</p>
-              </div>
-            </div>      
-          </div>
-          <div class="col-lg-4 text-center d-flex align-self-stretch ftco-animate">
-            <div class="media block-6 services p-4 py-md-5">
-              <div class="icon d-flex justify-content-center align-items-center mb-4">
-            		<span class="flaticon-customer-service"></span>
-              </div>
-              <div class="media-body">
-                <h3 class="heading">Support Customer</h3>
-                <p>In the quiet valleys of forgotten lands, beyond the reach of bustling towns, there dwell the tales untold.</p>
-              </div>
-            </div>    
-          </div>
-          <div class="col-lg-4 text-center d-flex align-self-stretch ftco-animate">
-            <div class="media block-6 services p-4 py-md-5">
-              <div class="icon d-flex justify-content-center align-items-center mb-4">
-            		<span class="flaticon-payment-security"></span>
-              </div>
-              <div class="media-body">
-                <h3 class="heading">Secure Payments</h3>
-                <p>In the quiet valleys of forgotten lands, beyond the reach of bustling towns, there dwell the tales untold.</p>
-              </div>
-            </div>      
-          </div>
-        </div>
-			</div>
-		</section>
-
-		
-<section class="ftco-section bg-light">
-  <div class="container">
-    <div class="row justify-content-center mb-3 pb-3">
-      <div class="col-md-12 heading-section text-center ftco-animate">
-        <h2 class="mb-4">New Watches Arrival</h2>
-        <p>"Time just got a style upgrade – discover our new arrivals and redefine every second."</p>
-      </div>
-    </div>   		
+<!-- Hero Section -->
+<section id="home-section" class="hero-section">  
+  <div class="hero-container">    
+    <div class="hero-content">      
+      <div class="hero-text">        
+        <h1 class="hero-title">          
+          <span class="title-line">CUSTOM WATCHES FOR</span>          
+          <span class="title-line accent">ANY OCCASION</span>        
+        </h1>                
+        <div class="hero-buttons">          
+          <a href="#collections" class="btn-primary">SHOP WATCHES</a>          
+          <a href="#story" class="btn-secondary">DISCOVER OUR STORY</a>        
+        </div>                
+        <!-- Navigation Dots -->        
+        <div class="hero-dots">          
+          <span class="dot active"></span>          
+          <span class="dot"></span>          
+          <span class="dot"></span>          
+          <span class="dot"></span>        
+        </div>      
+      </div>            
+      <div class="hero-watch">        
+        <div class="watch-showcase">          
+          <img src="/images/kylefromthenorth-TeOH1b-t3Nc-unsplash.jpg" alt="NextTick Premium Watch" class="hero-watch-img">          
+          <div class="watch-glow"></div>        
+        </div>      
+      </div>    
+    </div>        
+    <!-- Scroll Indicator -->    
+    <div class="scroll-indicator">      
+      <div class="scroll-arrow">        
+        <i class="fas fa-chevron-down"></i>      
+      </div>    
+    </div>  
   </div>
-  <section class="ftco-section bg-light">
-    <div class="container">
-      <div class="row">
+</section>
 
-        <% if (products && products.length > 0) { %>
-          <% products.forEach(product => { %>
-            <div class="col-sm-12 col-md-6 col-lg-3 ftco-animate d-flex">
-              <div class="product d-flex flex-column">
-                <div class="media-container position-relative">
-                  <a href="/productDetails?id=<%= product._id %>" class="img-prod">
+<!-- Story Section -->
+<section id="story" class="story-section">  
+  <div class="container">    
+    <div class="story-content">      
+      <div class="story-image">        
+        <img src="/images/watch-story.jpg" alt="NextTick Story" class="story-img">        
+        <div class="story-overlay">          
+          <div class="play-button">            
+            <i class="fas fa-play"></i>          
+          </div>        
+        </div>      
+      </div>            
+      <div class="story-text">        
+        <div class="navigation-arrows">          
+          <button class="nav-arrow prev">            
+            <i class="fas fa-chevron-left"></i>          
+          </button>          
+          <button class="nav-arrow next">            
+            <i class="fas fa-chevron-right"></i>          
+          </button>        
+        </div>                
+        <div class="story-info">          
+          <h2 class="story-title">OUR STORY</h2>          
+          <p class="story-description">            
+            At NextTick, we believe that every moment deserves a timepiece that reflects your unique style. Our master craftsmen are dedicated to creating exceptional watches that combine traditional Swiss precision with contemporary design. Each watch tells a story of passion, precision, and timeless elegance.          
+          </p>          
+          <p class="story-description">            
+            From the initial sketch to the final polish, every NextTick timepiece undergoes rigorous quality control and meticulous attention to detail, ensuring that you receive nothing less than perfection on your wrist.          
+          </p>        
+        </div>      
+      </div>    
+    </div>  
+  </div>
+</section>
 
+<!-- Collections Section -->
+<section id="collections" class="collections-section">  
+  <div class="container">    
+    <div class="section-header">      
+      <h2 class="section-title">COLLECTIONS</h2>      
+      <div class="collection-nav">        
+        <button class="collection-btn active" data-collection="minimal">MINIMAL</button>        
+        <button class="collection-btn" data-collection="popular">POPULAR</button>      
+      </div>    
+    </div>        
+    <div class="collections-grid">      
+      <% if (products && products.length > 0) { %>        
+        <% products.slice(0, 3).forEach((product, index) => { %>          
+          <div class="collection-item" data-collection="<%= index === 0 ? 'minimal' : 'popular' %>">            
+            <div class="collection-watch">              
+              <div class="watch-container">                
+                <img src="/uploads/re-image/<%= product.productImage[0] %>" alt="<%= product.productName %>" class="collection-watch-img">                                
+                <% if (product.productVideo) { %>                  
+                  <video class="product-video" loop muted playsinline preload="metadata" style="display: none;">                    
+                    <source src="/uploads/videos/<%= product.productVideo %>" type="video/mp4">                  
+                  </video>                
+                <% } %>                                
+                <div class="watch-overlay">                  
+                  <div class="watch-actions">                    
+                    <button class="action-btn" onclick="addToCartHandler(event, '<%= product._id %>')">                      
+                      <i class="fas fa-shopping-cart"></i>                    
+                    </button>                    
+                    <button class="action-btn" onclick="addToWishlist('<%= product._id %>')">                      
+                      <i class="fas fa-heart"></i>                    
+                    </button>                    
+                    <a href="/productDetails?id=<%= product._id %>" class="action-btn">                      
+                      <i class="fas fa-eye"></i>                    
+                    </a>                  
+                  </div>                
+                </div>              
+              </div>                            
+              <div class="watch-info">                
+                <h3 class="watch-name"><%= product.productName %></h3>                
+                <div class="watch-price">                  
+                  <%                     
+                    let finalPrice = product.regularPrice;                    
+                    let maxOffer = Math.max(product.discount || 0, (product.category && product.category.offer) || 0, product.productOffer || 0);                    
+                    if (maxOffer > 0) {                      
+                      finalPrice = product.regularPrice - (product.regularPrice * maxOffer / 100);                  
+                  %>                    
+                    <span class="original-price">₹<%= product.regularPrice.toFixed(2) %></span>                    
+                    <span class="sale-price">₹<%= finalPrice.toFixed(2) %></span>                  
+                  <% } else { %>                    
+                    <span class="current-price">₹<%= product.salesPrice.toFixed(2) %></span>                  
+                  <% } %>                
+                </div>                                
+                <div class="watch-rating">                  
+                  <% for (let i = 0; i < 5; i++) { %>                    
+                    <i class="fas fa-star <%= i < product.rating ? 'filled' : '' %>"></i>                  
+                  <% } %>                
+                </div>              
+              </div>            
+            </div>          
+          </div>        
+        <% }); %>      
+      <% } else { %>        
+        <div class="no-products">          
+          <i class="fas fa-clock"></i>          
+          <h3>Coming Soon</h3>          
+          <p>Our exclusive timepiece collection is being curated.</p>        
+        </div>      
+      <% } %>    
+    </div>  
+  </div>
+</section>
 
-                    <img class="img-fluid" src="/uploads/re-image/<%= product.productImage[0] %>" alt="<%= product.productName %>">
+<!-- Features Section -->
+<section class="features-section">  
+  <div class="container">    
+    <div class="features-grid">      
+      <div class="feature-item">        
+        <div class="feature-icon">          
+          <i class="fas fa-shipping-fast"></i>        
+        </div>        
+        <h3 class="feature-title">FREE WORLDWIDE SHIPPING</h3>        
+        <p class="feature-description">Complimentary shipping on all orders over $500</p>      
+      </div>            
+      <div class="feature-item">        
+        <div class="feature-icon">          
+          <i class="fas fa-shield-alt"></i>        
+        </div>        
+        <h3 class="feature-title">LIFETIME WARRANTY</h3>        
+        <p class="feature-description">Comprehensive coverage for all manufacturing defects</p>      
+      </div>            
+      <div class="feature-item">        
+        <div class="feature-icon">          
+          <i class="fas fa-clock"></i>        
+        </div>        
+        <h3 class="feature-title">SWISS MOVEMENT</h3>        
+        <p class="feature-description">Precision Swiss automatic movements in every timepiece</p>      
+      </div>            
+      <div class="feature-item">        
+        <div class="feature-icon">          
+          <i class="fas fa-headset"></i>        
+        </div>        
+        <h3 class="feature-title">24/7 SUPPORT</h3>        
+        <p class="feature-description">Expert assistance whenever you need it</p>      
+      </div>    
+    </div>  
+  </div>
+</section>
 
-                    
-                    <div class="overlay"></div>
-                    
-                  </a>
+<!-- Newsletter Section -->
+<section class="newsletter-section">  
+  <div class="container">    
+    <div class="newsletter-content">      
+      <h2 class="newsletter-title">STAY CONNECTED</h2>      
+      <p class="newsletter-subtitle">Be the first to discover our latest timepieces and exclusive offers</p>            
+      <form class="newsletter-form">        
+        <div class="input-group">          
+          <input type="email" placeholder="Enter your email address" required>          
+          <button type="submit" class="subscribe-btn">SUBSCRIBE</button>        
+        </div>      
+      </form>            
+      <div class="social-links">        
+        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>        
+        <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>        
+        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>        
+        <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>      
+      </div>    
+    </div>  
+  </div>
+</section>
 
-                  <video class="product-video" loop muted playsinline preload="metadata" style="display: none;">
-                    <source src="/uploads/videos/<%= product.productVideo %>" type="video/mp4">
-                    Your browser does not support the video tag.
-                  </video>
-                  <button class="toggle-media" aria-label="Toggle media">
-                    <i class="fas fa-play"></i>
-                  </button>
-                </div>
-                <div class="text py-3 pb-4 px-3">
-                  <div class="d-flex">
-                    <div class="cat">
-                      <span><%= product.category.name %></span>
-                    </div>
-
-                    <div class="rating">
-                      <p class="text-right mb-0">
-                        <% for (let i = 0; i < 5; i++) { %>
-                          <a href="#"><span class="ion-ios-star<%= i < product.rating ? '' : '-outline' %>"></span></a>
-                        <% } %>
-                      </p>
-                    </div>
-                  </div>
-
-                  <h3><a href="/productDetails?id=<%= product._id %>"><%= product.productName %></a></h3>
-                
-                  <div class="pricing">
-                    <% 
-                      let finalPrice = product.regularPrice;
-                      let maxOffer = Math.max(product.discount || 0, (product.category && product.category.offer) || 0, product.productOffer || 0);
-                      if (maxOffer > 0) {
-                        finalPrice = product.regularPrice - (product.regularPrice * maxOffer / 100);
-                    %>
-                      <p class="price">
-                        <span class="mr-2 price-dc">₹<%= product.regularPrice.toFixed(2) %></span>
-                        <span class="price-sale">₹<%= finalPrice.toFixed(2) %></span>
-                      </p>
-                    <% } else { %>
-                      <p class="price"><span>₹<%= product.salesPrice.toFixed(2) %></span></p>
-                    <% } %>
-                  </div>
-
-                  <p class="bottom-area d-flex px-3">
-                    <a href="#" class="add-to-cart text-center py-2 mr-1" onclick="addToCartHandler(event, '<%= product._id %>')">
-                      <span>Add to cart <i class="ion-ios-add ml-1"></i></span>
-                    </a>
-
-                  </p>
-                </div>
-              </div>
-            </div>
-          <% }); %>
-        <% } else { %>
-          <p>No products available at the moment.</p>
-        <% } %>
-      </div>
-    </div>
-
-
-
-  </section>
-              
-            </div>
-             <div class="container">
-              <div class="horizontal-line"></div>
-              <div class="video-grid">
-                  <div class="video-box">
-                      <video autoplay muted loop playsinline>
-                          <source src="/video/one.mp4" type="video/mp4">
-                          Your browser does not support the video tag.
-                      </video>
-                  </div>
-                  <div class="video-box">
-                      <video autoplay muted loop playsinline>
-                          <source src="\video\banner video.mp4" type="video/mp4">
-                          Your browser does not support the video tag.
-                      </video>
-                  </div>
-                  <div class="video-box">
-                      <video autoplay muted loop playsinline>
-                          <source src="/video/ten.mp4" type="video/mp4">
-                          Your browser does not support the video tag.
-                      </video>
-                  </div>
-                  <div class="video-box">
-                      <video autoplay muted loop playsinline>
-                          <source src="\video\15615-265015228_small.mp4" type="video/mp4">
-                          Your browser does not support the video tag.
-                      </video>
-                  </div>
-              </div>
-          </div>
-          </section>
-           
-  </section>
-  
-  
-  
-   
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-
-  //addToCart function........................................................................
-
- function addToCartHandler(event, productId) {
-    event.preventDefault();
-
-    fetch('/addToCart', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            productId: productId,
-            quantity: 1
-        })
-    })
-    .then(response => {
-     
-        if (!response.ok) {
-            return response.json().then(data => {
-                throw new Error(data.message || 'Failed to add product to cart');
-            });
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.success) {
-
-          Swal.fire({
-                title: 'Success!',
-                text: data.message || 'Product added to cart successfully!',
-                icon: 'success',
-                showConfirmButton: false,
-                timer: 1500
-            }).then(() => {
-                if (data.cartCount !== undefined) {
-                    updateCartCount(data.cartCount);
-                }
-                
-                if (data.redirect) {
-                    window.location.href = data.redirect;
-                }
-            });
-        } else {
-            throw new Error(data.message || 'Failed to add product to cart');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        
-        if (error.message.includes('Please login')) {
-            Swal.fire({
-                title: 'Login Required',
-                text: 'Please login to add items to your cart',
-                icon: 'info',
-                showCancelButton: true,
-                confirmButtonText: 'Login',
-                cancelButtonText: 'Cancel'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = '/login';
-                }
-            });
-        } 
-        else if (error.message.includes('Maximum quantity')) {
-            Swal.fire({
-                title: 'Quantity Limit Reached',
-                text: error.message,
-                icon: 'warning',
-                confirmButtonText: 'OK'
-            });
-        }
-        else if (error.message.includes('out of stock') || error.message.includes('available in stock')) {
-            Swal.fire({
-                title: 'Stock Limited',
-                text: error.message,
-                icon: 'warning',
-                confirmButtonText: 'OK'
-            });
-        }
-        else {
-            Swal.fire({
-                title: 'Error!',
-                text: error.message || 'Something went wrong. Please try again.',
-                icon: 'error',
-                confirmButtonText: 'OK'
-            });
-        }
-    });
-}
-
-
-
-function updateCartCount(count) {
-    const cartCountElements = document.querySelectorAll('.cart-count');
-    cartCountElements.forEach(element => {
-        element.textContent = count;
-    });
-}
-
-
-document.addEventListener('DOMContentLoaded', function() {
-  const mediaContainers = document.querySelectorAll('.media-container');
-
-  mediaContainers.forEach(container => {
-    const img = container.querySelector('img');
-    const video = container.querySelector('video');
-    const toggleBtn = container.querySelector('.toggle-media');
-    const icon = toggleBtn.querySelector('i');
-
-    toggleBtn.addEventListener('click', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-
-      if (video.style.display === 'none') {
-        img.style.display = 'none';
-        video.style.display = 'block';
-        video.play();
-        icon.classList.remove('fa-play');
-        icon.classList.add('fa-pause');
-      } else {
-        video.pause();
-        video.style.display = 'none';
-        img.style.display = 'block';
-        icon.classList.remove('fa-pause');
-        icon.classList.add('fa-play');
-      }
-    });
-
-    video.addEventListener('ended', function() {
-      video.currentTime = 0;
-      video.play();
-    });
+// Hero Slider Animation
+document.addEventListener('DOMContentLoaded', function() {  
+  const dots = document.querySelectorAll('.dot');  
+  const heroWatchImg = document.querySelector('.hero-watch-img');  
+  const watchImages = [    
+    '/images/kylefromthenorth-TeOH1b-t3Nc-unsplash.jpg',    
+    '/images/watch-2.jpg',    
+    '/images/watch-3.jpg',    
+    '/images/watch-4.jpg'  
+  ];    
+  let currentSlide = 0;    
+  
+  function changeSlide(index) {    
+    dots.forEach(dot => dot.classList.remove('active'));    
+    dots[index].classList.add('active');    
+    heroWatchImg.style.opacity = '0';    
+    setTimeout(() => {      
+      heroWatchImg.src = watchImages[index];      
+      heroWatchImg.style.opacity = '1';    
+    }, 300);  
+  }    
+  
+  // Auto-slide  
+  setInterval(() => {    
+    currentSlide = (currentSlide + 1) % watchImages.length;    
+    changeSlide(currentSlide);  
+  }, 5000);    
+  
+  // Manual navigation  
+  dots.forEach((dot, index) => {    
+    dot.addEventListener('click', () => {      
+      currentSlide = index;      
+      changeSlide(index);    
+    });  
   });
 });
 
-
-//function for adding to wishlist page..................................................................
-
-function addToWishlist(productId) {
-
-$.ajax({
-  url: "/addToWishlist", 
-  method: "POST",
-  data: { productId: productId },
-  success: (response) => {
-    if (response.status) {
-      Swal.fire({
-        title: "Added to wishlist",
-        text: "The product has been added to your wishlist.",
-        icon: "success",
-        timer: 2000,
-      });
-    } else {
-      Swal.fire({
-        title: "Already in wishlist",
-        text: response.message || "This product is already in your wishlist.",
-        icon: "info",
-        timer: 2000,
-      });
-    }
-  },
-  error: (xhr, status, error) => {
-
-    console.error("AJAX Error: ", error, xhr.responseText);
-    Swal.fire({
-      title: "Error",
-      text: "There was an error adding the product to your wishlist. Please try again.",
-      icon: "error",
-      timer: 2000,
-    });
-  },
-});
-}
-
-function addToCart(productId) {
-}
-
-document.getElementById('sort').addEventListener('change', function() {
-const currentUrl = new URL(window.location.href);
-currentUrl.searchParams.set('sort', this.value);
-window.location.href = currentUrl.toString();
+// Collection Filter
+document.addEventListener('DOMContentLoaded', function() {  
+  const collectionBtns = document.querySelectorAll('.collection-btn');  
+  const collectionItems = document.querySelectorAll('.collection-item');    
+  
+  collectionBtns.forEach(btn => {    
+    btn.addEventListener('click', () => {      
+      const filter = btn.getAttribute('data-collection');            
+      collectionBtns.forEach(b => b.classList.remove('active'));      
+      btn.classList.add('active');            
+      collectionItems.forEach(item => {        
+        if (filter === 'all' || item.getAttribute('data-collection') === filter) {          
+          item.style.display = 'block';          
+          item.style.animation = 'fadeIn 0.5s ease';        
+        } else {          
+          item.style.display = 'none';        
+        }      
+      });    
+    });  
+  });
 });
 
-document.querySelector('input[name="inStock"]').addEventListener('change', function() {
-const currentUrl = new URL(window.location.href);
-if (this.checked) {
-  currentUrl.searchParams.set('inStock', 'true');
-} else {
-  currentUrl.searchParams.delete('inStock');
-}
-window.location.href = currentUrl.toString();
+// Smooth Scrolling
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {  
+  anchor.addEventListener('click', function (e) {    
+    e.preventDefault();    
+    document.querySelector(this.getAttribute('href')).scrollIntoView({      
+      behavior: 'smooth'    
+    });  
+  });
 });
 
+// Add to Cart Handler (Original Function Preserved)
+function addToCartHandler(event, productId) {  
+  event.preventDefault();  
+  fetch('/addToCart', {    
+    method: 'POST',    
+    headers: {      
+      'Content-Type': 'application/json',    
+    },    
+    body: JSON.stringify({      
+      productId: productId,      
+      quantity: 1    
+    })  
+  })  
+  .then(response => {    
+    if (!response.ok) {      
+      return response.json().then(data => {        
+        throw new Error(data.message || 'Failed to add product to cart');      
+      });    
+    }    
+    return response.json();  
+  })  
+  .then(data => {    
+    if (data.success) {      
+      Swal.fire({        
+        title: 'Success!',        
+        text: data.message || 'Product added to cart successfully!',        
+        icon: 'success',        
+        showConfirmButton: false,        
+        timer: 1500      
+      }).then(() => {        
+        if (data.cartCount !== undefined) {          
+          updateCartCount(data.cartCount);        
+        }        
+        if (data.redirect) {          
+          window.location.href = data.redirect;        
+        }      
+      });    
+    } else {      
+      throw new Error(data.message || 'Failed to add product to cart');    
+    }  
+  })  
+  .catch(error => {    
+    console.error('Error:', error);        
+    if (error.message.includes('Please login')) {      
+      Swal.fire({        
+        title: 'Login Required',        
+        text: 'Please login to add items to your cart',        
+        icon: 'info',        
+        showCancelButton: true,        
+        confirmButtonText: 'Login',        
+        cancelButtonText: 'Cancel'      
+      }).then((result) => {        
+        if (result.isConfirmed) {          
+          window.location.href = '/login';        
+        }      
+      });    
+    }     
+    else if (error.message.includes('Maximum quantity')) {      
+      Swal.fire({        
+        title: 'Quantity Limit Reached',        
+        text: error.message,        
+        icon: 'warning',        
+        confirmButtonText: 'OK'      
+      });    
+    }    
+    else if (error.message.includes('out of stock') || error.message.includes('available in stock')) {      
+      Swal.fire({        
+        title: 'Stock Limited',        
+        text: error.message,        
+        icon: 'warning',        
+        confirmButtonText: 'OK'      
+      });    
+    }    
+    else {      
+      Swal.fire({        
+        title: 'Error!',        
+        text: error.message || 'Something went wrong. Please try again.',        
+        icon: 'error',        
+        confirmButtonText: 'OK'      
+      });    
+    }  
+  });
+}
 
-function toggleDropdown(id) {
-  const dropdown = document.getElementById(id);
-  dropdown.classList.toggle('show');
+function updateCartCount(count) {  
+  const cartCountElements = document.querySelectorAll('.cart-count');  
+  cartCountElements.forEach(element => {    
+    element.textContent = count;  
+  });
+}
 
-  const arrow = dropdown.previousElementSibling.querySelector('.dropdown-arrow');
-  if (dropdown.classList.contains('show')) {
-    arrow.style.transform = 'rotate(180deg)';
-  } else {
-    arrow.style.transform = 'rotate(0deg)';
+// Wishlist Function (Original Function Preserved)
+function addToWishlist(productId) {  
+  $.ajax({    
+    url: "/addToWishlist",     
+    method: "POST",    
+    data: { productId: productId },    
+    success: (response) => {      
+      if (response.status) {        
+        Swal.fire({          
+          title: "Added to wishlist",          
+          text: "The product has been added to your wishlist.",          
+          icon: "success",          
+          timer: 2000,        
+        });      
+      } else {        
+        Swal.fire({          
+          title: "Already in wishlist",          
+          text: response.message || "This product is already in your wishlist.",          
+          icon: "info",          
+          timer: 2000,        
+        });      
+      }    
+    },    
+    error: (xhr, status, error) => {      
+      console.error("AJAX Error: ", error, xhr.responseText);      
+      Swal.fire({        
+        title: "Error",        
+        text: "There was an error adding the product to your wishlist. Please try again.",        
+        icon: "error",        
+        timer: 2000,      
+      });    
+    },  
+  });
+}
+
+// Original Functions Preserved
+function addToCart(productId) {}
+
+document.getElementById('sort')?.addEventListener('change', function() {  
+  const currentUrl = new URL(window.location.href);  
+  currentUrl.searchParams.set('sort', this.value);  
+  window.location.href = currentUrl.toString();
+});
+
+document.querySelector('input[name="inStock"]')?.addEventListener('change', function() {  
+  const currentUrl = new URL(window.location.href);  
+  if (this.checked) {    
+    currentUrl.searchParams.set('inStock', 'true');  
+  } else {    
+    currentUrl.searchParams.delete('inStock');  
+  }  
+  window.location.href = currentUrl.toString();
+});
+
+function toggleDropdown(id) {  
+  const dropdown = document.getElementById(id);  
+  dropdown.classList.toggle('show');  
+  const arrow = dropdown.previousElementSibling.querySelector('.dropdown-arrow');  
+  if (dropdown.classList.contains('show')) {    
+    arrow.style.transform = 'rotate(180deg)';  
+  } else {    
+    arrow.style.transform = 'rotate(0deg)';  
   }
 }
+</script>
 
-
-  </script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-  <%- include ("../../views/partials/user/footer.ejs")  %>
+<%- include ("../../views/partials/user/footer.ejs")  %>
