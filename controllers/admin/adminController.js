@@ -24,7 +24,7 @@ const loadLogin = (req, res) => {
     }
     res.render("adminLogin", { message: null })
 }
-
+console.log(loadLogin)
 
 //login..........................................................................................................
 
